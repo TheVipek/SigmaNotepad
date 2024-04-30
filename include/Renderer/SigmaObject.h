@@ -13,13 +13,16 @@ class SigmaObject {
 public:
     SigmaObject(const int x, const int y, const int w, const int h, const bool enabled, const bool visible)
         : rect( {x,y,w,h} ), enabled(enabled), visible(visible) {}
+
     SigmaObject(const SDL_Rect& rect, const bool enabled, const bool visible)
         : rect(rect), enabled(enabled), visible(visible) {}
+
     virtual ~SigmaObject() = default;
-    int getX() const { return rect.x;}
-    int getY() const { return rect.y;}
-    int getWidth() const { return rect.w; }
-    int getHeight() const { return rect.h; }
+
+    [[nodiscard]] int getX() const { return rect.x;}
+    [[nodiscard]] int getY() const { return rect.y;}
+    [[nodiscard]] int getWidth() const { return rect.w; }
+    [[nodiscard]] int getHeight() const { return rect.h; }
 
     virtual void setEnabled(const bool enabled) { this->enabled = enabled; }
     virtual void setRect(const SDL_Rect& rect) { this->rect = rect; }
