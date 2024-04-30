@@ -39,6 +39,7 @@ target_sources(${PROJECT_NAME}
         include/Renderer/SigmaObject.h
         include/Renderer/SigmaRenderableObject.h
         include/Renderer/Button.h
+        include/Renderer/TextLabel.h
         src/Renderer/Button.cpp
 
         main.cpp
