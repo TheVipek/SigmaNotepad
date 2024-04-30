@@ -36,11 +36,13 @@ add_dependencies(${PROJECT_NAME} copy_resources)
 
 target_sources(${PROJECT_NAME}
     PUBLIC
-    include/Renderer/RendererObject.h
-    include/Renderer/Button.h
-    src/Renderer/Button.cpp
+        include/Renderer/SigmaObject.h
+        include/Renderer/SigmaRenderableObject.h
+        include/Renderer/Button.h
+        src/Renderer/Button.cpp
 
-    main.cpp)
+        main.cpp
+)
 
 
 

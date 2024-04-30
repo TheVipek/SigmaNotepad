@@ -3,3 +3,6 @@
 //
 
 #include <Renderer/Button.h>
+void handleEvent(const SDL_Event &e) {
+
+}
