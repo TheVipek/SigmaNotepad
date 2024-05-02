@@ -9,8 +9,6 @@ SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 SDL_Surface* windowSurface = NULL;
 SDL_Surface* img = NULL;
-
-Button* testBtn = NULL;
 int main(int argc, char *argv[])
 {
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -21,28 +19,11 @@ int main(int argc, char *argv[])
     windowSurface = SDL_GetWindowSurface(window);
 
     SDL_Rect btnSize = {100, 100, 200, 200};
-    testBtn = new Button(btnSize, true, true, *renderer, "hfgdhdfghdfg");
+    Button testBtn = Button(btnSize, true, true, *renderer, "hfgdhdfghdfg");
 
-    testBtn->render();
+    testBtn.render();
 
     SDL_Delay(5000);
-    // std::cout << "baeDir;" << SDL_GetBasePath();
-    //
-    // img = SDL_LoadBMP("assets/sigma.bmp");
-    // if(img == NULL)
-    // {
-    //     std::cerr << "Error loading image: " << SDL_GetError() << std::endl;
-    // }
-    // else
-    // {
-    //     SDL_BlitScaled(img, NULL, windowSurface, NULL);
-    //     SDL_UpdateWindowSurface(window);
-    //     SDL_Delay(2000);
-    // }
-
-
-
-    // SDL_FreeSurface(img);
     SDL_DestroyWindow(window);
     SDL_Quit();
 

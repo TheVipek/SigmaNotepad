@@ -53,8 +53,13 @@ target_sources(${PROJECT_NAME}
         include/Renderer/TextVerticalAligment.h
         include/Renderer/Font.h
 
+        include/Managers/RendererManager.h
+
+        src/Renderer/SigmaRenderableObject.cpp
         src/Renderer/Button.cpp
         src/Renderer/TextLabel.cpp
+        src/Renderer/Font.cpp
+        src/Managers/RendererManager.cpp
 
         main.cpp
 )

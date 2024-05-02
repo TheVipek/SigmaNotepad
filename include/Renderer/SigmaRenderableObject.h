@@ -9,11 +9,12 @@
 
 #include "SigmaObject.h"
 
+
 class SigmaRenderableObject : public SigmaObject {
 public:
     SigmaRenderableObject(const SDL_Rect& rect, const bool enabled, const bool visible
-        , SDL_Renderer& renderer)
-        : SigmaObject(rect, enabled, visible), renderer(renderer) {}
+        , SDL_Renderer& renderer);
+    ~SigmaRenderableObject() override;
 
     virtual void render() = 0;
 protected:

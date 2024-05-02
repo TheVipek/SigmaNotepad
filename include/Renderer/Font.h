@@ -12,32 +12,14 @@
 
 class Font {
 public:
-    Font(const std::string& fontPath, const int fontSize) : mFont(nullptr) {
-        open(fontPath, fontSize);
-    }
+    Font(const std::string& fontPath, const int fontSize);
+    ~Font();
 
-    ~Font() {
-        close();
-    }
+    void open(const std::string& fontPath, const int fontSize);
+    void close();
+    void change(const std::string& fontPath, const int fontSize);
 
     [[nodiscard]] TTF_Font* get() const { return mFont; }
-
-    void open(const std::string& fontPath, const int fontSize) {
-        mFont = TTF_OpenFont(fontPath.c_str(), fontSize);
-        if (!mFont) {
-            std::cerr << "Failed to load font: " << TTF_GetError() << std::endl;
-        }
-    }
-    void close() {
-        if (mFont) {
-            TTF_CloseFont(mFont);
-            mFont = nullptr;
-        }
-    }
-    void change(const std::string& fontPath, const int fontSize) {
-        close();
-        open(fontPath, fontSize);
-    }
 
 private:
     TTF_Font* mFont;
