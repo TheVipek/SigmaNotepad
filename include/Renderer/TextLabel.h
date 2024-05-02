@@ -6,6 +6,8 @@
 #define TEXTLABEL_H
 
 
+#include <memory>
+
 #include "SigmaRenderableObject.h"
 #include "TextHorizontalAligment.h"
 #include "TextVerticalAligment.h"
@@ -16,18 +18,22 @@
 class TextLabel : public SigmaRenderableObject {
 
 public:
-    TextLabel(const SDL_Rect& rect, SDL_Renderer& renderer
-        , const bool enabled, const bool visible, const std::string& text
-        //, std::string fontPath = "", int fontSize = 12
-        , const HorizontalAligment ha = HorizontalAligment::Top, const VerticalAligment va = VerticalAligment::Left)
-        : SigmaRenderableObject(rect, enabled, visible, renderer), text(text)
-        , horizontal_aligment(ha), vertical_aligment(va) {
+    TextLabel(const SDL_Rect& rect, SDL_Renderer& renderer, const bool enabled, const bool visible, const std::string& text)
+        : SigmaRenderableObject(rect, enabled, visible, renderer), text(text) {
 
+        initFont(DEFAULT_FONTP, DEFAULT_FONTS);
     }
 
 
     virtual void setText(const std::string& text) { this->text = text; }
     virtual std::string getText() { return text;}
+
+    virtual void setHorizontalAligment(const HorizontalAligment ha) { horizontal_aligment = ha; }
+    virtual void setVerticalAligment(const VerticalAligment va) { vertical_aligment = va; }
+
+    virtual void initFont(const std::string& fPath, const int fSize);
+
+
 
     void handleEvent(const SDL_Event &e) override;
     void render() override;
@@ -35,14 +41,14 @@ protected:
 
     SDL_Color                   textColor = { 0, 0, 0, 255 };
 
-    std::string                 fontPath;
-    int                         fontSize;
-    //Font                        font;
+    std::unique_ptr<Font>       font;
 
     std::string                 text;
-    HorizontalAligment          horizontal_aligment;
-    VerticalAligment            vertical_aligment;
+    HorizontalAligment          horizontal_aligment = HorizontalAligment::Top;
+    VerticalAligment            vertical_aligment = VerticalAligment::Left;
 
+    const std::string DEFAULT_FONTP = "assets/defaultFonts/OpenSans_Condensed-Medium.ttf";
+    const int DEFAULT_FONTS = 12;
 };
 
 #endif //TEXTLABEL_H

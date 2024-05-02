@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     windowSurface = SDL_GetWindowSurface(window);
 
     SDL_Rect btnSize = {100, 100, 200, 200};
-    testBtn = new Button(btnSize, true, true, *renderer, "asd");
+    testBtn = new Button(btnSize, true, true, *renderer, "hfgdhdfghdfg");
 
     testBtn->render();
 

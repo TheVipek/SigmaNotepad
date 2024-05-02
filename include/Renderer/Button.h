@@ -17,17 +17,13 @@
 
 class Button : public SigmaRenderableObject  {
     public:
-    Button(const int x, const int y, const int w
-        , const int h, const bool enabled, const bool visible, SDL_Renderer& renderer, const std::string& text)
-        : SigmaRenderableObject(x, y, w, h, enabled, visible, renderer) {
-        TLabel = std::make_unique<TextLabel>(rect, renderer, enabled, visible, text );
-    }
-
     Button(const SDL_Rect& rect, const bool enabled, const bool visible
         , SDL_Renderer& renderer, const std::string& text)
         : SigmaRenderableObject(rect, enabled, visible, renderer) {
         TLabel = std::make_unique<TextLabel>(this->rect, renderer, enabled, visible, text );
     }
+
+    std::unique_ptr<TextLabel>  TLabel;
 
     virtual void setText(const std::string& text) { this->TLabel->setText(text); }
     virtual std::string getText() { return this->TLabel->getText(); }
@@ -35,7 +31,6 @@ class Button : public SigmaRenderableObject  {
     void handleEvent(const SDL_Event &e) override;
     void render() override;
 
-    std::unique_ptr<TextLabel>  TLabel;
     protected:
 
     bool                        isHovered = false;

@@ -53,10 +53,12 @@ void Button::render() {
 
     SDL_RenderFillRect(&renderer, &rect);
 
+
+
+    if(TLabel != nullptr) {
+        TLabel->render();
+    }
     SDL_RenderPresent(&renderer);
-
-   // if(tlabel)
-
 }
 
 void Button::onClick() {

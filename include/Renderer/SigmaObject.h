@@ -11,9 +11,6 @@
 
 class SigmaObject {
 public:
-    SigmaObject(const int x, const int y, const int w, const int h, const bool enabled, const bool visible)
-        : rect( {x,y,w,h} ), enabled(enabled), visible(visible) {}
-
     SigmaObject(const SDL_Rect& rect, const bool enabled, const bool visible)
         : rect(rect), enabled(enabled), visible(visible) {}
 
