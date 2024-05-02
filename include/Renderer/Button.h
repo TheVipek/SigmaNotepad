@@ -20,24 +20,33 @@ class Button : public SigmaRenderableObject  {
     Button(const int x, const int y, const int w
         , const int h, const bool enabled, const bool visible, SDL_Renderer& renderer, const std::string& text)
         : SigmaRenderableObject(x, y, w, h, enabled, visible, renderer) {
-        tLabel = std::make_unique<TextLabel>(rect, renderer, enabled, visible, text );
+        TLabel = std::make_unique<TextLabel>(rect, renderer, enabled, visible, text );
     }
 
     Button(const SDL_Rect& rect, const bool enabled, const bool visible
         , SDL_Renderer& renderer, const std::string& text)
         : SigmaRenderableObject(rect, enabled, visible, renderer) {
-        tLabel = std::make_unique<TextLabel>(rect, renderer, enabled, visible, text );
+        TLabel = std::make_unique<TextLabel>(this->rect, renderer, enabled, visible, text );
     }
 
-    virtual void setText(const std::string& text) { this->tLabel->setText(text); }
-    virtual std::string getText() { return this->tLabel->getText(); }
+    virtual void setText(const std::string& text) { this->TLabel->setText(text); }
+    virtual std::string getText() { return this->TLabel->getText(); }
 
     void handleEvent(const SDL_Event &e) override;
     void render() override;
 
+    std::unique_ptr<TextLabel>  TLabel;
     protected:
-    std::unique_ptr<TextLabel>  tLabel;
+
     bool                        isHovered = false;
+    bool                        isClicked = false;
+
+    SDL_Color                   normalColor = { 242, 242, 242, 255}; // default bg color
+    SDL_Color                   hoverColor = { 242, 242, 242, 255};; // bg on hover
+    SDL_Color                   clickColor = { 242, 242, 242, 255};; // bg on click
+
+
+    virtual void onClick();
 };
 
 

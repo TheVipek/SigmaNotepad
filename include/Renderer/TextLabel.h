@@ -5,29 +5,25 @@
 #ifndef TEXTLABEL_H
 #define TEXTLABEL_H
 
-#include <SDL_rect.h>
 
 #include "SigmaRenderableObject.h"
+#include "TextHorizontalAligment.h"
+#include "TextVerticalAligment.h"
+#include "SDL_ttf.h"
+#include "Font.h"
 
-enum class HorizontalAligment {
-    Top,
-    Center,
-    Bottom
-};
 
-enum class VerticalAligment {
-    Left,
-    Center,
-    Right
-};
+class TextLabel : public SigmaRenderableObject {
 
-class TextLabel : SigmaRenderableObject {
 public:
     TextLabel(const SDL_Rect& rect, SDL_Renderer& renderer
         , const bool enabled, const bool visible, const std::string& text
+        //, std::string fontPath = "", int fontSize = 12
         , const HorizontalAligment ha = HorizontalAligment::Top, const VerticalAligment va = VerticalAligment::Left)
         : SigmaRenderableObject(rect, enabled, visible, renderer), text(text)
-        , horizontal_aligment(ha), vertical_aligment(va){}
+        , horizontal_aligment(ha), vertical_aligment(va) {
+
+    }
 
 
     virtual void setText(const std::string& text) { this->text = text; }
@@ -36,9 +32,17 @@ public:
     void handleEvent(const SDL_Event &e) override;
     void render() override;
 protected:
-    std::string             text;
-    HorizontalAligment      horizontal_aligment;
-    VerticalAligment        vertical_aligment;
+
+    SDL_Color                   textColor = { 0, 0, 0, 255 };
+
+    std::string                 fontPath;
+    int                         fontSize;
+    //Font                        font;
+
+    std::string                 text;
+    HorizontalAligment          horizontal_aligment;
+    VerticalAligment            vertical_aligment;
+
 };
 
 #endif //TEXTLABEL_H

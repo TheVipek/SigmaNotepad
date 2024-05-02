@@ -2,10 +2,11 @@
 // Created by thevi on 4/30/2024.
 //
 
+#include <iostream>
 #include <Renderer/Button.h>
 
 void Button::handleEvent(const SDL_Event &e) {
-    if(!enabled)
+    if(!enabled) // no need to process events
         return;
 
     if(e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) {
@@ -24,14 +25,40 @@ void Button::handleEvent(const SDL_Event &e) {
         }
 
         if(e.type == SDL_MOUSEMOTION) {
-
+            //Change color to hovered
+            isHovered = true;
         }
         else if(e.type == SDL_MOUSEBUTTONDOWN) {
-
+            //Change color to click
+            onClick();
+            isClicked = true;
         }
     }
 }
 
 void Button::render() {
+    if(!visible) // no need to render
+        return;
+    SDL_Color bgColorToRender;
+    if(isHovered) {
+        bgColorToRender = hoverColor;
+    }
+    else if(isClicked) {
+        bgColorToRender = clickColor;
+    }
+    else {
+        bgColorToRender = normalColor;
+    }
+    SDL_SetRenderDrawColor(&renderer, bgColorToRender.r, bgColorToRender.g, bgColorToRender.b, bgColorToRender.a);
+
+    SDL_RenderFillRect(&renderer, &rect);
+
+    SDL_RenderPresent(&renderer);
+
+   // if(tlabel)
+
+}
+
+void Button::onClick() {
 
 }
