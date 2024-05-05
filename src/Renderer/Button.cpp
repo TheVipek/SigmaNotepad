@@ -6,10 +6,13 @@
 #include <Renderer/Button.h>
 
 void Button::handleEvent(const SDL_Event &e) {
+
     if(!enabled) // no need to process events
         return;
 
-    if(e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) {
+    SigmaRenderableObject::handleEvent(e);
+
+    if(e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
         const int mousePosX = e.button.x;
         const int mousePosY = e.button.y;
 
@@ -30,8 +33,17 @@ void Button::handleEvent(const SDL_Event &e) {
         }
         else if(e.type == SDL_MOUSEBUTTONDOWN) {
             //Change color to click
-            onClick();
-            isClicked = true;
+            if(!isClicked) {
+                std::cout << "clicked";
+                onClick();
+                isClicked = true;
+
+            }
+        }
+        else if(e.type == SDL_MOUSEBUTTONUP) {
+            if(isClicked) {
+                isClicked = false;
+            }
         }
     }
 }
@@ -39,6 +51,9 @@ void Button::handleEvent(const SDL_Event &e) {
 void Button::render(SDL_Renderer* renderer) {
     if(!visible) // no need to render
         return;
+
+    SigmaRenderableObject::render(renderer);
+
     SDL_Color bgColorToRender;
     if(isHovered) {
         bgColorToRender = hoverColor;
@@ -49,8 +64,8 @@ void Button::render(SDL_Renderer* renderer) {
     else {
         bgColorToRender = normalColor;
     }
-    SDL_SetRenderDrawColor(renderer, bgColorToRender.r, bgColorToRender.g, bgColorToRender.b, bgColorToRender.a);
 
+    SDL_SetRenderDrawColor(renderer, bgColorToRender.r, bgColorToRender.g, bgColorToRender.b, bgColorToRender.a);
     SDL_RenderFillRect(renderer, &rect);
 }
 

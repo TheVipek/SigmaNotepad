@@ -7,9 +7,8 @@
 
 #include <iostream>
 
-SigmaRenderableObject::SigmaRenderableObject(const SDL_Rect& rect, const bool enabled, const bool visible
-                                             , std::shared_ptr<IWindowRenderingManager> targetWindow)
-    : SigmaObject(rect, enabled, visible), targetWindow(targetWindow){
+SigmaRenderableObject::SigmaRenderableObject(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow)
+    : SigmaObject(rect), targetWindow(targetWindow){
     if(targetWindow != nullptr) {
         targetWindow->AddRenderableObject(this);
     }
@@ -17,5 +16,21 @@ SigmaRenderableObject::SigmaRenderableObject(const SDL_Rect& rect, const bool en
 SigmaRenderableObject::~SigmaRenderableObject() {
     if(targetWindow != nullptr) {
         targetWindow->RemoveRenderableObject(this);
+    }
+}
+void SigmaRenderableObject::render(SDL_Renderer* renderer) {
+    if(isAnchorDirty) {
+        int w,h;
+        if(SDL_GetRendererOutputSize(renderer, &w, &h) == 0) {
+            std::cout << "update anchor";
+            handleToAnchor(w,h);
+            isAnchorDirty = false;
+        }
+    }
+}
+void SigmaObject::handleEvent(const SDL_Event &e) {
+    if(e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_RESIZED) {
+        std::cout << "resized";
+        isAnchorDirty = true;
     }
 }

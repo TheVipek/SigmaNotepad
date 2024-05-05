@@ -6,9 +6,9 @@
 
 #include "Managers/WindowRenderingManager.h"
 #include "Renderer/Button.h"
+#include "Renderer/Panel.h"
 
 std::shared_ptr<WindowRenderingManager> mainWindow;
-Button* btn;
 int main(int argc, char *argv[])
 {
 //Initialization
@@ -18,15 +18,31 @@ int main(int argc, char *argv[])
 //Creating Window
     mainWindow = std::make_shared<WindowRenderingManager>();
 
-    SDL_Window* window = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 380, SDL_WINDOW_SHOWN);
+    SDL_Window* window = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 380, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     mainWindow->SetTargetWindow(window);
     mainWindow->SetTargetRenderer(renderer);
 
 //Creating GUI Elements
-    SDL_Rect btnSize = {100, 100, 200, 200};
-    btn = new Button(btnSize, true, true, mainWindow, "hfgdhdfghdfg");
+    SDL_Rect topPanelSize = {0, 0, 25, 25};
+    auto panel = new Panel(topPanelSize, mainWindow);
+    panel->setBackgroundColor({ 15, 25 ,35 ,255});
+
+    panel->setAnchor(Anchor::FullWidthCenter);
+    SDL_Rect btnSize = {0, 0, 75, 25};
+    auto btn = new Button(btnSize, mainWindow, "File");
+    btn->setAnchor(Anchor::TopLeft);
+
+    SDL_Rect btnSize2 = {80, 0, 75, 25};
+    auto btn2 = new Button(btnSize2, mainWindow, "Edit");
+    btn2->setAnchor(Anchor::TopLeft);
+
+    SDL_Rect btnSize3 = {160, 0, 75, 25};
+    auto btn3 = new Button(btnSize3, mainWindow, "Show");
+    btn3->setAnchor(Anchor::TopLeft);
+
     while(true) {
         SDL_Event event;
         if(SDL_PollEvent(&event)) {

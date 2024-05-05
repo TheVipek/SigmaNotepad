@@ -52,14 +52,18 @@ target_sources(${PROJECT_NAME}
         include/Renderer/TextHorizontalAligment.h
         include/Renderer/TextVerticalAligment.h
         include/Renderer/Font.h
+        include/Renderer/Panel.h
 
         include/Managers/IWindowRenderingManager.h
         include/Managers/WindowRenderingManager.h
 
+        src/Renderer/SigmaObject.cpp
         src/Renderer/SigmaRenderableObject.cpp
         src/Renderer/Button.cpp
         src/Renderer/TextLabel.cpp
         src/Renderer/Font.cpp
+        src/Renderer/Panel.cpp
+
         src/Managers/WindowRenderingManager.cpp
 
         main.cpp

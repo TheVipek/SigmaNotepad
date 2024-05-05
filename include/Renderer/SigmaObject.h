@@ -7,12 +7,19 @@
 
 #include <SDL_events.h>
 #include <SDL_rect.h>
-#include <string>
 
+enum class Anchor {
+    TopLeft, TopRight, BottomLeft, BottomRight,
+    Top, Bottom, Left, Right, Center,
+    FullScreen,
+    FullWidthTop, FullWidthCenter, FullWidthBottom,
+    FullHeightLeft, FullHeightCenter, FullHeightRight,
+    None
+};
 class SigmaObject {
 public:
-    SigmaObject(const SDL_Rect& rect, const bool enabled, const bool visible)
-        : rect(rect), enabled(enabled), visible(visible) {}
+    SigmaObject(SDL_Rect& rect)
+        : rect(rect), baseX(rect.x), baseY(rect.y) {}
 
     virtual ~SigmaObject() = default;
 
@@ -21,16 +28,24 @@ public:
     [[nodiscard]] int getWidth() const { return rect.w; }
     [[nodiscard]] int getHeight() const { return rect.h; }
 
-    virtual void setEnabled(const bool enabled) { this->enabled = enabled; }
-    virtual void setRect(const SDL_Rect& rect) { this->rect = rect; }
-    virtual void setVisibility(const bool visible) { this->visible = visible; }
-
-
+    void setEnabled(const bool enabled) { this->enabled = enabled; }
+    void setRect(const SDL_Rect& rect) { this->rect = rect;}
+    void setVisibility(const bool visible) { this->visible = visible; }
+    void setAnchor(Anchor anchor) { this->anchor = anchor; isAnchorDirty = true;}
+    void handleToAnchor(const int& width, const int& height);
     virtual void handleEvent(const SDL_Event& e) = 0;
 protected:
-    SDL_Rect            rect;
-    bool                enabled;
-    bool                visible;
+
+
+    SDL_Rect&           rect;
+
+    Anchor              anchor = Anchor::None;
+    int&                baseX;
+    int&                baseY;
+
+    bool                isAnchorDirty = true;
+    bool                enabled = true;
+    bool                visible = true;
 };
 
 

@@ -15,7 +15,8 @@ void TextLabel::initFont(const std::string& fPath, const int fSize) {
 }
 
 void TextLabel::handleEvent(const SDL_Event &e) {
-    }
+
+}
 
 
 void TextLabel::render(SDL_Renderer* renderer) {
@@ -24,8 +25,7 @@ void TextLabel::render(SDL_Renderer* renderer) {
 
     if(font->get() == nullptr)
         return;
-
-    SDL_Surface* surface = TTF_RenderText_Solid(font->get(), text.c_str(), textColor);
+    SDL_Surface* surface = TTF_RenderText_Blended(font->get(), text.c_str(), textColor);
     if (surface == nullptr) {
         SDL_Log("Unable to create text surface: %s", SDL_GetError());
         return;

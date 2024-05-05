@@ -8,9 +8,14 @@ void WindowRenderingManager::RenderFrame() {
     if(targetRenderer == nullptr)
         return;
 
+    // Clear the renderer with a default or background color
+    SDL_SetRenderDrawColor(targetRenderer, 42, 42, 42, 255); // Black, or choose another color
+    SDL_RenderClear(targetRenderer);
+
     for (auto obj: renderableObjects) {
         obj->render(targetRenderer);
     }
+
     SDL_RenderPresent(targetRenderer);
 }
 
