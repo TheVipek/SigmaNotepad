@@ -18,9 +18,9 @@
 class Button : public SigmaRenderableObject  {
     public:
     Button(const SDL_Rect& rect, const bool enabled, const bool visible
-        , SDL_Renderer& renderer, const std::string& text)
-        : SigmaRenderableObject(rect, enabled, visible, renderer) {
-        TLabel = std::make_unique<TextLabel>(this->rect, renderer, enabled, visible, text );
+        , std::shared_ptr<IWindowRenderingManager> targetWindow, const std::string& text)
+        : SigmaRenderableObject(rect, enabled, visible, targetWindow) {
+        TLabel = std::make_unique<TextLabel>(this->rect, targetWindow, enabled, visible, text );
     }
 
     std::unique_ptr<TextLabel>  TLabel;
@@ -29,7 +29,7 @@ class Button : public SigmaRenderableObject  {
     virtual std::string getText() { return this->TLabel->getText(); }
 
     void handleEvent(const SDL_Event &e) override;
-    void render() override;
+    void render(SDL_Renderer* renderer) override;
 
     protected:
 

@@ -5,19 +5,21 @@
 #ifndef SIGMARENDERABLEOBJECT_H
 #define SIGMARENDERABLEOBJECT_H
 
+#include <memory>
 #include <SDL_render.h>
 
 #include "SigmaObject.h"
+#include "Managers/IWindowRenderingManager.h"
 
 
 class SigmaRenderableObject : public SigmaObject {
 public:
     SigmaRenderableObject(const SDL_Rect& rect, const bool enabled, const bool visible
-        , SDL_Renderer& renderer);
+        , std::shared_ptr<IWindowRenderingManager> targetWindow);
     ~SigmaRenderableObject() override;
 
-    virtual void render() = 0;
+    virtual void render(SDL_Renderer* renderer) = 0;
 protected:
-    SDL_Renderer& renderer;
+    std::shared_ptr<IWindowRenderingManager> targetWindow;
 };
 #endif //SIGMARENDERABLEOBJECT_H

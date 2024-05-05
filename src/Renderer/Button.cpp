@@ -36,7 +36,7 @@ void Button::handleEvent(const SDL_Event &e) {
     }
 }
 
-void Button::render() {
+void Button::render(SDL_Renderer* renderer) {
     if(!visible) // no need to render
         return;
     SDL_Color bgColorToRender;
@@ -49,16 +49,9 @@ void Button::render() {
     else {
         bgColorToRender = normalColor;
     }
-    SDL_SetRenderDrawColor(&renderer, bgColorToRender.r, bgColorToRender.g, bgColorToRender.b, bgColorToRender.a);
+    SDL_SetRenderDrawColor(renderer, bgColorToRender.r, bgColorToRender.g, bgColorToRender.b, bgColorToRender.a);
 
-    SDL_RenderFillRect(&renderer, &rect);
-
-
-
-    if(TLabel != nullptr) {
-        TLabel->render();
-    }
-    SDL_RenderPresent(&renderer);
+    SDL_RenderFillRect(renderer, &rect);
 }
 
 void Button::onClick() {

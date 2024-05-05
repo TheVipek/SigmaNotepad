@@ -7,6 +7,7 @@
 
 
 #include <memory>
+#include <utility>
 
 #include "SigmaRenderableObject.h"
 #include "TextHorizontalAligment.h"
@@ -18,8 +19,8 @@
 class TextLabel : public SigmaRenderableObject {
 
 public:
-    TextLabel(const SDL_Rect& rect, SDL_Renderer& renderer, const bool enabled, const bool visible, const std::string& text)
-        : SigmaRenderableObject(rect, enabled, visible, renderer), text(text) {
+    TextLabel(const SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow, const bool enabled, const bool visible, const std::string& text)
+        : SigmaRenderableObject(rect, enabled, visible, targetWindow), text(text) {
 
         initFont(DEFAULT_FONTP, DEFAULT_FONTS);
     }
@@ -36,7 +37,7 @@ public:
 
 
     void handleEvent(const SDL_Event &e) override;
-    void render() override;
+    void render(SDL_Renderer* renderer) override;
 protected:
 
     SDL_Color                   textColor = { 0, 0, 0, 255 };

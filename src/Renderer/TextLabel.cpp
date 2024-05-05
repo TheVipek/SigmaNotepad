@@ -18,7 +18,7 @@ void TextLabel::handleEvent(const SDL_Event &e) {
     }
 
 
-void TextLabel::render() {
+void TextLabel::render(SDL_Renderer* renderer) {
     if(!visible)
         return;
 
@@ -31,13 +31,13 @@ void TextLabel::render() {
         return;
     }
 
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(&renderer, surface);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
     if (texture == nullptr) {
         SDL_Log("Unable to create texture: %s", SDL_GetError());
         SDL_FreeSurface(surface);
         return;
     }
-    SDL_RenderCopy(&renderer, texture, NULL, &rect);
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
 
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(surface);
