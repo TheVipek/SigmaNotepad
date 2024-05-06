@@ -53,7 +53,7 @@ target_sources(${PROJECT_NAME}
         include/Renderer/TextVerticalAligment.h
         include/Renderer/Font.h
         include/Renderer/Panel.h
-
+        include/Renderer/Offset.h
         include/Managers/IWindowRenderingManager.h
         include/Managers/WindowRenderingManager.h
 

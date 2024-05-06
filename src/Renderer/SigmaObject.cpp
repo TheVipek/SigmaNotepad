@@ -6,79 +6,84 @@
 
 #include <iostream>
 
-void SigmaObject::handleToAnchor(const int& width, const int& height) {
+void SigmaObject::handlePosition(const int& screen_width, const int& screen_height) {
     switch (anchor) {
         case Anchor::None:
             break;
         case Anchor::Top:
-            rect.x = ((width - rect.w) / 2) + baseX;;
-            rect.y = 0 + baseY;
+            rect.x = ((screen_width - rect.w) / 2) ;
+            rect.y = 0;
         break;
         case Anchor::TopLeft:
-            rect.x = 0 + baseX;
-            rect.y = 0 + baseY;
+            rect.x = 0;
+            rect.y = 0;
         break;
         case Anchor::TopRight:
-            rect.x = width - rect.w + baseX;
-            rect.y = 0 + baseY;
+            rect.x = screen_width - rect.w;
+            rect.y = 0;
         break;
         case Anchor::BottomLeft:
-            rect.x = 0 + baseX;
-            rect.y = height - rect.h + baseY;
+            rect.x = 0;
+            rect.y = screen_height - rect.h;
         break;
         case Anchor::BottomRight:
-            rect.x = width - rect.w + baseX;
-            rect.y = height - rect.h + baseY;
+            rect.x = screen_width - rect.w;
+            rect.y = screen_height - rect.h;
         break;
         case Anchor::Bottom:
-            rect.x = ((width - rect.w) / 2) + baseX;
-            rect.y = height - rect.h + baseY;
+            rect.x = ((screen_width - rect.w) / 2);
+            rect.y = screen_height - rect.h;
         break;
         case Anchor::Left:
-            rect.x = 0 + baseX;
-            rect.y = ((height - rect.h) / 2) + baseY;
+            rect.x = 0;
+            rect.y = ((screen_height - rect.h) / 2);
         break;
         case Anchor::Right:
-            rect.x = width - rect.w + baseX;
-            rect.y = ((height - rect.h) / 2) + baseY;
+            rect.x = screen_width - rect.w;
+            rect.y = ((screen_height - rect.h) / 2);
         break;
         case Anchor::Center:
-            rect.x = ((width - rect.w) / 2) + baseX;
-            rect.y = ((height - rect.h) / 2) + baseY;
+            rect.x = ((screen_width - rect.w) / 2);
+            rect.y = ((screen_height - rect.h) / 2);
         break;
         case Anchor::FullScreen:
-            rect.w = width;
-            rect.h = height;
-            rect.x = 0 + baseX;
-            rect.y = 0 + baseY;
+            rect.w = screen_width;
+            rect.h = screen_height;
+            rect.x = 0;
+            rect.y = 0;
         break;
         case Anchor::FullWidthTop:
-            rect.w = width;
-            rect.x = 0 + baseX;
-            rect.y = 0 + baseY;
+            rect.w = screen_width;
+            rect.x = 0;
+            rect.y = 0;
         break;
         case Anchor::FullWidthCenter:
-            rect.w = width;
-            rect.x = 0 + baseX;
-            rect.y = (height / 2) - (rect.h / 2) + baseY;
+            rect.w = screen_width;
+            rect.x = 0;
+            rect.y = ((screen_height - rect.h) / 2);
         break;
         case Anchor::FullWidthBottom:
-            rect.w = width;
-            rect.x = 0 + baseX;
-            rect.y = height - rect.h + baseY;
+            rect.w = screen_width;
+            rect.x = 0;
+            rect.y = screen_height - rect.h;
         break;
         case Anchor::FullHeightLeft:
-            rect.h = height;
-            rect.x = 0 + baseX;
-            rect.y = ((height - rect.h) / 2) + baseY;
+            rect.h = screen_height;
+            rect.x = 0;
+            rect.y = ((screen_height - rect.h) / 2);
+        break;
         case Anchor::FullHeightCenter:
-            rect.h = height;
-            rect.x = ((width - rect.w) / 2) + baseX;
-            rect.y = ((height - rect.h) / 2) + baseY;
+            rect.h = screen_height;
+            rect.x = ((screen_width - rect.w) / 2);
+            rect.y = ((screen_height - rect.h) / 2);
+        break;
         case Anchor::FullHeightRight:
-            rect.h = height;
-            rect.x = ((width - rect.w) / 2) + baseX;
-            rect.y = ((height - rect.h) / 2) + baseY;
+            rect.h = screen_height;
+            rect.x = screen_width - rect.w;
+            rect.y = ((screen_height - rect.h) / 2);
         break;
     }
+    rect.x += (offset.Left - offset.Right);
+    rect.y += (offset.Bottom - offset.Top);
+
 }

@@ -29,19 +29,21 @@ int main(int argc, char *argv[])
     SDL_Rect topPanelSize = {0, 0, 25, 25};
     auto panel = new Panel(topPanelSize, mainWindow);
     panel->setBackgroundColor({ 15, 25 ,35 ,255});
+    panel->setAnchor(Anchor::FullHeightRight);
 
-    panel->setAnchor(Anchor::FullWidthCenter);
     SDL_Rect btnSize = {0, 0, 75, 25};
     auto btn = new Button(btnSize, mainWindow, "File");
     btn->setAnchor(Anchor::TopLeft);
 
-    SDL_Rect btnSize2 = {80, 0, 75, 25};
+    SDL_Rect btnSize2 = {0, 0, 75, 25};
     auto btn2 = new Button(btnSize2, mainWindow, "Edit");
     btn2->setAnchor(Anchor::TopLeft);
+    btn2->setOffset({80, 0,0,0});
 
-    SDL_Rect btnSize3 = {160, 0, 75, 25};
+    SDL_Rect btnSize3 = {0, 0, 75, 25};
     auto btn3 = new Button(btnSize3, mainWindow, "Show");
     btn3->setAnchor(Anchor::TopLeft);
+    btn3->setOffset({160, 0,0,0});
 
     while(true) {
         SDL_Event event;

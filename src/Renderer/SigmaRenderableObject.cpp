@@ -23,7 +23,7 @@ void SigmaRenderableObject::render(SDL_Renderer* renderer) {
         int w,h;
         if(SDL_GetRendererOutputSize(renderer, &w, &h) == 0) {
             std::cout << "update anchor";
-            handleToAnchor(w,h);
+            handlePosition(w,h);
             isAnchorDirty = false;
         }
     }

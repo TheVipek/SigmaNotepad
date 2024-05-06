@@ -7,6 +7,7 @@
 
 #include <SDL_events.h>
 #include <SDL_rect.h>
+#include "Offset.h"
 
 enum class Anchor {
     TopLeft, TopRight, BottomLeft, BottomRight,
@@ -16,10 +17,11 @@ enum class Anchor {
     FullHeightLeft, FullHeightCenter, FullHeightRight,
     None
 };
+
 class SigmaObject {
 public:
     SigmaObject(SDL_Rect& rect)
-        : rect(rect), baseX(rect.x), baseY(rect.y) {}
+        : rect(rect),offset(defaultOffset) {};
 
     virtual ~SigmaObject() = default;
 
@@ -32,17 +34,14 @@ public:
     void setRect(const SDL_Rect& rect) { this->rect = rect;}
     void setVisibility(const bool visible) { this->visible = visible; }
     void setAnchor(Anchor anchor) { this->anchor = anchor; isAnchorDirty = true;}
-    void handleToAnchor(const int& width, const int& height);
+    void setOffset(const Offset& offset) { this->offset = offset;  }
+    void handlePosition(const int& screen_width, const int& screen_height);
     virtual void handleEvent(const SDL_Event& e) = 0;
 protected:
-
-
     SDL_Rect&           rect;
-
     Anchor              anchor = Anchor::None;
-    int&                baseX;
-    int&                baseY;
-
+    Offset&             offset;
+    Offset              defaultOffset = Offset(0,0,0,0);
     bool                isAnchorDirty = true;
     bool                enabled = true;
     bool                visible = true;
