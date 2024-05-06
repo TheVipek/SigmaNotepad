@@ -18,7 +18,6 @@ void Panel::render(SDL_Renderer *renderer) {
     SigmaRenderableObject::render(renderer);
 
     SDL_SetRenderDrawColor(renderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
-    SDL_RenderFillRect(renderer, &rect);
+    SDL_RenderFillRect(renderer, &currentRect);
 
-    printf("Panel pos; X:%d Y:%d \n", rect.x, rect.y);
 }

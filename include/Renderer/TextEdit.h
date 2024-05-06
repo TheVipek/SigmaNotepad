@@ -7,11 +7,11 @@
 
 #include "TextLabel.h"
 #include "Panel.h"
-class TextEdit : public SigmaRenderableObject, public ITextAligment, public IText
+class TextEdit : public SigmaRenderableObject, public ITextAligment, public IText, public IBackground
 {
 public:
-    TextEdit(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow)
-        : SigmaRenderableObject(rect, targetWindow) {
+    TextEdit(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow, std::string text)
+        : SigmaRenderableObject(rect, targetWindow), text(text) {
         initFont(DEFAULT_FONTP, DEFAULT_FONTS);
     }
     void setText(const std::string& text) override { this->text = text; }
@@ -21,6 +21,7 @@ public:
     void render(SDL_Renderer* renderer) override;
 protected:
     std::string                 text; // temporary, need to write custom data structure
+    bool                        isActive = false;
 };
 
 #endif //TEXTEDIT_H

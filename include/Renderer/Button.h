@@ -19,12 +19,17 @@ class Button : public SigmaRenderableObject  {
 public:
     Button(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow, const std::string& text)
         : SigmaRenderableObject(rect, targetWindow) {
-        TLabel = std::make_unique<TextLabel>(this->rect, targetWindow, text );
+
+        TLabel = std::make_unique<TextLabel>(this->baseRect, targetWindow, text );
+
     }
 
     std::unique_ptr<TextLabel>  TLabel;
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;
+    void setRect(const SDL_Rect& rect) override;
+    void setAnchor(Anchor anchor) override;
+    void setOffset(const Offset &offset) override;
 
 protected:
 

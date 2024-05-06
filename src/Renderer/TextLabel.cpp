@@ -7,13 +7,18 @@
 
 
 void TextLabel::handleEvent(const SDL_Event &e) {
+    if(!enabled)
+        return;
 
+    SigmaRenderableObject::handleEvent(e);
 }
 
 
 void TextLabel::render(SDL_Renderer* renderer) {
     if(!visible)
         return;
+
+    SigmaRenderableObject::render(renderer);
 
     if(font->get() == nullptr)
         return;
@@ -29,7 +34,7 @@ void TextLabel::render(SDL_Renderer* renderer) {
         SDL_FreeSurface(surface);
         return;
     }
-    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_RenderCopy(renderer, texture, NULL, &currentRect);
 
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(surface);

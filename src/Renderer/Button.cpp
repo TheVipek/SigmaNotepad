@@ -16,8 +16,8 @@ void Button::handleEvent(const SDL_Event &e) {
         const int mousePosX = e.button.x;
         const int mousePosY = e.button.y;
 
-        const bool withinX = mousePosX > rect.x && mousePosX < rect.x + rect.w;
-        const bool withinY = mousePosY > rect.y && mousePosY < rect.y + rect.h;
+        const bool withinX = mousePosX > currentRect.x && mousePosX < currentRect.x + currentRect.w;
+        const bool withinY = mousePosY > currentRect.y && mousePosY < currentRect.y + currentRect.h;
 
         if(!withinX || !withinY) {
             if(isHovered) {
@@ -66,9 +66,24 @@ void Button::render(SDL_Renderer* renderer) {
     }
 
     SDL_SetRenderDrawColor(renderer, bgColorToRender.r, bgColorToRender.g, bgColorToRender.b, bgColorToRender.a);
-    SDL_RenderFillRect(renderer, &rect);
+    SDL_RenderFillRect(renderer, &currentRect);
 }
 
 void Button::onClick() {
 
+}
+
+void Button::setAnchor(Anchor anchor) {
+    SigmaRenderableObject::setAnchor(anchor);
+    TLabel->setAnchor(anchor);
+}
+
+void Button::setRect(const SDL_Rect &rect) {
+    SigmaRenderableObject::setRect(rect);
+    TLabel->setRect(rect);
+}
+
+void Button::setOffset(const Offset &offset) {
+    SigmaRenderableObject::setOffset(offset);
+    TLabel->setOffset(offset);
 }

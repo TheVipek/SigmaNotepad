@@ -20,25 +20,26 @@ enum class Anchor {
 
 class SigmaObject {
 public:
-    SigmaObject(SDL_Rect& rect)
-        : rect(rect),offset(defaultOffset) {};
+    SigmaObject(const SDL_Rect& rect)
+        : baseRect(rect), currentRect(rect),offset(defaultOffset) {};
 
     virtual ~SigmaObject() = default;
 
-    [[nodiscard]] int getX() const { return rect.x;}
-    [[nodiscard]] int getY() const { return rect.y;}
-    [[nodiscard]] int getWidth() const { return rect.w; }
-    [[nodiscard]] int getHeight() const { return rect.h; }
+    [[nodiscard]] int getX() const { return currentRect.x;}
+    [[nodiscard]] int getY() const { return currentRect.y;}
+    [[nodiscard]] int getWidth() const { return currentRect.w; }
+    [[nodiscard]] int getHeight() const { return currentRect.h; }
 
-    void setEnabled(const bool enabled) { this->enabled = enabled; }
-    void setRect(const SDL_Rect& rect) { this->rect = rect;}
-    void setVisibility(const bool visible) { this->visible = visible; }
-    void setAnchor(Anchor anchor) { this->anchor = anchor; isAnchorDirty = true;}
-    void setOffset(const Offset& offset) { this->offset = offset;  }
-    void handlePosition(const int& screen_width, const int& screen_height);
+    virtual void setEnabled(const bool enabled) { this->enabled = enabled; }
+    virtual void setRect(const SDL_Rect& rect) { this->currentRect = rect;}
+    virtual void setVisibility(const bool visible) { this->visible = visible; }
+    virtual void setAnchor(Anchor anchor) { this->anchor = anchor; isAnchorDirty = true;}
+    virtual void setOffset(const Offset& offset) { this->offset = offset;  }
+    virtual void handlePosition(const int& screen_width, const int& screen_height);
     virtual void handleEvent(const SDL_Event& e) = 0;
 protected:
-    SDL_Rect&           rect;
+    SDL_Rect            currentRect;
+    SDL_Rect            baseRect;
     Anchor              anchor = Anchor::None;
     Offset&             offset;
     Offset              defaultOffset = Offset(0,0,0,0);

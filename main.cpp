@@ -47,10 +47,10 @@ int main(int argc, char *argv[])
     btn3->setAnchor(Anchor::TopLeft);
     btn3->setOffset({160, 0,0,0});
 
-    // SDL_Rect textEditSize = {0, 0, 0, 0};
-    // auto textEdit = new TextEdit(textEditSize, mainWindow);
-    // textEdit->setAnchor(Anchor::FullScreen);
-    // textEdit->setOffset({0,30,0,30});
+     SDL_Rect textEditSize = {0, 30, 0, -60};
+     auto textEdit = new TextEdit(textEditSize, mainWindow, "");
+     textEdit->setAnchor(Anchor::FullScreen);
+    textEdit->setOffset({0,30,0,30});
 
 
 

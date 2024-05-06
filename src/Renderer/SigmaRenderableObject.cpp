@@ -22,7 +22,6 @@ void SigmaRenderableObject::render(SDL_Renderer* renderer) {
     if(isAnchorDirty) {
         int w,h;
         if(SDL_GetRendererOutputSize(renderer, &w, &h) == 0) {
-            std::cout << "update anchor";
             handlePosition(w,h);
             isAnchorDirty = false;
         }
@@ -30,7 +29,6 @@ void SigmaRenderableObject::render(SDL_Renderer* renderer) {
 }
 void SigmaObject::handleEvent(const SDL_Event &e) {
     if(e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_RESIZED) {
-        std::cout << "resized";
         isAnchorDirty = true;
     }
 }
