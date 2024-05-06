@@ -54,16 +54,19 @@ target_sources(${PROJECT_NAME}
         include/Renderer/Font.h
         include/Renderer/Panel.h
         include/Renderer/Offset.h
+        include/Renderer/TextEdit.h
         include/Managers/IWindowRenderingManager.h
         include/Managers/WindowRenderingManager.h
-
+        include/Renderer/ITextAligment.h
+        include/Renderer/IText.h
+        include/Renderer/IBackground.h
         src/Renderer/SigmaObject.cpp
         src/Renderer/SigmaRenderableObject.cpp
         src/Renderer/Button.cpp
         src/Renderer/TextLabel.cpp
         src/Renderer/Font.cpp
         src/Renderer/Panel.cpp
-
+        src/Renderer/TextEdit.cpp
         src/Managers/WindowRenderingManager.cpp
 
         main.cpp

@@ -5,14 +5,6 @@
 #include <SDL_events.h>
 #include <Renderer/TextLabel.h>
 
-void TextLabel::initFont(const std::string& fPath, const int fSize) {
-    if(font != nullptr) {
-        //Ignore, font has been initialized already
-    }
-    else {
-        font = std::make_unique<Font>(fPath, fSize);
-    }
-}
 
 void TextLabel::handleEvent(const SDL_Event &e) {
 

@@ -7,6 +7,7 @@
 #include "Managers/WindowRenderingManager.h"
 #include "Renderer/Button.h"
 #include "Renderer/Panel.h"
+#include "Renderer/TextEdit.h"
 
 std::shared_ptr<WindowRenderingManager> mainWindow;
 int main(int argc, char *argv[])
@@ -26,10 +27,11 @@ int main(int argc, char *argv[])
     mainWindow->SetTargetRenderer(renderer);
 
 //Creating GUI Elements
-    SDL_Rect topPanelSize = {0, 0, 25, 25};
-    auto panel = new Panel(topPanelSize, mainWindow);
-    panel->setBackgroundColor({ 15, 25 ,35 ,255});
-    panel->setAnchor(Anchor::FullHeightRight);
+    SDL_Rect topPanelSize = {0, 0, 25, 30};
+    auto topPanel = new Panel(topPanelSize, mainWindow);
+    topPanel->setBackgroundColor({ 30, 30 ,30 ,255});
+    topPanel->setAnchor(Anchor::FullWidthTop);
+
 
     SDL_Rect btnSize = {0, 0, 75, 25};
     auto btn = new Button(btnSize, mainWindow, "File");
@@ -44,6 +46,25 @@ int main(int argc, char *argv[])
     auto btn3 = new Button(btnSize3, mainWindow, "Show");
     btn3->setAnchor(Anchor::TopLeft);
     btn3->setOffset({160, 0,0,0});
+
+    // SDL_Rect textEditSize = {0, 0, 0, 0};
+    // auto textEdit = new TextEdit(textEditSize, mainWindow);
+    // textEdit->setAnchor(Anchor::FullScreen);
+    // textEdit->setOffset({0,30,0,30});
+
+
+
+
+
+
+
+
+
+
+    SDL_Rect bottomPanelSize = {0, 0, 25, 30};
+    auto bottomPanel = new Panel(bottomPanelSize, mainWindow);
+    bottomPanel->setBackgroundColor({ 30, 30 ,30 ,255});
+    bottomPanel->setAnchor(Anchor::FullWidthBottom);
 
     while(true) {
         SDL_Event event;

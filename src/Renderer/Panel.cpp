@@ -22,7 +22,3 @@ void Panel::render(SDL_Renderer *renderer) {
 
     printf("Panel pos; X:%d Y:%d \n", rect.x, rect.y);
 }
-
-void Panel::setBackgroundColor(const SDL_Color &color) {
-    backgroundColor = color;
-}

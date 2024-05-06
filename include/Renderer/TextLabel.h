@@ -10,46 +10,27 @@
 #include <utility>
 
 #include "SigmaRenderableObject.h"
-#include "TextHorizontalAligment.h"
-#include "TextVerticalAligment.h"
+#include "ITextAligment.h"
+#include "IText.h"
 #include "SDL_ttf.h"
 #include "Font.h"
 
 
-class TextLabel : public SigmaRenderableObject {
+class TextLabel : public SigmaRenderableObject, public ITextAligment, public IText {
 
 public:
     TextLabel(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow, const std::string& text)
         : SigmaRenderableObject(rect, targetWindow), text(text) {
-
         initFont(DEFAULT_FONTP, DEFAULT_FONTS);
     }
 
-
-    virtual void setText(const std::string& text) { this->text = text; }
-    virtual std::string getText() { return text;}
-
-    virtual void setHorizontalAligment(const HorizontalAligment ha) { horizontal_aligment = ha; }
-    virtual void setVerticalAligment(const VerticalAligment va) { vertical_aligment = va; }
-
-    virtual void initFont(const std::string& fPath, const int fSize);
-
-
+    void setText(const std::string& text) override { this->text = text; }
+    std::string getText() override { return text;}
 
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;
 protected:
-
-    SDL_Color                   textColor = { 242, 242, 242, 255 };
-
-    std::unique_ptr<Font>       font;
-
     std::string                 text;
-    HorizontalAligment          horizontal_aligment = HorizontalAligment::Top;
-    VerticalAligment            vertical_aligment = VerticalAligment::Left;
-
-    const std::string DEFAULT_FONTP = "assets/defaultFonts/OpenSans_Condensed-Medium.ttf";
-    const int DEFAULT_FONTS = 512;
 };
 
 #endif //TEXTLABEL_H
