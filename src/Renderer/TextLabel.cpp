@@ -22,7 +22,7 @@ void TextLabel::render(SDL_Renderer* renderer) {
 
     if(font->get() == nullptr)
         return;
-    SDL_Surface* surface = TTF_RenderText_Blended(font->get(), text.c_str(), textColor);
+    SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font->get(), text.c_str(), textColor, 0);
     if (surface == nullptr) {
         SDL_Log("Unable to create text surface: %s", SDL_GetError());
         return;
@@ -34,7 +34,9 @@ void TextLabel::render(SDL_Renderer* renderer) {
         SDL_FreeSurface(surface);
         return;
     }
-    SDL_RenderCopy(renderer, texture, NULL, &currentRect);
+
+    SDL_Rect dest = { currentRect.x + (surface->w/2) + 20 , currentRect.y, surface->w, surface->h };
+    SDL_RenderCopy(renderer, texture, NULL, &dest);
 
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(surface);

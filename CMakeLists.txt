@@ -68,7 +68,6 @@ target_sources(${PROJECT_NAME}
         src/Renderer/Panel.cpp
         src/Renderer/TextEdit.cpp
         src/Managers/WindowRenderingManager.cpp
-
         main.cpp
 )
 

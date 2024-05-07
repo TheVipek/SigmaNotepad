@@ -40,12 +40,12 @@ int main(int argc, char *argv[])
     SDL_Rect btnSize2 = {0, 0, 75, 25};
     auto btn2 = new Button(btnSize2, mainWindow, "Edit");
     btn2->setAnchor(Anchor::TopLeft);
-    btn2->setOffset({80, 0,0,0});
+    btn2->setOffset({100, 0,0,0});
 
     SDL_Rect btnSize3 = {0, 0, 75, 25};
     auto btn3 = new Button(btnSize3, mainWindow, "Show");
     btn3->setAnchor(Anchor::TopLeft);
-    btn3->setOffset({160, 0,0,0});
+    btn3->setOffset({200, 0,0,0});
 
      SDL_Rect textEditSize = {0, 30, 0, -60};
      auto textEdit = new TextEdit(textEditSize, mainWindow, "");

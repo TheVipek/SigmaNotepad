@@ -8,7 +8,7 @@
 #include <string>
 #include "Font.h"
 
-class IText {
+class IText : public ITextAligment {
 public:
     virtual ~IText() = default;
     virtual void initFont(const std::string& fPath, const int fSize) {
@@ -21,12 +21,13 @@ public:
     }
     virtual void setText(const std::string& text) = 0;
     virtual std::string getText() = 0;
+
 protected:
     //i wont define there data structure for text, beacuse i may want to have different in specific scenarios
     SDL_Color                           textColor = { 242, 242, 242, 255 };
     std::unique_ptr<Font>               font;
     const std::string                   DEFAULT_FONTP = "assets/defaultFonts/OpenSans_Condensed-Medium.ttf";
-    const int                           DEFAULT_FONTS = 512;
+    const int                           DEFAULT_FONTS = 20;
 };
 
 #endif //ITEXT_H

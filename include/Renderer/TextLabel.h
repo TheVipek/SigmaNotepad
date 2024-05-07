@@ -16,7 +16,7 @@
 #include "Font.h"
 
 
-class TextLabel : public SigmaRenderableObject, public ITextAligment, public IText {
+class TextLabel : public SigmaRenderableObject, public IText {
 
 public:
     TextLabel(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow, const std::string& text)

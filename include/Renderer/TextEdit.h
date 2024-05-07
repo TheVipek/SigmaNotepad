@@ -7,7 +7,7 @@
 
 #include "TextLabel.h"
 #include "Panel.h"
-class TextEdit : public SigmaRenderableObject, public ITextAligment, public IText, public IBackground
+class TextEdit : public SigmaRenderableObject, public IText, public IBackground
 {
 public:
     TextEdit(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow, std::string text)
