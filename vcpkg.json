@@ -1,0 +1,33 @@
+{
+  "name" : "sigmanotepad",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "267a2879245639d08996e61ccee72b843a608564",
+  "dependencies" : [ {
+    "name" : "brotli",
+    "version>=" : "1.1.0#1"
+  }, {
+    "name" : "bzip2",
+    "version>=" : "1.0.8#5"
+  }, {
+    "name" : "freetype",
+    "version>=" : "2.13.2#1"
+  }, {
+    "name" : "libpng",
+    "version>=" : "1.6.43#1"
+  }, {
+    "name" : "sdl2-ttf",
+    "version>=" : "2.22.0#1"
+  }, {
+    "name" : "sdl2",
+    "version>=" : "2.30.1"
+  }, {
+    "name" : "vcpkg-cmake-config",
+    "version>=" : "2022-02-06#1"
+  }, {
+    "name" : "vcpkg-cmake",
+    "version>=" : "2024-04-18"
+  }, {
+    "name" : "zlib",
+    "version>=" : "1.3.1"
+  } ]
+}

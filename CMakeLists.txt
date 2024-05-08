@@ -1,3 +1,4 @@
+set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 CMAKE_MINIMUM_REQUIRED(VERSION 3.2...3.28)
 
 project(SigmaNotepad
@@ -7,31 +8,23 @@ project(SigmaNotepad
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
-
-set(SDL2_PATH ${CMAKE_SOURCE_DIR}/libs/SDL2)
-set(SDL2_LIBRARY ${CMAKE_SOURCE_DIR}/libs/SDL2/lib/libSDL2.a)
-
-set(SDL2_TTF_LIBRARY ${CMAKE_SOURCE_DIR}/libs/SDL2_ttf/lib/libSDL2_ttf.a)
-set(SDL2_TTF_PATH ${CMAKE_SOURCE_DIR}/libs/SDL2_ttf)
-
-find_package(SDL2 REQUIRED)
-find_package(SDL2_ttf REQUIRED)
-
 add_executable(SigmaNotepad)
 
-
-target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_TTF_INCLUDE_DIR})
+find_package(SDL2 CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
+        $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+)
+find_package(SDL2_ttf CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>)
 
 target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_SOURCE_DIR}/src")
 target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
 
 
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY} -lsetupapi -limm32 -lversion -lwinmm)
-target_link_libraries(${PROJECT_NAME} ${SDL2_TTF_LIBRARY} -lRpcrt4)
+
 
 
 add_custom_target(copy_resources ALL

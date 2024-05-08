@@ -1,16 +1,16 @@
 ﻿#include <iostream>
 
 #define SDL_MAIN_HANDLED
-#include <SDL.h>
+#define main SDL_main
+#include <SDL2/SDL.h>
 #include <SDL_ttf.h>
-
 #include "Managers/WindowRenderingManager.h"
 #include "Renderer/Button.h"
 #include "Renderer/Panel.h"
 #include "Renderer/TextEdit.h"
 
 std::shared_ptr<WindowRenderingManager> mainWindow;
-int main(int argc, char *argv[])
+int main(int argc, char* args[])
 {
 //Initialization
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -81,5 +81,6 @@ int main(int argc, char *argv[])
 
     SDL_Quit();
     TTF_Quit();
+
     return 0;
 }
