@@ -7,21 +7,26 @@
 
 #include "TextLabel.h"
 #include "Panel.h"
+#include <ext/rope>
+
+using namespace __gnu_cxx;
+
 class TextEdit : public SigmaRenderableObject, public IText, public IBackground
 {
 public:
-    TextEdit(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow, std::string text)
+    TextEdit(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow, rope<char> text)
         : SigmaRenderableObject(rect, targetWindow), text(text) {
         initFont(DEFAULT_FONTP, DEFAULT_FONTS);
     }
-    void setText(const std::string& text) override { this->text = text; }
-    std::string getText() override { return text;}
+    void setText(const std::string& text) override { this->text = rope<char>(text.c_str()); }
+    std::string getText() override { return std::string(text.begin(), text.end());}
 
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;
 protected:
-    std::string                 text; // temporary, need to write custom data structure
-    bool                        isActive = false;
+    rope<char>                 text; // temporary, need to write custom data structure
+    bool                       isActive = false;
+    SDL_Renderer*              cursor;
 };
 
 #endif //TEXTEDIT_H

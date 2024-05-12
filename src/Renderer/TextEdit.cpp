@@ -36,56 +36,23 @@ void TextEdit::handleEvent(const SDL_Event &e) {
                 //const Uint8 *state = SDL_GetKeyboardState(NULL);
 
                 if (keycode == SDLK_BACKSPACE && !text.empty()) {
+
                     text.pop_back();
                 } else if (keycode == SDLK_TAB) {
-                    text += "\t";
+                    text.append("\t");
                 } else if (keycode == SDLK_RETURN) {
-                    text += "\n";
+                    text.append("\n");
                 } else if (keycode == SDLK_SPACE) {
-                    text += " ";
+                    text.append(" ");
                 }
                 break;
             }
             case SDL_TEXTINPUT: {
                 // Append the text from input
-                text += e.text.text;
+                text.append(e.text.text);
                 break;
             }
         }
-        // if(e.type == SDL_KEYDOWN) {
-        //     SDL_KeyboardEvent* keyEvent = (SDL_KeyboardEvent*)&e;
-        //     SDL_Keycode keyCode = keyEvent->keysym.sym;
-        //     SDL_GetModState();
-        //     printf("keycode; %d \n", keyCode);
-        //     if(keyCode == 8) {
-        //         text.pop_back();
-        //     }
-        //     else if(keyCode == 9) {
-        //         text = text + "\t";
-        //     }
-        //     else if(keyCode == 13) {
-        //         text = text + "\n";
-        //     }
-        //     else if(keyCode == 32) {
-        //         text = text + " ";
-        //     }
-        //     else if(keyCode >= 0x21 && keyCode <= 0x7A) {
-        //         const char* keyName = SDL_GetKeyName(keyCode);
-        //         if(keyName == "Space") {
-        //             text = text + " ";
-        //         }
-        //         else if(keyName == "Return") {
-        //             text = text + "\n";
-        //         }
-        //         else {
-        //
-        //             text = text + keyName;
-        //         }
-        //         printf("writing; '%d' \n", keyName);
-        //     }
-
-
-        // }
     }
 }
 
@@ -118,7 +85,17 @@ void TextEdit::render(SDL_Renderer *renderer) {
     }
 
     SDL_Rect textRect = {currentRect.x, currentRect.y,  surface->w , surface->h};
+
+
+
     SDL_RenderCopy(renderer, texture, NULL, &textRect);
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+    int cursorPosX = surface->w;
+    int cursorPosY = surface->h;
+    int hieght = TTF_FontHeight(font->get());
+    SDL_RenderDrawLine(renderer, cursorPosX, cursorPosY, cursorPosX, cursorPosY + hieght);
 
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(surface);
