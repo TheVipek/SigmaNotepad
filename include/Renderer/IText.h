@@ -26,7 +26,7 @@ protected:
     //i wont define there data structure for text, beacuse i may want to have different in specific scenarios
     SDL_Color                           textColor = { 242, 242, 242, 255 };
     std::unique_ptr<Font>               font;
-    const std::string                   DEFAULT_FONTP = "assets/defaultFonts/OpenSans_Condensed-Medium.ttf";
+    const std::string                   DEFAULT_FONTP = "assets/defaultFonts/Consolas-Regular.ttf";
     const int                           DEFAULT_FONTS = 20;
 };
 

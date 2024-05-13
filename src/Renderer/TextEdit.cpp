@@ -3,6 +3,9 @@
 //
 
 #include "Renderer/TextEdit.h"
+#include "math.h"
+
+
 
 void TextEdit::handleEvent(const SDL_Event &e) {
     if(!enabled) // no need to process events
@@ -33,23 +36,32 @@ void TextEdit::handleEvent(const SDL_Event &e) {
         switch (e.type) {
             case SDL_KEYDOWN: {
                 int keycode = e.key.keysym.sym;
-                //const Uint8 *state = SDL_GetKeyboardState(NULL);
 
                 if (keycode == SDLK_BACKSPACE && !text.empty()) {
-
+                    if(text[text.length() - 1] == '\n') {
+                        currentColumn--;
+                    }
+                    else if(lines[currentColumn] > 0) {
+                        lines[currentColumn]--;
+                    }
                     text.pop_back();
                 } else if (keycode == SDLK_TAB) {
-                    text.append("\t");
+                    text.append("   ");
+                    lines[currentColumn]+=3;
                 } else if (keycode == SDLK_RETURN) {
-                    text.append("\n");
-                } else if (keycode == SDLK_SPACE) {
-                    text.append(" ");
+                    text.append('\n');
+                    if(lines.size() <= currentColumn + 1) {
+                        lines.push_back(0);
+                    }
+                    currentColumn++;
                 }
+
+
                 break;
             }
             case SDL_TEXTINPUT: {
-                // Append the text from input
                 text.append(e.text.text);
+                lines[currentColumn]++;
                 break;
             }
         }
@@ -87,15 +99,17 @@ void TextEdit::render(SDL_Renderer *renderer) {
     SDL_Rect textRect = {currentRect.x, currentRect.y,  surface->w , surface->h};
 
 
-
+    int spaceBetweenLine = TTF_FontLineSkip(font->get());
     SDL_RenderCopy(renderer, texture, NULL, &textRect);
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    int cursorPosX = surface->w;
-    int cursorPosY = surface->h;
-    int hieght = TTF_FontHeight(font->get());
-    SDL_RenderDrawLine(renderer, cursorPosX, cursorPosY, cursorPosX, cursorPosY + hieght);
+    int w,h;
+    //TTF_SizeUTF8(font->get(), text.c_str(),&w, &h);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    int cursorPosX = (currentRect.x + offset.Left) + (letterWidth * lines[currentColumn]);
+    int cursorPosY = (currentRect.x + offset.Top) + (currentColumn * spaceBetweenLine);
+
+    SDL_RenderDrawLine(renderer, cursorPosX, cursorPosY, cursorPosX, cursorPosY + spaceBetweenLine);
 
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(surface);
