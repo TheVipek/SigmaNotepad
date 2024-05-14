@@ -36,32 +36,79 @@ void TextEdit::handleEvent(const SDL_Event &e) {
         switch (e.type) {
             case SDL_KEYDOWN: {
                 int keycode = e.key.keysym.sym;
-
                 if (keycode == SDLK_BACKSPACE && !text.empty()) {
                     if(text[text.length() - 1] == '\n') {
-                        currentColumn--;
+                        cursor.Column--;
+                        cursor.Line--;
                     }
-                    else if(lines[currentColumn] > 0) {
-                        lines[currentColumn]--;
+                    else if(lines[cursor.Column] > 0) {
+                        lines[cursor.Column]--;
+                        cursor.Line--;
                     }
-                    text.pop_back();
+                    text.erase(cursor.Line, 1);
                 } else if (keycode == SDLK_TAB) {
-                    text.append("   ");
-                    lines[currentColumn]+=3;
+                    text.insert(cursor.Line,"   ");
+                    lines[cursor.Column]+=3;
+                    cursor.Line+=3;
                 } else if (keycode == SDLK_RETURN) {
-                    text.append('\n');
-                    if(lines.size() <= currentColumn + 1) {
+
+                    text.insert(cursor.Line,"\n");
+                    if(lines.size() <= cursor.Column + 1) {
                         lines.push_back(0);
                     }
-                    currentColumn++;
+                    cursor.Column++;
+                    cursor.Line++;
                 }
+                else if (keycode == SDLK_LEFT) {
+                    if(cursor.Line + cursor.Index <= 0) {
+                        printf("breaking... \n");
+                        break;
+                    }
+                    cursor.Index--;
 
-
+                    if(text[cursor.Line + cursor.Index] == '\n') {
+                        printf("breakline appeared; \n");
+                        cursor.Column--;
+                        cursor.Index = 0;
+                        cursor.Line = lines[cursor.Column];
+                    }
+                }
+                // else if(keycode == SDLK_RIGHT) {
+                //     printf("RIGHT \n");
+                //     if(cursor.Line + cursor.Index >= text.length()) {
+                //         printf("breaking... \n");
+                //         break;
+                //     }
+                //     cursor.Index++;
+                //
+                //     // if(text[cursor.Line + cursor.Index] == '\n') {
+                //     //     printf("breakline appeared; \n");
+                //     //     cursor.Column++;
+                //     //     cursor.Index = -lines[cursor.Column];
+                //     //     cursor.Line = lines[cursor.Column];
+                //     // }
+                //
+                //     if (text[cursor.Line + cursor.Index] == '\n') {
+                //         printf("breakline appeared; \n");
+                //         cursor.Column++;
+                //         cursor.Index = 0;
+                //         cursor.Line++;
+                //     } else if (cursor.Index > lines[cursor.Column]) {
+                //         cursor.Index = 0;
+                //         cursor.Column++;
+                //         cursor.Line++;
+                //     }
+                //
+                //     printf("cursor.Column %d \n", cursor.Column);
+                //     printf("cursor.Index %d \n", cursor.Index);
+                //     printf("cursor.Line %d \n", cursor.Line);
+                // }
                 break;
             }
             case SDL_TEXTINPUT: {
-                text.append(e.text.text);
-                lines[currentColumn]++;
+                text.insert(cursor.Line + cursor.Index,e.text.text);
+                lines[cursor.Column]++;
+                cursor.Line++;
                 break;
             }
         }
@@ -102,12 +149,9 @@ void TextEdit::render(SDL_Renderer *renderer) {
     int spaceBetweenLine = TTF_FontLineSkip(font->get());
     SDL_RenderCopy(renderer, texture, NULL, &textRect);
 
-
-    int w,h;
-    //TTF_SizeUTF8(font->get(), text.c_str(),&w, &h);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    int cursorPosX = (currentRect.x + offset.Left) + (letterWidth * lines[currentColumn]);
-    int cursorPosY = (currentRect.x + offset.Top) + (currentColumn * spaceBetweenLine);
+    int cursorPosX = (currentRect.x + offset.Left) + (letterWidth * (lines[cursor.Column] + cursor.Index));
+    int cursorPosY = (currentRect.x + offset.Top) + (cursor.Column * spaceBetweenLine);
 
     SDL_RenderDrawLine(renderer, cursorPosX, cursorPosY, cursorPosX, cursorPosY + spaceBetweenLine);
 

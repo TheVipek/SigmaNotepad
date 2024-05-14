@@ -13,6 +13,12 @@
 
 using namespace __gnu_cxx;
 
+struct Cursor {
+    int             Column = 0;
+    int             Line = 0;
+    int             Index = 0;
+};
+
 class TextEdit : public SigmaRenderableObject, public IText, public IBackground
 {
 public:
@@ -41,9 +47,8 @@ protected:
     int getLengthOfColumn(const int& column);
     rope<char>                 text; // temporary, need to write custom data structure
     bool                       isActive = false;
-    SDL_Renderer*              cursor;
     std::vector<int>           lines = { 0 };
-    int                        currentColumn = 0;
+    Cursor                     cursor = {};
     int                        letterWidth;
     int                        letterHeight;
 };
