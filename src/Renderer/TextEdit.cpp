@@ -126,6 +126,27 @@ void TextEdit::handleEvent(const SDL_Event &e) {
                         cursor.Line++;
                     }
                 }
+                else if(keycode == SDLK_UP) {
+                    if(cursor.Column == 0) {
+                        break;
+                    }
+                    cursor.Column--;
+                    if(text[cursor.Column].size() < cursor.Line) {
+                        cursor.Line = text[cursor.Column].size();
+                    }
+                }
+                else if(keycode == SDLK_DOWN) {
+                    if(cursor.Column == text.size() - 1) {\
+                        if(cursor.Line < currentTextLine.size()) {
+                            cursor.Line = currentTextLine.size();
+                        }
+                        break;
+                    }
+                    cursor.Column++;
+                    if(text[cursor.Column].size() < cursor.Line) {
+                        cursor.Line = text[cursor.Column].size();
+                    }
+                }
             }
         }
         printf("Line; %d \n", cursor.Line);
