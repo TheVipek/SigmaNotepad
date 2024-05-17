@@ -13,13 +13,17 @@
 
 using namespace __gnu_cxx;
 
+struct Position {
+    int Column = 0;
+    int Line = 0;
+};
 struct Selection {
-    int From = 0;
-    int To = 0;
+    Position          SelectionStart = {};
+    Position          SelectionEnd = {};
+    bool IsSelecting = false;
 };
 struct Cursor {
-    int             Column = 0;
-    int             Line = 0;
+    Position        Position = {};
     Selection       Selection = {};
 
 };

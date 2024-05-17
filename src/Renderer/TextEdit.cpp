@@ -11,29 +11,32 @@ bool TextEdit::handleCTRLEvent(const SDL_Event &e) {
         switch (e.key.keysym.sym) {
             case SDLK_LEFT: {
                 // Skip multiple characters to left
-                if (cursor.Line == 0)
+                if (cursor.Position.Line == 0)
                     return false;
 
-                std::string beforeCursor(text[cursor.Column].begin(),text[cursor.Column].begin() + cursor.Line);
+                std::string beforeCursor(text[cursor.Position.Column].begin(),text[cursor.Position.Column].begin() + cursor.Position.Line);
                 std::reverse(beforeCursor.begin(), beforeCursor.end());
                 std::regex pattern(R"((\s+|\W+|\w+))");
                 std::smatch match;
 
                 if(std::regex_search(beforeCursor, match, pattern)) {
-                    cursor.Line -= match.length();
+                    if(cursor.Selection.IsSelecting) {
+                        //cursor.Selection.SelectionEnd = cursor.Position.Line;
+                    }
+                    cursor.Position.Line -= match.length();
                 }
                 return true;
             }
             case SDLK_RIGHT: {
-                if(cursor.Line >= text[cursor.Column].size()) {
+                if(cursor.Position.Line >= text[cursor.Position.Column].size()) {
                     return false;
                 }
-                std::string beforeCursor(text[cursor.Column].begin() + cursor.Line,text[cursor.Column].end());;
+                std::string beforeCursor(text[cursor.Position.Column].begin() + cursor.Position.Line,text[cursor.Position.Column].end());;
                 std::regex pattern(R"((\s+|\W+|\w+))");
                 std::smatch match;
 
                 if(std::regex_search(beforeCursor, match, pattern)) {
-                    cursor.Line += match.length();
+                    cursor.Position.Line += match.length();
                 }
                 // Skip multiple characters to right
                 return true;
@@ -60,8 +63,6 @@ bool TextEdit::handleCTRLEvent(const SDL_Event &e) {
     }
     return false;
 }
-
-
 void TextEdit::handleEvent(const SDL_Event &e) {
     if(!enabled) // no need to process events
         return;
@@ -90,128 +91,134 @@ void TextEdit::handleEvent(const SDL_Event &e) {
     if(isActive) {
         switch (e.type) {
             case SDL_TEXTINPUT: {
-                text[cursor.Column].insert(cursor.Line,e.text.text);
-                cursor.Line++;
+                text[cursor.Position.Column].insert(cursor.Position.Line,e.text.text);
+                cursor.Position.Line++;
                 break;
             }
             case SDL_KEYDOWN: {
                 int keycode = e.key.keysym.sym;
-
-                if (handleCTRLEvent(e)) {
-                    return;
+                if(SDL_GetModState() & KMOD_SHIFT) {
+                    if(!cursor.Selection.IsSelecting) {
+                        cursor.Selection.IsSelecting = true;
+                        //cursor.Selection.SelectionStart = cursor.
+                    }
                 }
+                handleCTRLEvent(e);
 
-                auto& currentTextLine = text[cursor.Column];
+                if(SDL_GetModState() & KMOD_CTRL || SDL_GetModState() & KMOD_SHIFT)
+                    return;
+
+                auto& currentTextLine = text[cursor.Position.Column];
                 if (keycode == SDLK_BACKSPACE) {
                     printf("BACKSPACE \n");
                     if(currentTextLine.empty()) {
-                        if(cursor.Column == 0) {
+                        if(cursor.Position.Column == 0) {
                             break;
                         }
 
-                        cursor.Column--;
-                        cursor.Line = text[cursor.Column].size();
+                        cursor.Position.Column--;
+                        cursor.Position.Line = text[cursor.Position.Column].size();
                     }
                     else {
-                        cursor.Line--;
-                        currentTextLine.erase(cursor.Line, 1);
+                        cursor.Position.Line--;
+                        currentTextLine.erase(cursor.Position.Line, 1);
                     }
                 }
                 else if (keycode == SDLK_TAB) {
-                    currentTextLine.insert(cursor.Line,"   ");
-                    cursor.Line+=3;
+                    currentTextLine.insert(cursor.Position.Line,"   ");
+                    cursor.Position.Line+=3;
                 }
                 else if (keycode == SDLK_RETURN) {
                     //currentTextLine.insert(cursor.Line,"\n");  // no need for it?
 
-                    if(text.size() - 1 == cursor.Column) { // last index
+                    if(text.size() - 1 == cursor.Position.Column) { // last index
                         //printf("LAST textSize %d;cursor.Column %d  \n", text.size(), cursor.Column);
-                        if(cursor.Line < currentTextLine.size()) {
+                        if(cursor.Position.Line < currentTextLine.size()) {
                             //printf("smaller \n");
-                            rope<char> newLineText = currentTextLine.substr(cursor.Line, currentTextLine.size() - cursor.Line);
+                            rope<char> newLineText = currentTextLine.substr(cursor.Position.Line, currentTextLine.size() - cursor.Position.Line);
                             text.push_back(newLineText);
 
-                            rope<char> modifiedCurrentLine = currentTextLine.substr(0, cursor.Line);
-                            text[cursor.Column] = modifiedCurrentLine;
+                            rope<char> modifiedCurrentLine = currentTextLine.substr(0, cursor.Position.Line);
+                            text[cursor.Position.Column] = modifiedCurrentLine;
                         }
                         else {
                             text.emplace_back();
                         }
                     }
-                    else if(text.size() - 1 > cursor.Column) { // between index
+                    else if(text.size() - 1 > cursor.Position.Column) { // between index
                         //printf("BETWEEN textSize %d;cursor.Column %d  \n", text.size(), cursor.Column);
-                        if(cursor.Line < currentTextLine.size()) {
+                        if(cursor.Position.Line < currentTextLine.size()) {
                             //printf("smaller \n");
-                            rope<char> newLineText = currentTextLine.substr(cursor.Line, currentTextLine.size() - cursor.Line);
-                            text.insert(text.begin() + cursor.Column + 1,newLineText);
+                            rope<char> newLineText = currentTextLine.substr(cursor.Position.Line, currentTextLine.size() - cursor.Position.Line);
+                            text.insert(text.begin() + cursor.Position.Column + 1,newLineText);
 
-                            rope<char> modifiedCurrentLine = currentTextLine.substr(0, cursor.Line);
-                            text[cursor.Column] = modifiedCurrentLine;
+                            rope<char> modifiedCurrentLine = currentTextLine.substr(0, cursor.Position.Line);
+                            text[cursor.Position.Column] = modifiedCurrentLine;
                         }
                         else {
                             //printf("insert between \n");
-                            text.insert(text.begin() + cursor.Column + 1, rope<char>(""));
+                            text.insert(text.begin() + cursor.Position.Column + 1, rope<char>(""));
                         }
                     }
-                    cursor.Column++;
-                    cursor.Line = text[cursor.Column].size();
+                    cursor.Position.Column++;
+                    cursor.Position.Line = text[cursor.Position.Column].size();
                 }
                 else if (keycode == SDLK_LEFT) {
-                    if(cursor.Column == 0 && cursor.Line == 0) {
+                    if(cursor.Position.Column == 0 && cursor.Position.Line == 0) {
                         printf("Beginning of document \n");
                         break;
                     }
 
-                    if(cursor.Line == 0) {
+                    if(cursor.Position.Line == 0) {
                         //printf("Detected newline character");
-                        cursor.Column--;
-                        cursor.Line = text[cursor.Column].size();
+                        cursor.Position.Column--;
+                        cursor.Position.Line = text[cursor.Position.Column].size();
                     }
                     else {
-                        cursor.Line--;
+                        cursor.Position.Line--;
                     }
                 }
                 else if(keycode == SDLK_RIGHT) {
-                    if(cursor.Column == text.size() - 1 && cursor.Line >= currentTextLine.size()) {
+                    if(cursor.Position.Column == text.size() - 1 && cursor.Position.Line >= currentTextLine.size()) {
                         printf("End of document \n");
                         break;
                     }
 
-                    if(cursor.Line > currentTextLine.size() - 1) {
-                        cursor.Column++;
-                        cursor.Line = 0;
+                    if(cursor.Position.Line > currentTextLine.size() - 1) {
+                        cursor.Position.Column++;
+                        cursor.Position.Line = 0;
                     }
                     else {
-                        cursor.Line++;
+                        cursor.Position.Line++;
                     }
                 }
                 else if(keycode == SDLK_UP) {
-                    if(cursor.Column == 0) {
+                    if(cursor.Position.Column == 0) {
                         printf("First column of document \n");
                         break;
                     }
-                    cursor.Column--;
-                    if(text[cursor.Column].size() < cursor.Line) {
-                        cursor.Line = text[cursor.Column].size();
+                    cursor.Position.Column--;
+                    if(text[cursor.Position.Column].size() < cursor.Position.Line) {
+                        cursor.Position.Line = text[cursor.Position.Column].size();
                     }
                 }
                 else if(keycode == SDLK_DOWN) {
-                    if(cursor.Column == text.size() - 1) {
-                        if(cursor.Line < currentTextLine.size()) {
-                            cursor.Line = currentTextLine.size();
+                    if(cursor.Position.Column == text.size() - 1) {
+                        if(cursor.Position.Line < currentTextLine.size()) {
+                            cursor.Position.Line = currentTextLine.size();
                         }
                         printf("Last column of document \n");
                         break;
                     }
-                    cursor.Column++;
-                    if(text[cursor.Column].size() < cursor.Line) {
-                        cursor.Line = text[cursor.Column].size();
+                    cursor.Position.Column++;
+                    if(text[cursor.Position.Column].size() < cursor.Position.Line) {
+                        cursor.Position.Line = text[cursor.Position.Column].size();
                     }
                 }
                 
             }
         }
-        printf("Line; %d \n", cursor.Line);
+        printf("Line; %d \n", cursor.Position.Line);
     }
 }
 
@@ -264,8 +271,8 @@ void TextEdit::render(SDL_Renderer *renderer) {
     // Render cursor
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    int cursorPosX = currentRect.x + (letterWidth * cursor.Line);
-    int cursorPosY = currentRect.y + (cursor.Column * spaceBetweenLine);
+    int cursorPosX = currentRect.x + (letterWidth * cursor.Position.Line);
+    int cursorPosY = currentRect.y + (cursor.Position.Column * spaceBetweenLine);
 
     SDL_RenderDrawLine(renderer, cursorPosX, cursorPosY, cursorPosX, cursorPosY + spaceBetweenLine);
 }
