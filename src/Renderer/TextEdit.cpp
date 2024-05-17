@@ -21,11 +21,20 @@ bool TextEdit::handleCTRLEvent(const SDL_Event &e) {
 
                 if(std::regex_search(beforeCursor, match, pattern)) {
                     cursor.Line -= match.length();
-                    beforeCursor = match.suffix().str();
                 }
                 return true;
             }
             case SDLK_RIGHT: {
+                if(cursor.Line >= text[cursor.Column].size()) {
+                    return false;
+                }
+                std::string beforeCursor(text[cursor.Column].begin() + cursor.Line,text[cursor.Column].end());;
+                std::regex pattern(R"((\s+|\W+|\w+))");
+                std::smatch match;
+
+                if(std::regex_search(beforeCursor, match, pattern)) {
+                    cursor.Line += match.length();
+                }
                 // Skip multiple characters to right
                 return true;
             }
@@ -87,13 +96,14 @@ void TextEdit::handleEvent(const SDL_Event &e) {
             }
             case SDL_KEYDOWN: {
                 int keycode = e.key.keysym.sym;
-                auto currentTextLine = text[cursor.Column];
 
                 if (handleCTRLEvent(e)) {
                     return;
                 }
 
+                auto& currentTextLine = text[cursor.Column];
                 if (keycode == SDLK_BACKSPACE) {
+                    printf("BACKSPACE \n");
                     if(currentTextLine.empty()) {
                         if(cursor.Column == 0) {
                             break;
