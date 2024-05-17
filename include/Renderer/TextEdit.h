@@ -16,6 +16,13 @@ using namespace __gnu_cxx;
 struct Position {
     int Column = 0;
     int Line = 0;
+
+    bool operator>=(const Position& other) const {
+        if(Line >= other.Line && Column >= other.Column) {
+            return true;
+        }
+        return false;
+    }
 };
 struct Selection {
     Position          SelectionStart = {};
@@ -52,14 +59,15 @@ public:
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;
 protected:
-    int getLengthOfColumn(const int& column);
     std::vector<rope<char>>    text = {}; // temporary, need to write custom data structure
     bool                       isActive = false;
     Cursor                     cursor = {};
     int                        letterWidth;
     int                        letterHeight;
 
-    virtual bool handleCTRLEvent(const SDL_Event &e);
+    virtual void handleCTRLEvent(const SDL_Event &e);
+    virtual void handleSHIFTEvent(const SDL_Event &e);
+    virtual void updateSelection();
 };
 
 #endif //TEXTEDIT_H
