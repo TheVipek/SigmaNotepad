@@ -4,7 +4,53 @@
 
 #include "Renderer/TextEdit.h"
 #include "math.h"
+#include "regex"
 
+bool TextEdit::handleCTRLEvent(const SDL_Event &e) {
+    if (SDL_GetModState() & KMOD_CTRL) {
+        switch (e.key.keysym.sym) {
+            case SDLK_LEFT: {
+                // Skip multiple characters to left
+                if (cursor.Line == 0)
+                    return false;
+
+                std::string beforeCursor(text[cursor.Column].begin(),text[cursor.Column].begin() + cursor.Line);
+                std::reverse(beforeCursor.begin(), beforeCursor.end());
+                std::regex pattern(R"((\s+|\W+|\w+))");
+                std::smatch match;
+
+                if(std::regex_search(beforeCursor, match, pattern)) {
+                    cursor.Line -= match.length();
+                    beforeCursor = match.suffix().str();
+                }
+                return true;
+            }
+            case SDLK_RIGHT: {
+                // Skip multiple characters to right
+                return true;
+            }
+            case SDLK_x: {
+                // CTRL + X
+                std::cout << "Cut command\n";
+                return true;
+            }
+            case SDLK_c: {
+                // CTRL + C
+                std::cout << "Copy command\n";
+                return true;
+            }
+            case SDLK_v: {
+                // CTRL + V
+                std::cout << "Paste command\n";
+                return true;
+            }
+            default: {
+                return false;
+            }
+        }
+    }
+    return false;
+}
 
 
 void TextEdit::handleEvent(const SDL_Event &e) {
@@ -41,10 +87,13 @@ void TextEdit::handleEvent(const SDL_Event &e) {
             }
             case SDL_KEYDOWN: {
                 int keycode = e.key.keysym.sym;
-
                 auto currentTextLine = text[cursor.Column];
-                if (keycode == SDLK_BACKSPACE) {
 
+                if (handleCTRLEvent(e)) {
+                    return;
+                }
+
+                if (keycode == SDLK_BACKSPACE) {
                     if(currentTextLine.empty()) {
                         if(cursor.Column == 0) {
                             break;
@@ -99,7 +148,7 @@ void TextEdit::handleEvent(const SDL_Event &e) {
                 }
                 else if (keycode == SDLK_LEFT) {
                     if(cursor.Column == 0 && cursor.Line == 0) {
-                        //printf("Beginning of document \n");
+                        printf("Beginning of document \n");
                         break;
                     }
 
@@ -113,12 +162,12 @@ void TextEdit::handleEvent(const SDL_Event &e) {
                     }
                 }
                 else if(keycode == SDLK_RIGHT) {
-                    if(cursor.Column == text.size() && cursor.Line == currentTextLine.size()) {
+                    if(cursor.Column == text.size() - 1 && cursor.Line >= currentTextLine.size()) {
                         printf("End of document \n");
                         break;
                     }
 
-                    if(cursor.Line == currentTextLine.size()) {
+                    if(cursor.Line > currentTextLine.size() - 1) {
                         cursor.Column++;
                         cursor.Line = 0;
                     }
@@ -128,6 +177,7 @@ void TextEdit::handleEvent(const SDL_Event &e) {
                 }
                 else if(keycode == SDLK_UP) {
                     if(cursor.Column == 0) {
+                        printf("First column of document \n");
                         break;
                     }
                     cursor.Column--;
@@ -136,10 +186,11 @@ void TextEdit::handleEvent(const SDL_Event &e) {
                     }
                 }
                 else if(keycode == SDLK_DOWN) {
-                    if(cursor.Column == text.size() - 1) {\
+                    if(cursor.Column == text.size() - 1) {
                         if(cursor.Line < currentTextLine.size()) {
                             cursor.Line = currentTextLine.size();
                         }
+                        printf("Last column of document \n");
                         break;
                     }
                     cursor.Column++;
@@ -147,6 +198,7 @@ void TextEdit::handleEvent(const SDL_Event &e) {
                         cursor.Line = text[cursor.Column].size();
                     }
                 }
+                
             }
         }
         printf("Line; %d \n", cursor.Line);

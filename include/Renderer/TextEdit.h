@@ -13,10 +13,17 @@
 
 using namespace __gnu_cxx;
 
+struct Selection {
+    int From = 0;
+    int To = 0;
+};
 struct Cursor {
     int             Column = 0;
     int             Line = 0;
+    Selection       Selection = {};
+
 };
+
 
 class TextEdit : public SigmaRenderableObject, public IText, public IBackground
 {
@@ -47,6 +54,8 @@ protected:
     Cursor                     cursor = {};
     int                        letterWidth;
     int                        letterHeight;
+
+    virtual bool handleCTRLEvent(const SDL_Event &e);
 };
 
 #endif //TEXTEDIT_H
