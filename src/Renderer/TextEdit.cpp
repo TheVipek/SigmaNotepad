@@ -273,47 +273,11 @@ void TextEdit::render(SDL_Renderer *renderer) {
     int spaceBetweenLine = TTF_FontLineSkip(font->get());
     int yOffset = 0;
 
-    // Render each line of text
-    for (size_t i = 0; i < text.size(); ++i) {
-        const auto& lineRope = text[i];
-        std::string line(lineRope.c_str(), lineRope.size());
-        if (line.empty())
-            line = " "; // to render even empty lines correctly
-
-        SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font->get(), line.c_str(), textColor, 0);
-        if (surface == nullptr) {
-            SDL_Log("Unable to create text surface: %s", SDL_GetError());
-            continue;
-        }
-
-        SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-        if (texture == nullptr) {
-            SDL_Log("Unable to create texture: %s", SDL_GetError());
-            SDL_FreeSurface(surface);
-            continue;
-        }
-        SDL_Rect textRect = {currentRect.x, currentRect.y + yOffset, surface->w, surface->h};
-        SDL_RenderCopy(renderer, texture, nullptr, &textRect);
-
-        SDL_DestroyTexture(texture);
-        SDL_FreeSurface(surface);
-
-        yOffset += spaceBetweenLine;
-    }
-
     // Render cursor
 
-
-    int cursorPosX, cursorPosY;
-    if(cursor.Selection.IsSelecting == false) { // draw cursor normally
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        cursorPosX = currentRect.x + (letterWidth * cursor.Position.Line);
-        cursorPosY = currentRect.y + (cursor.Position.Column * spaceBetweenLine);
-
-        SDL_RenderDrawLine(renderer, cursorPosX, cursorPosY, cursorPosX, cursorPosY + spaceBetweenLine);
-    }
-    else { // need to draw it line by line like font i think
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 128);
+    //It is being rendered first, so we can se blinking cursor on top of it
+    if(cursor.Selection.IsSelecting) { // need to draw it line by line like font i think
+        SDL_SetRenderDrawColor(renderer, 52, 45, 113, 255);
         Position startPos = cursor.Selection.SelectionStart;
         Position endPos = cursor.Selection.SelectionEnd;
 
@@ -427,4 +391,49 @@ void TextEdit::render(SDL_Renderer *renderer) {
             }
         }
     }
+
+    int cursorPosX, cursorPosY;
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    cursorPosX = currentRect.x + (letterWidth * cursor.Position.Line);
+    cursorPosY = currentRect.y + (cursor.Position.Column * spaceBetweenLine);
+
+
+    SDL_RenderDrawLine(renderer, cursorPosX, cursorPosY, cursorPosX, cursorPosY + spaceBetweenLine);
+
+
+
+
+
+
+
+
+    // Render each line of text
+    for (size_t i = 0; i < text.size(); ++i) {
+        const auto& lineRope = text[i];
+        std::string line(lineRope.c_str(), lineRope.size());
+        if (line.empty())
+            line = " "; // to render even empty lines correctly
+
+        SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(font->get(), line.c_str(), textColor, 0);
+        if (surface == nullptr) {
+            SDL_Log("Unable to create text surface: %s", SDL_GetError());
+            continue;
+        }
+
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+        if (texture == nullptr) {
+            SDL_Log("Unable to create texture: %s", SDL_GetError());
+            SDL_FreeSurface(surface);
+            continue;
+        }
+        SDL_Rect textRect = {currentRect.x, currentRect.y + yOffset, surface->w, surface->h};
+        SDL_RenderCopy(renderer, texture, nullptr, &textRect);
+
+        SDL_DestroyTexture(texture);
+        SDL_FreeSurface(surface);
+
+        yOffset += spaceBetweenLine;
+    }
+
+
 }
