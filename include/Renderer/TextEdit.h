@@ -24,15 +24,19 @@ struct Position {
         return false;
     }
 };
+
 struct Selection {
     Position          SelectionStart = {};
     Position          SelectionEnd = {};
     bool IsSelecting = false;
 };
+
 struct Cursor {
     Position        Position = {};
     Selection       Selection = {};
-
+    Uint32 LastTimeBlink = 0;
+    const int BLINK_INTERVAL = 500;
+    bool IsBlinking = false;
 };
 
 

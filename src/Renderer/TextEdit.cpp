@@ -392,19 +392,21 @@ void TextEdit::render(SDL_Renderer *renderer) {
         }
     }
 
-    int cursorPosX, cursorPosY;
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    cursorPosX = currentRect.x + (letterWidth * cursor.Position.Line);
-    cursorPosY = currentRect.y + (cursor.Position.Column * spaceBetweenLine);
 
+    Uint32 ticks = SDL_GetTicks();
+    if(ticks - cursor.LastTimeBlink > cursor.BLINK_INTERVAL) {
+        cursor.LastTimeBlink = ticks;
+        cursor.IsBlinking = !cursor.IsBlinking;
+        printf("blinking true lastTime; %d \n", cursor.LastTimeBlink);
+    }
+    if(cursor.IsBlinking) {
 
-    SDL_RenderDrawLine(renderer, cursorPosX, cursorPosY, cursorPosX, cursorPosY + spaceBetweenLine);
-
-
-
-
-
-
+        int cursorPosX, cursorPosY;
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        cursorPosX = currentRect.x + (letterWidth * cursor.Position.Line);
+        cursorPosY = currentRect.y + (cursor.Position.Column * spaceBetweenLine);
+        SDL_RenderDrawLine(renderer, cursorPosX, cursorPosY, cursorPosX, cursorPosY + spaceBetweenLine);
+    }
 
 
     // Render each line of text
@@ -434,6 +436,4 @@ void TextEdit::render(SDL_Renderer *renderer) {
 
         yOffset += spaceBetweenLine;
     }
-
-
 }
