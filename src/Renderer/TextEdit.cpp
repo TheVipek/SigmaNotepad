@@ -6,13 +6,13 @@
 #include "math.h"
 #include "regex"
 
-void TextEdit::handleCTRLEvent(const SDL_Event &e) {
+bool TextEdit::handleCTRLEvent(const SDL_Event &e) {
     if (SDL_GetModState() & KMOD_CTRL) {
         switch (e.key.keysym.sym) {
             case SDLK_LEFT: {
                 // Skip multiple characters to left
                 if (cursor.Position.Line == 0) {
-                    break;
+                    return false;
                 }
 
                 std::string beforeCursor(text[cursor.Position.Column].begin(),text[cursor.Position.Column].begin() + cursor.Position.Line);
@@ -26,11 +26,11 @@ void TextEdit::handleCTRLEvent(const SDL_Event &e) {
                     }
                     cursor.Position.Line -= match.length();
                 }
-                break;
+                return true;
             }
             case SDLK_RIGHT: {
                 if(cursor.Position.Line >= text[cursor.Position.Column].size()) {
-                    break;
+                    return false;
                 }
                 std::string beforeCursor(text[cursor.Position.Column].begin() + cursor.Position.Line,text[cursor.Position.Column].end());;
                 std::regex pattern(R"((\s+|\W+|\w+))");
@@ -40,25 +40,26 @@ void TextEdit::handleCTRLEvent(const SDL_Event &e) {
                     cursor.Position.Line += match.length();
                 }
                 // Skip multiple characters to right
-                break;
+                return true;
             }
             case SDLK_x: {
                 std::cout << "Cut command\n";
-                break;
+                return false;
             }
             case SDLK_c: {
                 std::cout << "Copy command\n";
-                break;
+                return false;
             }
             case SDLK_v: {
                 std::cout << "Paste command\n";
-                break;
+                return false;
             }
             default: {
-                break;
+                return false;
             }
         }
     }
+    return false;
 }
 
 void TextEdit::handleSHIFTEvent(const SDL_Event &e) {
@@ -130,10 +131,10 @@ void TextEdit::handleEvent(const SDL_Event &e) {
                 int keycode = e.key.keysym.sym;
 
                 handleSHIFTEvent(e);
-                handleCTRLEvent(e);
+                bool anyAction = handleCTRLEvent(e);
 
                 //handle normal events
-                if(!(SDL_GetModState() & KMOD_CTRL)) {
+                if(!anyAction) {
                     auto& currentTextLine = text[cursor.Position.Column];
                     if (keycode == SDLK_BACKSPACE) {
                         printf("BACKSPACE \n");

@@ -65,7 +65,7 @@ protected:
     int                        letterWidth;
     int                        letterHeight;
 
-    virtual void handleCTRLEvent(const SDL_Event &e);
+    virtual bool handleCTRLEvent(const SDL_Event &e);
     virtual void handleSHIFTEvent(const SDL_Event &e);
     virtual void updateSelection();
 };
