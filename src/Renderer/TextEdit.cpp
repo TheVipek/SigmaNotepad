@@ -316,81 +316,110 @@ void TextEdit::render(SDL_Renderer *renderer) {
         Position startPos = cursor.Selection.SelectionStart;
         Position endPos = cursor.Selection.SelectionEnd;
 
-        int startX,endX, startY_Up, endY_Up;
+        int xPosition,xSize, yPosition, ySize;
         if(startPos.Column == endPos.Column) { // one liner
-            startX = currentRect.x + (letterWidth * startPos.Line);
-            endX = letterWidth * (endPos.Line - startPos.Line);
-            startY_Up = currentRect.y + (startPos.Column * spaceBetweenLine);
-            endY_Up = spaceBetweenLine;
+            xPosition = currentRect.x + (letterWidth * startPos.Line);
+            xSize = letterWidth * (endPos.Line - startPos.Line);
+            yPosition = currentRect.y + (startPos.Column * spaceBetweenLine);
+            ySize = spaceBetweenLine;
 
             SDL_Rect rect = {
-                startX,
-                startY_Up,
-                endX,
-                endY_Up
+                xPosition,
+                yPosition,
+                xSize,
+                ySize
             };
             SDL_RenderFillRect(renderer, &rect);
         }
-        else if(endPos.Column > startPos.Column){ // from left to right
+        else if(startPos.Column < endPos.Column){ // from left to right
             for(int i = startPos.Column; i <= endPos.Column; i++) {
-                if(i == endPos.Column) {
-                    startX = currentRect.x;
-                    endX = letterWidth * endPos.Line;
-                    startY_Up = currentRect.y + (i * spaceBetweenLine);
-                    endY_Up = spaceBetweenLine;
+                if(i == endPos.Column) { // last line
+                    xPosition = currentRect.x;
+                    xSize = letterWidth * endPos.Line;
+                    yPosition = currentRect.y + (i * spaceBetweenLine);
+                    ySize = spaceBetweenLine;
 
                     SDL_Rect rect = {
-                        startX,
-                        startY_Up,
-                        endX,
-                        endY_Up
+                        xPosition,
+                        yPosition,
+                        xSize,
+                        ySize
                     };
                     SDL_RenderFillRect(renderer, &rect);
                 }
-                else {
-                    startX = currentRect.x;
-                    endX = letterWidth * text[i].size();
-                    startY_Up = currentRect.y + (i * spaceBetweenLine);
-                    endY_Up = spaceBetweenLine;
+                else if(i == startPos.Column) { // first line
+                    xPosition = currentRect.x + (letterWidth * startPos.Line);
+                    xSize = letterWidth * (text[i].size() - startPos.Line);
+                    yPosition = currentRect.y + (i * spaceBetweenLine);
+                    ySize = spaceBetweenLine;
 
                     SDL_Rect rect = {
-                        startX,
-                        startY_Up,
-                        endX,
-                        endY_Up
+                        xPosition,
+                        yPosition,
+                        xSize,
+                        ySize
+                    };
+                    SDL_RenderFillRect(renderer, &rect);
+                }
+                else { // any other line
+                    xPosition = currentRect.x;
+                    xSize = letterWidth * text[i].size();
+                    yPosition = currentRect.y + (i * spaceBetweenLine);
+                    ySize = spaceBetweenLine;
+
+                    SDL_Rect rect = {
+                        xPosition,
+                        yPosition,
+                        xSize,
+                        ySize
                     };
                     SDL_RenderFillRect(renderer, &rect);
                 }
             }
         }
-        else if(startPos.Column > endPos.Column) { // ** INCOMPLETED **
-            // from right to left
-            for(int i = endPos.Column; i <= startPos.Column; i++) {
-                if(i == startPos.Column) {
-                    startX = currentRect.x;
-                    endX = letterWidth * (text[i].size() == startPos.Line ? 0 : startPos.Line - text[i].size() );
-                    startY_Up = currentRect.y + (i * spaceBetweenLine);
-                    endY_Up = spaceBetweenLine;
+        else if(startPos.Column > endPos.Column) { // ** INCOMPLETED ** // from right to left
+
+            for(int i = startPos.Column; i >= endPos.Column; i--) {
+                if(i == endPos.Column) { // first line
+                    xPosition = currentRect.x + (letterWidth * endPos.Line);
+                    xSize = letterWidth * (text[i].size() - endPos.Line);
+                    yPosition = currentRect.y + (i * spaceBetweenLine);
+                    ySize = spaceBetweenLine;
 
                     SDL_Rect rect = {
-                        startX,
-                        startY_Up,
-                        endX,
-                        endY_Up
+                        xPosition,
+                        yPosition,
+                        xSize,
+                        ySize
+                    };
+                    SDL_RenderFillRect(renderer, &rect);
+                }
+                else if(i == startPos.Column) { // last line
+                    xPosition = currentRect.x + (letterWidth * startPos.Line);
+                    xSize = text[i].size() == startPos.Line ? -startPos.Line : startPos.Line - text[i].size();
+                    xSize *= letterWidth;
+                    yPosition = currentRect.y + (i * spaceBetweenLine);
+                    ySize = spaceBetweenLine;
+
+                    SDL_Rect rect = {
+                        xPosition,
+                        yPosition,
+                        xSize,
+                        ySize
                     };
                     SDL_RenderFillRect(renderer, &rect);
                 }
                 else {
-                    startX = currentRect.x;
-                    endX = letterWidth * text[i].size();
-                    startY_Up = currentRect.y + (i * spaceBetweenLine);
-                    endY_Up = spaceBetweenLine;
+                    xPosition = currentRect.x;
+                    xSize = letterWidth * text[i].size();
+                    yPosition = currentRect.y + (i * spaceBetweenLine);
+                    ySize = spaceBetweenLine;
 
                     SDL_Rect rect = {
-                        startX,
-                        startY_Up,
-                        endX,
-                        endY_Up
+                        xPosition,
+                        yPosition,
+                        xSize,
+                        ySize
                     };
                     SDL_RenderFillRect(renderer, &rect);
                 }
