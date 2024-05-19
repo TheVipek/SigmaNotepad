@@ -72,6 +72,8 @@ protected:
     virtual bool handleCTRLEvent(const SDL_Event &e);
     virtual void handleSHIFTEvent(const SDL_Event &e);
     virtual void updateSelection();
+    virtual void insertText(const char* val, const int& count);
+    virtual void removeText(const int& count);
 };
 
 #endif //TEXTEDIT_H

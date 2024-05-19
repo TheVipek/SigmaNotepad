@@ -3,7 +3,6 @@
 //
 
 #include "Renderer/TextEdit.h"
-#include "math.h"
 #include "regex"
 
 bool TextEdit::handleCTRLEvent(const SDL_Event &e) {
@@ -95,6 +94,16 @@ void TextEdit::updateSelection() {
     }
 }
 
+void TextEdit::insertText(const char* val, const int& count) {
+    text[cursor.Position.Column].insert(cursor.Position.Line, val);
+    cursor.Position.Line += count;
+}
+
+void TextEdit::removeText(const int& count) {
+    cursor.Position.Line-= count;
+    text[cursor.Position.Column].erase(cursor.Position.Line, count);
+}
+
 void TextEdit::handleEvent(const SDL_Event &e) {
     if(!enabled) // no need to process events
         return;
@@ -123,18 +132,16 @@ void TextEdit::handleEvent(const SDL_Event &e) {
     if(isActive) {
         switch (e.type) {
             case SDL_TEXTINPUT: {
-                text[cursor.Position.Column].insert(cursor.Position.Line,e.text.text);
-                cursor.Position.Line++;
+                insertText(e.text.text, 1);
                 break;
             }
             case SDL_KEYDOWN: {
                 int keycode = e.key.keysym.sym;
 
                 handleSHIFTEvent(e);
-                bool anyAction = handleCTRLEvent(e);
 
-                //handle normal events
-                if(!anyAction) {
+                if(!handleCTRLEvent(e)) { // check whether user did anything while pressing CTRL or if action taken was allowed
+                    //handle normal events
                     auto& currentTextLine = text[cursor.Position.Column];
                     if (keycode == SDLK_BACKSPACE) {
                         printf("BACKSPACE \n");
@@ -147,17 +154,13 @@ void TextEdit::handleEvent(const SDL_Event &e) {
                             cursor.Position.Line = text[cursor.Position.Column].size();
                         }
                         else {
-                            cursor.Position.Line--;
-                            currentTextLine.erase(cursor.Position.Line, 1);
+                            removeText(1);
                         }
                     }
                     else if (keycode == SDLK_TAB) {
-                        currentTextLine.insert(cursor.Position.Line,"   ");
-                        cursor.Position.Line+=3;
+                        insertText("   ", 3);
                     }
                     else if (keycode == SDLK_RETURN) {
-                        //currentTextLine.insert(cursor.Line,"\n");  // no need for it?
-
                         if(text.size() - 1 == cursor.Position.Column) { // last index
                             //printf("LAST textSize %d;cursor.Column %d  \n", text.size(), cursor.Column);
                             if(cursor.Position.Line < currentTextLine.size()) {
@@ -397,7 +400,6 @@ void TextEdit::render(SDL_Renderer *renderer) {
     if(ticks - cursor.LastTimeBlink > cursor.BLINK_INTERVAL) {
         cursor.LastTimeBlink = ticks;
         cursor.IsBlinking = !cursor.IsBlinking;
-        printf("blinking true lastTime; %d \n", cursor.LastTimeBlink);
     }
     if(cursor.IsBlinking) {
 
