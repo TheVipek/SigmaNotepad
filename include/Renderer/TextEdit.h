@@ -69,9 +69,10 @@ protected:
     int                        letterWidth;
     int                        letterHeight;
 
-    virtual bool handleCTRLEvent(const SDL_Event &e);
-    virtual void handleSHIFTEvent(const SDL_Event &e);
-    virtual void updateSelection();
+    virtual void handleNormalEvent(const SDL_Event& e);
+    virtual bool handleCTRLEvent(const SDL_Event& e);
+    virtual bool handleSHIFTEvent(const SDL_Event& e);
+    virtual bool handleSelection(const SDL_Event& e);
     virtual void insertText(const char* val, const int& count);
     virtual void removeText(const int& count);
 };
