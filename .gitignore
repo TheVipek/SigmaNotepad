@@ -34,3 +34,5 @@
 *build*
 
 .idea
+
+vcpkg_installed*/

@@ -8,6 +8,7 @@
 #include <string>
 #include "Font.h"
 
+template<typename T>
 class IText : public ITextAligment {
 public:
     virtual ~IText() = default;
@@ -19,8 +20,8 @@ public:
             font = std::make_unique<Font>(fPath, fSize);
         }
     }
-    virtual void setText(const std::string& text) = 0;
-    virtual std::string getText() = 0;
+    virtual void setText(const T text) = 0;
+    virtual T getText() = 0;
 
 protected:
     //i wont define there data structure for text, beacuse i may want to have different in specific scenarios
@@ -28,6 +29,7 @@ protected:
     std::unique_ptr<Font>               font;
     const std::string                   DEFAULT_FONTP = "assets/defaultFonts/Consolas-Regular.ttf";
     const int                           DEFAULT_FONTS = 20;
+    T                                   text;
 };
 
 #endif //ITEXT_H

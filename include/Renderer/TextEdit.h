@@ -13,68 +13,62 @@
 
 using namespace __gnu_cxx;
 
-struct Position {
-    int Column = 0;
-    int Line = 0;
-
-    bool operator>=(const Position& other) const {
-        if(Line >= other.Line && Column >= other.Column) {
-            return true;
-        }
-        return false;
-    }
-};
-
 struct Selection {
-    Position          SelectionStart = {};
-    Position          SelectionEnd = {};
+    int          SelectionStart;
+    int          SelectionEnd;
     bool IsSelecting = false;
 };
 
 struct Cursor {
-    Position        Position = {};
-    Selection       Selection = {};
+    int Position;
+    Selection Selection = {};
     Uint32 LastTimeBlink = 0;
     const int BLINK_INTERVAL = 500;
     bool IsBlinking = false;
 };
 
 
-class TextEdit : public SigmaRenderableObject, public IText, public IBackground
+class TextEdit : public SigmaRenderableObject, public IText<rope<char>>, public IBackground
 {
 public:
-    TextEdit(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow, rope<char> text)
+    TextEdit(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow)
         : SigmaRenderableObject(rect, targetWindow){
         initFont(DEFAULT_FONTP, DEFAULT_FONTS);
         TTF_SizeUTF8(font->get(), " ",&letterWidth, &letterHeight);
-        setText(text.c_str());
+        setText(rope<char>(""));
     }
-    void setText(const std::string& text) override {
-        this->text = { rope<char>(text.c_str()) };
+    void setText(const rope<char> text) override {
+        this->text = text;
     }
-    std::string getText() override {
-        std::string t = "";
-        for (auto _text: text) {
-            t += _text.c_str();
-        }
-        return t;
+    rope<char> getText() override {
+        return text;
     }
 
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;
 protected:
-    std::vector<rope<char>>    text = {}; // temporary, need to write custom data structure
     bool                       isActive = false;
     Cursor                     cursor = {};
     int                        letterWidth;
     int                        letterHeight;
 
     virtual void handleNormalEvent(const SDL_Event& e);
-    virtual bool handleCTRLEvent(const SDL_Event& e);
-    virtual bool handleSHIFTEvent(const SDL_Event& e);
+    virtual bool handleCTRLEvent(const SDL_Event& e, bool isCtrlPressed);
+    virtual bool handleSHIFTEvent(const SDL_Event& e, bool isShiftPressed);
     virtual bool handleSelection(const SDL_Event& e);
+
+    virtual void handleCursorSelection(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);
+    virtual void handleCursorBlinking(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);
+    virtual void handleRenderingText(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);
     virtual void insertText(const char* val, const int& count);
     virtual void removeText(const int& count);
+    virtual void removeSelectionText(const int& startPos, const int& count);
+    int getSpaceBetweenLine() {
+        if(font->get() != nullptr) {
+            return TTF_FontLineSkip(font->get());
+        }
+        return -1;
+    }
 };
 
 #endif //TEXTEDIT_H

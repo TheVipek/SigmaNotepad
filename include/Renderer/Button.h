@@ -20,8 +20,8 @@ public:
     Button(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow, const std::string& text)
         : SigmaRenderableObject(rect, targetWindow) {
 
-        TLabel = std::make_unique<TextLabel>(this->baseRect, targetWindow, text );
-
+        TLabel = std::make_unique<TextLabel>(this->baseRect, targetWindow);
+        TLabel->setText(text);
     }
 
     std::unique_ptr<TextLabel>  TLabel;

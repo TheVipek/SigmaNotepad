@@ -4,6 +4,28 @@
 
 #include "Renderer/TextEdit.h"
 #include "regex"
+#include "StringHelpers.h"
+
+void TextEdit::insertText(const char *val, const int &count) {
+    text.insert(cursor.Position, val);
+    cursor.Position += count;
+}
+
+void TextEdit::removeText(const int &count) {
+    if(cursor.Position > 0) {
+        cursor.Position -= count;
+        text.erase(cursor.Position, count);
+    }
+}
+void TextEdit::removeSelectionText(const int &startPos, const int &count) {
+    std::cout << "startPos;" << startPos << "\n";
+    std::cout << "deletion count;" << count << "\n";
+    std::cout << "textCount; " << text.size() << "\n";
+    if(startPos >= 0 && count <= text.size() - startPos) {
+        cursor.Position = startPos;
+        text.erase(startPos, count);
+    }
+}
 
 void TextEdit::handleNormalEvent(const SDL_Event &e) {
 
@@ -15,118 +37,69 @@ void TextEdit::handleNormalEvent(const SDL_Event &e) {
         case SDL_KEYDOWN: {
             int keycode = e.key.keysym.sym;
             //handle normal events
-            auto &currentTextLine = text[cursor.Position.Column];
             if (keycode == SDLK_BACKSPACE) {
                 //printf("BACKSPACE \n");
-                if (currentTextLine.empty()) {
-                    if (cursor.Position.Column == 0) {
-                        break;
-                    }
-
-                    cursor.Position.Column--;
-                    cursor.Position.Line = text[cursor.Position.Column].size();
-                } else {
+                if (!text.empty()) {
                     removeText(1);
                 }
             } else if (keycode == SDLK_TAB) {
                 insertText("   ", 3);
             } else if (keycode == SDLK_RETURN) {
-                if (text.size() - 1 == cursor.Position.Column) {
-                    // last index
-                    //printf("LAST textSize %d;cursor.Column %d  \n", text.size(), cursor.Column);
-                    if (cursor.Position.Line < currentTextLine.size()) {
-                        //printf("smaller \n");
-                        rope<char> newLineText = currentTextLine.substr(
-                            cursor.Position.Line, currentTextLine.size() - cursor.Position.Line);
-                        text.push_back(newLineText);
-
-                        rope<char> modifiedCurrentLine = currentTextLine.substr(0, cursor.Position.Line);
-                        text[cursor.Position.Column] = modifiedCurrentLine;
-                    } else {
-                        text.emplace_back();
-                    }
-                } else if (text.size() - 1 > cursor.Position.Column) {
-                    // between index
-                    //printf("BETWEEN textSize %d;cursor.Column %d  \n", text.size(), cursor.Column);
-                    if (cursor.Position.Line < currentTextLine.size()) {
-                        //printf("smaller \n");
-                        rope<char> newLineText = currentTextLine.substr(
-                            cursor.Position.Line, currentTextLine.size() - cursor.Position.Line);
-                        text.insert(text.begin() + cursor.Position.Column + 1, newLineText);
-
-                        rope<char> modifiedCurrentLine = currentTextLine.substr(0, cursor.Position.Line);
-                        text[cursor.Position.Column] = modifiedCurrentLine;
-                    } else {
-                        //printf("insert between \n");
-                        text.insert(text.begin() + cursor.Position.Column + 1, rope<char>(""));
-                    }
-                }
-                cursor.Position.Column++;
-                cursor.Position.Line = text[cursor.Position.Column].size();
+                insertText("\n", 1);
             } else if (keycode == SDLK_LEFT) {
-                if (cursor.Position.Column == 0 && cursor.Position.Line == 0) {
-                    printf("Beginning of document \n");
-                    break;
-                }
-
-                if (cursor.Position.Line == 0) {
-                    //printf("Detected newline character");
-                    cursor.Position.Column--;
-                    cursor.Position.Line = text[cursor.Position.Column].size();
-                } else {
-                    cursor.Position.Line--;
+                if(cursor.Position > 0) {
+                    cursor.Position--;
                 }
             } else if (keycode == SDLK_RIGHT) {
-                if (cursor.Position.Column == text.size() - 1 && cursor.Position.Line >= currentTextLine.size()) {
-                    printf("End of document \n");
-                    break;
-                }
-
-                if (cursor.Position.Line > currentTextLine.size() - 1) {
-                    cursor.Position.Column++;
-                    cursor.Position.Line = 0;
-                } else {
-                    cursor.Position.Line++;
+                if(cursor.Position < text.size()) {
+                    cursor.Position++;
                 }
             } else if (keycode == SDLK_UP) {
-                if (cursor.Position.Column == 0) {
-                    printf("First column of document \n");
-                    break;
+                if (cursor.Position == 0) {
+                    std::cout << "First line of document" << std::endl;
+                    return;
                 }
-                cursor.Position.Column--;
-                if (text[cursor.Position.Column].size() < cursor.Position.Line) {
-                    cursor.Position.Line = text[cursor.Position.Column].size();
+
+                size_t currentLineStart = findLineStart(cursor.Position, text.c_str(), '\n');
+                if (currentLineStart == 0) {
+                    cursor.Position = 0;
+                    std::cout << "First line of document" << std::endl;
+                } else {
+                    size_t previousLineEnd = currentLineStart - 1;
+                    size_t previousLineStart = findLineStart(previousLineEnd, text.c_str(), '\n');
+                    size_t distanceFromLineStart = cursor.Position - currentLineStart;
+                    cursor.Position = previousLineStart + std::min(distanceFromLineStart, previousLineEnd - previousLineStart);
                 }
-            } else if (keycode == SDLK_DOWN) {
-                if (cursor.Position.Column == text.size() - 1) {
-                    if (cursor.Position.Line < currentTextLine.size()) {
-                        cursor.Position.Line = currentTextLine.size();
-                    }
-                    printf("Last column of document \n");
-                    break;
+            }
+            else if (keycode == SDLK_DOWN) {
+                size_t currentLineEnd  = findLineEnd(cursor.Position, text.c_str(), '\n');
+                if (currentLineEnd  == text.size()) {
+                    std::cout << "End line of document" << std::endl;
+                    return;
                 }
-                cursor.Position.Column++;
-                if (text[cursor.Position.Column].size() < cursor.Position.Line) {
-                    cursor.Position.Line = text[cursor.Position.Column].size();
-                }
+
+                size_t nextLineStart = currentLineEnd + 1;
+                size_t nextLineEnd = findLineEnd(nextLineStart, text.c_str(), '\n');
+                size_t distanceFromLineStart = cursor.Position - findLineStart(cursor.Position, text.c_str(), '\n');
+                cursor.Position = nextLineStart + std::min(distanceFromLineStart, nextLineEnd - nextLineStart);
             }
         }
     }
 }
 
-bool TextEdit::handleCTRLEvent(const SDL_Event &e) {
-    if (SDL_GetModState() & KMOD_CTRL) {
+bool TextEdit::handleCTRLEvent(const SDL_Event &e, bool isCtrlPressed) {
+    if (isCtrlPressed) {
         switch(e.type) {
             case SDL_KEYDOWN: {
                 switch (e.key.keysym.sym) {
                     case SDLK_LEFT: {
                         // Skip multiple characters to left
-                        if (cursor.Position.Line == 0) {
+                        if (cursor.Position == 0) {
                             return false;
                         }
 
-                        std::string beforeCursor(text[cursor.Position.Column].begin(),
-                                                 text[cursor.Position.Column].begin() + cursor.Position.Line);
+                        std::string beforeCursor(text.begin(),
+                                                 text.begin() + cursor.Position);
                         std::reverse(beforeCursor.begin(), beforeCursor.end());
                         std::regex pattern(R"((\s+|\W+|\w+))");
                         std::smatch match;
@@ -135,40 +108,40 @@ bool TextEdit::handleCTRLEvent(const SDL_Event &e) {
                             if (cursor.Selection.IsSelecting) {
                                 //cursor.Selection.SelectionEnd = cursor.Position.Line;
                             }
-                            cursor.Position.Line -= match.length();
+                            cursor.Position -= match.length();
                             return true;
                         }
                         return false;
                     }
                     case SDLK_RIGHT: {
-                        if (cursor.Position.Line >= text[cursor.Position.Column].size()) {
+                        if (cursor.Position == text.size()) {
                             //printf("right false \n");
                             return false;
                         }
-                        std::string beforeCursor(text[cursor.Position.Column].begin() + cursor.Position.Line,
-                                                 text[cursor.Position.Column].end());;
+                        std::string beforeCursor(text.begin() + cursor.Position,
+                                                 text.end());;
                         std::regex pattern(R"((\s+|\W+|\w+))");
                         std::smatch match;
 
                         if (std::regex_search(beforeCursor, match, pattern)) {
-                            cursor.Position.Line += match.length();
+                            cursor.Position += match.length();
                             return true;
                         }
                         // Skip multiple characters to right
                         return false;
                     }
-                    case SDLK_x: {
-                        std::cout << "Cut command\n";
-                        return false;
-                    }
-                    case SDLK_c: {
-                        std::cout << "Copy command\n";
-                        return false;
-                    }
-                    case SDLK_v: {
-                        std::cout << "Paste command\n";
-                        return false;
-                    }
+                //     case SDLK_x: {
+                //         std::cout << "Cut command\n";
+                //         return false;
+                //     }
+                //     case SDLK_c: {
+                //         std::cout << "Copy command\n";
+                //         return false;
+                //     }
+                //     case SDLK_v: {
+                //         std::cout << "Paste command\n";
+                //         return false;
+                //     }
                 }
 
             }
@@ -177,27 +150,23 @@ bool TextEdit::handleCTRLEvent(const SDL_Event &e) {
     return false;
 }
 
-bool TextEdit::handleSHIFTEvent(const SDL_Event &e) {
-    if (SDL_GetModState() & KMOD_SHIFT) {
+bool TextEdit::handleSHIFTEvent(const SDL_Event &e, bool isShiftPressed) {
+    if (isShiftPressed) {
         if (cursor.Selection.IsSelecting == false) {
 
             cursor.Selection.IsSelecting = true;
-            cursor.Selection.SelectionStart.Column = cursor.Position.Column;
-            cursor.Selection.SelectionStart.Line = cursor.Position.Line;
+            cursor.Selection.SelectionStart = cursor.Position;
 
-            cursor.Selection.SelectionEnd.Column = cursor.Position.Column;
-            cursor.Selection.SelectionEnd.Line = cursor.Position.Line;
+            cursor.Selection.SelectionEnd = cursor.Position;
 
-            printf("SelectionStart; Column:%d Line:%d \n", cursor.Selection.SelectionStart.Column,
-                  cursor.Selection.SelectionStart.Line);
+            printf("SelectionStart; %d \n", cursor.Selection.SelectionStart);
         } else if (cursor.Selection.IsSelecting == true) {
-            cursor.Selection.SelectionEnd.Column = cursor.Position.Column;
-            cursor.Selection.SelectionEnd.Line = cursor.Position.Line;
+            cursor.Selection.SelectionEnd = cursor.Position;
 
-            printf("update SelectionEnd to; Column:%d Line:%d \n", cursor.Position.Column, cursor.Position.Line);
+            printf("update SelectionEnd to; %d \n", cursor.Selection.SelectionEnd);
         }
 
-        handleSelection(e);
+        return handleSelection(e);
     }
     else {
         printf("shift not selected");
@@ -218,7 +187,13 @@ bool TextEdit::handleSelection(const SDL_Event& e) {
             case SDL_KEYDOWN: {
                 int keycode = e.key.keysym.sym;
                 if (keycode == SDLK_BACKSPACE) {
+                    int selectionStart = cursor.Selection.SelectionStart >= cursor.Selection.SelectionEnd ?  cursor.Selection.SelectionEnd : cursor.Selection.SelectionStart;
+                    int selectionEnd = cursor.Selection.SelectionEnd >= cursor.Selection.SelectionStart ?  cursor.Selection.SelectionEnd : cursor.Selection.SelectionStart;
+                    std::cout << "selectionStart;" << selectionStart << "\n";
+                    std::cout << "selectionEnd;" << selectionEnd << "\n";
+                    removeSelectionText(selectionStart, selectionEnd - selectionStart);
 
+                    return true;
                 }
                 else if (keycode == SDLK_TAB) {
 
@@ -232,14 +207,123 @@ bool TextEdit::handleSelection(const SDL_Event& e) {
     return false;
 }
 
-void TextEdit::insertText(const char *val, const int &count) {
-    text[cursor.Position.Column].insert(cursor.Position.Line, val);
-    cursor.Position.Line += count;
+void TextEdit::handleCursorSelection(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines) {
+ if (cursor.Selection.IsSelecting) {
+        SDL_SetRenderDrawColor(renderer, 52, 45, 113, 255);
+        size_t startPos = cursor.Selection.SelectionStart;
+        size_t endPos = cursor.Selection.SelectionEnd;
+        if (startPos > endPos) {
+            std::swap(startPos, endPos);
+        }
+
+        size_t currentPos = 0;
+        for (size_t i = 0; i < lines.size(); ++i) {
+            std::string line = lines[i];
+            size_t lineStart = currentPos;
+            size_t lineEnd = lineStart + line.size();
+
+            if (endPos <= lineStart) {
+                // Selection ends before the current line starts
+                break;
+            }
+
+            if (startPos >= lineEnd) {
+                // Selection starts after the current line ends
+                currentPos += line.size() + 1; // +1 for the newline character
+                continue;
+            }
+
+            int xPosition = currentRect.x;
+            int yPosition = currentRect.y + (i * spaceBetweenLine);
+            int xSize;
+            int ySize = spaceBetweenLine;
+
+            if (startPos <= lineStart && endPos >= lineEnd) {
+                // Entire line is selected
+                xSize = letterWidth * line.size();
+            } else if (startPos > lineStart && endPos < lineEnd) {
+                // Selection is within this single line
+                xPosition += letterWidth * (startPos - lineStart);
+                xSize = letterWidth * (endPos - startPos);
+            } else if (startPos <= lineStart && endPos < lineEnd) {
+                // Selection starts before this line and ends within this line
+                xSize = letterWidth * (endPos - lineStart);
+            } else if (startPos > lineStart && endPos >= lineEnd) {
+                // Selection starts within this line and ends after this line
+                xPosition += letterWidth * (startPos - lineStart);
+                xSize = letterWidth * (lineEnd - startPos);
+            }
+
+            SDL_Rect rect = { xPosition, yPosition, xSize, ySize };
+            SDL_RenderFillRect(renderer, &rect);
+
+            currentPos += line.size() + 1; // +1 for the newline character
+        }
+    }
 }
 
-void TextEdit::removeText(const int &count) {
-    cursor.Position.Line -= count;
-    text[cursor.Position.Column].erase(cursor.Position.Line, count);
+void TextEdit::handleCursorBlinking(SDL_Renderer *renderer, const int spaceBetweenLine, const std::vector<std::string> lines) {
+    Uint32 ticks = SDL_GetTicks();
+    if (ticks - cursor.LastTimeBlink > cursor.BLINK_INTERVAL) {
+        cursor.LastTimeBlink = ticks;
+        cursor.IsBlinking = !cursor.IsBlinking;
+    }
+
+    if (cursor.IsBlinking) {
+        int cursorPosX, cursorPosY;
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+        size_t currentPos = 0;
+        size_t cursorLine = 0;
+        size_t cursorColumn = 0;
+
+        for (auto const line : lines) {
+            size_t lineStart = currentPos;
+            size_t lineEnd = lineStart + line.size();
+
+            if (cursor.Position >= lineStart && cursor.Position <= lineEnd) {
+
+                cursorColumn = cursor.Position - lineStart;
+                break;
+            }
+
+            currentPos += line.size() + 1; // +1 for the newline character
+            cursorLine++;
+        }
+
+        cursorPosX = currentRect.x + (letterWidth * cursorColumn);
+        cursorPosY = currentRect.y + (cursorLine * spaceBetweenLine);
+
+        SDL_RenderDrawLine(renderer, cursorPosX, cursorPosY, cursorPosX, cursorPosY + spaceBetweenLine);
+    }
+}
+
+void TextEdit::handleRenderingText(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines) {
+    int yOffset = 0;
+    for (auto line : lines) {
+        if (line.empty())
+            line = " "; // to render even empty lines correctly
+
+        SDL_Surface *surface = TTF_RenderUTF8_Blended_Wrapped(font->get(), line.c_str(), textColor, 0);
+        if (surface == nullptr) {
+            SDL_Log("Unable to create text surface: %s", SDL_GetError());
+            continue;
+        }
+
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+        if (texture == nullptr) {
+            SDL_Log("Unable to create texture: %s", SDL_GetError());
+            SDL_FreeSurface(surface);
+            continue;
+        }
+        SDL_Rect textRect = {currentRect.x, currentRect.y + yOffset, surface->w, surface->h};
+        SDL_RenderCopy(renderer, texture, nullptr, &textRect);
+
+        SDL_DestroyTexture(texture);
+        SDL_FreeSurface(surface);
+
+        yOffset += spaceBetweenLine;
+    }
 }
 
 void TextEdit::handleEvent(const SDL_Event &e) {
@@ -268,11 +352,11 @@ void TextEdit::handleEvent(const SDL_Event &e) {
     //Writing
     if (isActive) {
 
-        if(handleCTRLEvent(e)) {
+        if(handleCTRLEvent(e, SDL_GetModState() & KMOD_CTRL)) {
             printf("HANDLING CTRL EVENTS SKIP \n");
             return;
         }
-        if(handleSHIFTEvent(e)) {
+        if(handleSHIFTEvent(e, SDL_GetModState() & KMOD_SHIFT)) {
             printf("HANDLING SHIFT EVENTS SKIP \n");
             return;
         }
@@ -298,171 +382,18 @@ void TextEdit::render(SDL_Renderer *renderer) {
         return;
 
     // Get font line height and calculate space between lines
-    int spaceBetweenLine = TTF_FontLineSkip(font->get());
-    int yOffset = 0;
+    int spaceBetweenLine = getSpaceBetweenLine();
+
+    std::vector<std::string> splittedText = split(text.c_str(), "\n");
 
     // Render cursor
-
     //It is being rendered first, so we can se blinking cursor on top of it
-    if (cursor.Selection.IsSelecting) {
-        // need to draw it line by line like font i think
-        SDL_SetRenderDrawColor(renderer, 52, 45, 113, 255);
-        Position startPos = cursor.Selection.SelectionStart;
-        Position endPos = cursor.Selection.SelectionEnd;
-
-        int xPosition, xSize, yPosition, ySize;
-        if (startPos.Column == endPos.Column) {
-            // one liner
-            xPosition = currentRect.x + (letterWidth * startPos.Line);
-            xSize = letterWidth * (endPos.Line - startPos.Line);
-            yPosition = currentRect.y + (startPos.Column * spaceBetweenLine);
-            ySize = spaceBetweenLine;
-
-            SDL_Rect rect = {
-                xPosition,
-                yPosition,
-                xSize,
-                ySize
-            };
-            SDL_RenderFillRect(renderer, &rect);
-        } else if (startPos.Column < endPos.Column) {
-            // from left to right
-            for (int i = startPos.Column; i <= endPos.Column; i++) {
-                if (i == endPos.Column) {
-                    // last line
-                    xPosition = currentRect.x;
-                    xSize = letterWidth * endPos.Line;
-                    yPosition = currentRect.y + (i * spaceBetweenLine);
-                    ySize = spaceBetweenLine;
-
-                    SDL_Rect rect = {
-                        xPosition,
-                        yPosition,
-                        xSize,
-                        ySize
-                    };
-                    SDL_RenderFillRect(renderer, &rect);
-                } else if (i == startPos.Column) {
-                    // first line
-                    xPosition = currentRect.x + (letterWidth * startPos.Line);
-                    xSize = letterWidth * (text[i].size() - startPos.Line);
-                    yPosition = currentRect.y + (i * spaceBetweenLine);
-                    ySize = spaceBetweenLine;
-
-                    SDL_Rect rect = {
-                        xPosition,
-                        yPosition,
-                        xSize,
-                        ySize
-                    };
-                    SDL_RenderFillRect(renderer, &rect);
-                } else {
-                    // any other line
-                    xPosition = currentRect.x;
-                    xSize = letterWidth * text[i].size();
-                    yPosition = currentRect.y + (i * spaceBetweenLine);
-                    ySize = spaceBetweenLine;
-
-                    SDL_Rect rect = {
-                        xPosition,
-                        yPosition,
-                        xSize,
-                        ySize
-                    };
-                    SDL_RenderFillRect(renderer, &rect);
-                }
-            }
-        } else if (startPos.Column > endPos.Column) {
-            // ** INCOMPLETED ** // from right to left
-
-            for (int i = startPos.Column; i >= endPos.Column; i--) {
-                if (i == endPos.Column) {
-                    // first line
-                    xPosition = currentRect.x + (letterWidth * endPos.Line);
-                    xSize = letterWidth * (text[i].size() - endPos.Line);
-                    yPosition = currentRect.y + (i * spaceBetweenLine);
-                    ySize = spaceBetweenLine;
-
-                    SDL_Rect rect = {
-                        xPosition,
-                        yPosition,
-                        xSize,
-                        ySize
-                    };
-                    SDL_RenderFillRect(renderer, &rect);
-                } else if (i == startPos.Column) {
-                    // last line
-                    xPosition = currentRect.x + (letterWidth * startPos.Line);
-                    xSize = text[i].size() == startPos.Line ? -startPos.Line : startPos.Line - text[i].size();
-                    xSize *= letterWidth;
-                    yPosition = currentRect.y + (i * spaceBetweenLine);
-                    ySize = spaceBetweenLine;
-
-                    SDL_Rect rect = {
-                        xPosition,
-                        yPosition,
-                        xSize,
-                        ySize
-                    };
-                    SDL_RenderFillRect(renderer, &rect);
-                } else {
-                    xPosition = currentRect.x;
-                    xSize = letterWidth * text[i].size();
-                    yPosition = currentRect.y + (i * spaceBetweenLine);
-                    ySize = spaceBetweenLine;
-
-                    SDL_Rect rect = {
-                        xPosition,
-                        yPosition,
-                        xSize,
-                        ySize
-                    };
-                    SDL_RenderFillRect(renderer, &rect);
-                }
-            }
-        }
-    }
-
-
-    Uint32 ticks = SDL_GetTicks();
-    if (ticks - cursor.LastTimeBlink > cursor.BLINK_INTERVAL) {
-        cursor.LastTimeBlink = ticks;
-        cursor.IsBlinking = !cursor.IsBlinking;
-    }
-    if (cursor.IsBlinking) {
-        int cursorPosX, cursorPosY;
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        cursorPosX = currentRect.x + (letterWidth * cursor.Position.Line);
-        cursorPosY = currentRect.y + (cursor.Position.Column * spaceBetweenLine);
-        SDL_RenderDrawLine(renderer, cursorPosX, cursorPosY, cursorPosX, cursorPosY + spaceBetweenLine);
-    }
-
+    handleCursorSelection(renderer, spaceBetweenLine, splittedText);
+    //And now blinking
+    handleCursorBlinking(renderer, spaceBetweenLine, splittedText);
 
     // Render each line of text
-    for (size_t i = 0; i < text.size(); ++i) {
-        const auto &lineRope = text[i];
-        std::string line(lineRope.c_str(), lineRope.size());
-        if (line.empty())
-            line = " "; // to render even empty lines correctly
+    handleRenderingText(renderer,spaceBetweenLine, splittedText);
 
-        SDL_Surface *surface = TTF_RenderUTF8_Blended_Wrapped(font->get(), line.c_str(), textColor, 0);
-        if (surface == nullptr) {
-            SDL_Log("Unable to create text surface: %s", SDL_GetError());
-            continue;
-        }
-
-        SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-        if (texture == nullptr) {
-            SDL_Log("Unable to create texture: %s", SDL_GetError());
-            SDL_FreeSurface(surface);
-            continue;
-        }
-        SDL_Rect textRect = {currentRect.x, currentRect.y + yOffset, surface->w, surface->h};
-        SDL_RenderCopy(renderer, texture, nullptr, &textRect);
-
-        SDL_DestroyTexture(texture);
-        SDL_FreeSurface(surface);
-
-        yOffset += spaceBetweenLine;
-    }
 }
+

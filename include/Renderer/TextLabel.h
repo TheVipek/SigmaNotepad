@@ -16,21 +16,20 @@
 #include "Font.h"
 
 
-class TextLabel : public SigmaRenderableObject, public IText {
+class TextLabel : public SigmaRenderableObject, public IText<std::string> {
 
 public:
-    TextLabel(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow, const std::string& text)
-        : SigmaRenderableObject(rect, targetWindow), text(text) {
+    TextLabel(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow)
+        : SigmaRenderableObject(rect, targetWindow) {
         initFont(DEFAULT_FONTP, DEFAULT_FONTS);
+        setText("");
     }
 
-    void setText(const std::string& text) override { this->text = text; }
+    void setText(const std::string text) override { this->text = text; }
     std::string getText() override { return text;}
 
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;
-protected:
-    std::string                 text;
 };
 
 #endif //TEXTLABEL_H

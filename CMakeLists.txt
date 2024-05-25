@@ -1,4 +1,4 @@
-set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+#set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 CMAKE_MINIMUM_REQUIRED(VERSION 3.2...3.28)
 
 project(SigmaNotepad
@@ -40,6 +40,7 @@ add_dependencies(${PROJECT_NAME} copy_resources)
 
 target_sources(${PROJECT_NAME}
     PUBLIC
+        include/StringHelpers.h
         include/Renderer/SigmaObject.h
         include/Renderer/SigmaRenderableObject.h
         include/Renderer/Button.h
@@ -65,7 +66,3 @@ target_sources(${PROJECT_NAME}
         src/Managers/WindowRenderingManager.cpp
         main.cpp
 )
-
-
-
-
