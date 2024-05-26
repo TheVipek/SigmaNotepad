@@ -36,7 +36,7 @@ public:
     virtual void setAnchor(Anchor anchor) { this->anchor = anchor; isAnchorDirty = true;}
     virtual void setOffset(const Offset& offset) { this->offset = offset;  }
     virtual void handlePosition(const int& screen_width, const int& screen_height);
-    virtual void handleEvent(const SDL_Event& e) = 0;
+    virtual void handleEvent(const SDL_Event& e);
 protected:
     SDL_Rect            currentRect;
     SDL_Rect            baseRect;

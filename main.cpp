@@ -27,7 +27,7 @@ int main(int argc, char* args[])
     mainWindow->SetTargetRenderer(renderer);
 
 //Creating GUI Elements
-    SDL_Rect topPanelSize = {0, 0, 25, 30};
+    SDL_Rect topPanelSize = {0, 0, 0, 25};
     auto topPanel = new Panel(topPanelSize, mainWindow);
     topPanel->setBackgroundColor({ 30, 30 ,30 ,255});
     topPanel->setAnchor(Anchor::FullWidthTop);
@@ -36,7 +36,8 @@ int main(int argc, char* args[])
     SDL_Rect btnSize = {0, 0, 75, 25};
     auto btn = new Button(btnSize, mainWindow, "File");
     btn->setAnchor(Anchor::TopLeft);
-
+    btn->TLabel->setHorizontalAligment(HorizontalAligment::Center);
+    btn->TLabel->setVerticalAligment(VerticalAligment::Center);
     SDL_Rect btnSize2 = {0, 0, 75, 25};
     auto btn2 = new Button(btnSize2, mainWindow, "Edit");
     btn2->setAnchor(Anchor::TopLeft);
@@ -47,10 +48,10 @@ int main(int argc, char* args[])
     btn3->setAnchor(Anchor::TopLeft);
     btn3->setOffset({200, 0,0,0});
 
-     SDL_Rect textEditSize = {0, 30, 0, -60};
+     SDL_Rect textEditSize = {0, 25, 0, 55};
      auto textEdit = new TextEdit(textEditSize, mainWindow);
      textEdit->setAnchor(Anchor::FullScreen);
-    textEdit->setOffset({0,30,0,30});
+    textEdit->setOffset({0,0,0,0});
 
 
 
