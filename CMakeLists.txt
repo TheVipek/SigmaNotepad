@@ -62,10 +62,12 @@ target_sources(${PROJECT_NAME}
 
         main.cpp
 
-#        tests/SigmaObjectFixture.h
-#        tests/SigmaObjectFixture.cpp
-#        tests/main.cpp
+        tests/SigmaObjectFixture.h
+        tests/SigmaObjectFixture.cpp
+        tests/TextEditFixture.h
+        tests/TextEditFixture.cpp
+        tests/main.cpp
 )
-#target_link_libraries(${PROJECT_NAME} PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
-#enable_testing()
-#add_test(TESTS SigmaObjectFixture COMMAND SigmaNotepad)
+target_link_libraries(${PROJECT_NAME} PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
+enable_testing()
+add_test(TESTS SigmaObjectFixture COMMAND SigmaNotepad)
