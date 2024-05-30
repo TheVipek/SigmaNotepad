@@ -5,6 +5,7 @@
 #ifndef SIGMAOBJECTFIXTURE_H
 #define SIGMAOBJECTFIXTURE_H
 
+
 #include "gtest/gtest.h"
 #include "Renderer/SigmaObject.h"
 

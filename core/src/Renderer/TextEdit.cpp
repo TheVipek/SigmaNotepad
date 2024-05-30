@@ -342,10 +342,10 @@ void TextEdit::handleEvent(const SDL_Event &e) {
 
         if (!withinX || !withinY) {
             printf("not active \n");
-            isActive = false;
+            setActive(false);
         } else {
             printf("active \n");
-            isActive = true;
+            setActive(true);
         }
     }
 

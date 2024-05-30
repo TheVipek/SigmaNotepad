@@ -35,15 +35,19 @@ public:
         : SigmaRenderableObject(rect, targetWindow){
         initFont(DEFAULT_FONTP, DEFAULT_FONTS);
         TTF_SizeUTF8(font->get(), " ",&letterWidth, &letterHeight);
-        setText(rope<char>(""));
     }
     void setText(const rope<char> text) override {
         this->text = text;
     }
     rope<char> getText() override {
-        return text;
+        return {text};
     }
-
+    void setActive(bool value) {
+        isActive = value;
+    }
+    bool getActive() {
+        return isActive;
+    }
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;
 protected:

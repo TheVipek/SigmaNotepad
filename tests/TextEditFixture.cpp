@@ -4,17 +4,54 @@
 
 #include "TextEditFixture.h"
 
+
 TEST_F(TextEditFixture, InsertTextTest) {
-
-}
-TEST_F(TextEditFixture, InsertMultipleTextTest) {
-
+    const char testText[] = "Hello World";
+    SDL_Event event;
+    event.type = SDL_TEXTINPUT;
+    strncpy(event.text.text, testText, sizeof(event.text.text) - 1);
+    event.text.text[sizeof(event.text.text) - 1] = '\0'; // Ensure null-termination
+    obj->setActive(true);
+    obj->handleEvent(event);
+    ASSERT_STREQ(obj->getText().c_str(), testText);
 }
 TEST_F(TextEditFixture, RemoveTextTest) {
+    obj->setActive(true);
+    const char testText[] = "Hello World";
+    for(char c : testText) {
+        SDL_Event event;
+        event.type = SDL_TEXTINPUT;
+        event.text.text[0] = c;
+        event.text.text[1] = '\0';
+        obj->handleEvent(event);
+    }
+    for(size_t i = 0; i < sizeof(testText); i++) {
+        SDL_Event event3;
+        event3.type = SDL_KEYDOWN;
+        event3.key.keysym.sym = SDLK_BACKSPACE;
+        obj->handleEvent(event3);
+    }
 
+    ASSERT_STREQ(obj->getText().c_str(), "");
 }
 TEST_F(TextEditFixture, RemoveTextWithHigherThanCountTest) {
+    obj->setActive(true);
+    const char testText[] = "Hello World";
+    for(char c : testText) {
+        SDL_Event event;
+        event.type = SDL_TEXTINPUT;
+        event.text.text[0] = c;
+        event.text.text[1] = '\0';
+        obj->handleEvent(event);
+    }
+    for(size_t i = 0; i < sizeof(testText) + 10; i++) { // to test if it wont throw any error
+        SDL_Event event3;
+        event3.type = SDL_KEYDOWN;
+        event3.key.keysym.sym = SDLK_BACKSPACE;
+        obj->handleEvent(event3);
+    }
 
+    ASSERT_STREQ(obj->getText().c_str(), "");
 }
 TEST_F(TextEditFixture, HandleLeftArrowOneLineTest) {
 
