@@ -20,11 +20,15 @@ struct Selection {
 };
 
 struct Cursor {
-    int Position;
+    int Position = 0;
     Selection Selection = {};
     Uint32 LastTimeBlink = 0;
     const int BLINK_INTERVAL = 500;
     bool IsBlinking = false;
+
+    Cursor() = default;
+    Cursor(int pos, struct Selection sel, Uint32 lastTimeBlink, int blinkInterval, bool isBlinking)
+        : Position(pos), Selection(sel), LastTimeBlink(lastTimeBlink), BLINK_INTERVAL(blinkInterval), IsBlinking(isBlinking) {}
 };
 
 
@@ -47,6 +51,9 @@ public:
     }
     bool getActive() {
         return isActive;
+    }
+    Cursor getCursor() {
+        return {this->cursor};
     }
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;

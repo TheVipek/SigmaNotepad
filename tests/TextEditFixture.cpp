@@ -18,14 +18,15 @@ TEST_F(TextEditFixture, InsertTextTest) {
 TEST_F(TextEditFixture, RemoveTextTest) {
     obj->setActive(true);
     const char testText[] = "Hello World";
-    for(char c : testText) {
+
+    for(int  i = 0; i < sizeof(testText) - 1 ; ++i) {
         SDL_Event event;
         event.type = SDL_TEXTINPUT;
-        event.text.text[0] = c;
+        event.text.text[0] = testText[i];
         event.text.text[1] = '\0';
         obj->handleEvent(event);
     }
-    for(size_t i = 0; i < sizeof(testText); i++) {
+    for(size_t i = 0; i < sizeof(testText) - 1; ++i) {
         SDL_Event event3;
         event3.type = SDL_KEYDOWN;
         event3.key.keysym.sym = SDLK_BACKSPACE;
@@ -37,10 +38,10 @@ TEST_F(TextEditFixture, RemoveTextTest) {
 TEST_F(TextEditFixture, RemoveTextWithHigherThanCountTest) {
     obj->setActive(true);
     const char testText[] = "Hello World";
-    for(char c : testText) {
+    for(int  i = 0; i < sizeof(testText) - 1 ; ++i) {
         SDL_Event event;
         event.type = SDL_TEXTINPUT;
-        event.text.text[0] = c;
+        event.text.text[0] = testText[i];
         event.text.text[1] = '\0';
         obj->handleEvent(event);
     }
@@ -54,36 +55,198 @@ TEST_F(TextEditFixture, RemoveTextWithHigherThanCountTest) {
     ASSERT_STREQ(obj->getText().c_str(), "");
 }
 TEST_F(TextEditFixture, HandleLeftArrowOneLineTest) {
+    obj->setActive(true);
 
+    const char testText[] = "Hello World";
+    for(int  i = 0; i < sizeof(testText) - 1 ; ++i) {
+        SDL_Event event;
+        event.type = SDL_TEXTINPUT;
+        event.text.text[0] = testText[i];
+        event.text.text[1] = '\0';
+        obj->handleEvent(event);
+    }
+
+    for(size_t i = 0; i < sizeof(testText); i++) {
+        SDL_Event event3;
+        event3.type = SDL_KEYDOWN;
+        event3.key.keysym.sym = SDLK_LEFT;
+        obj->handleEvent(event3);
+    }
+
+    ASSERT_EQ(obj->getCursor().Position, 0);
 }
 TEST_F(TextEditFixture, HandleLeftArrowWithSwitchToPreviousLineTest) {
+    obj->setActive(true);
 
-}
-TEST_F(TextEditFixture, HandleLeftArrowWhenBeginningOfDocumentTest) {
+    const char testText[] = "Hello World\nasdf";
+    for(int  i = 0; i < sizeof(testText) - 1 ; ++i) {
+        SDL_Event event;
+        event.type = SDL_TEXTINPUT;
+        event.text.text[0] = testText[i];
+        event.text.text[1] = '\0';
+        obj->handleEvent(event);
+    }
 
+    for(size_t i = 0; i < sizeof(testText); i++) {
+        SDL_Event event3;
+        event3.type = SDL_KEYDOWN;
+        event3.key.keysym.sym = SDLK_LEFT;
+        obj->handleEvent(event3);
+    }
+
+    ASSERT_EQ(obj->getCursor().Position, 0);
 }
 TEST_F(TextEditFixture, HandleRightArrowOneLineTest) {
+    obj->setActive(true);
+
+    const char testText[] = "Hello World";
+
+    for(int  i = 0; i < sizeof(testText) - 1 ; ++i) {
+        SDL_Event event;
+        event.type = SDL_TEXTINPUT;
+        event.text.text[0] = testText[i];
+        event.text.text[1] = '\0';
+        obj->handleEvent(event);
+    }
+    ASSERT_EQ(obj->getCursor().Position, sizeof(testText) - 1);
+    for(size_t i = 0; i < sizeof(testText) - 1; ++i) {
+        SDL_Event event3;
+        event3.type = SDL_KEYDOWN;
+        event3.key.keysym.sym = SDLK_LEFT;
+        obj->handleEvent(event3);
+    }
+    ASSERT_EQ(obj->getCursor().Position, 0);
+
+    for(size_t i = 0; i < sizeof(testText) - 1; ++i) {
+        SDL_Event event3;
+        event3.type = SDL_KEYDOWN;
+        event3.key.keysym.sym = SDLK_RIGHT;
+        obj->handleEvent(event3);
+    }
+    ASSERT_EQ(obj->getCursor().Position, sizeof(testText) - 1);
 
 }
 TEST_F(TextEditFixture, HandleRightArrowWithSwitchToNextLineTest) {
+    obj->setActive(true);
 
-}
-TEST_F(TextEditFixture, HandleLeftArrowWhenEndOfDocumentTest) {
+    const char testText[] = "Hello World\nasdf";
 
+    for(int  i = 0; i < sizeof(testText) - 1 ; ++i) {
+        printf("inserting: %c \n", testText[i]);
+        SDL_Event event;
+        event.type = SDL_TEXTINPUT;
+        event.text.text[0] = testText[i];
+        event.text.text[1] = '\0';
+        obj->handleEvent(event);
+    }
+    ASSERT_EQ(obj->getCursor().Position, sizeof(testText) - 1);
+    for(size_t i = 0; i < sizeof(testText) - 1; ++i) {
+        SDL_Event event3;
+        event3.type = SDL_KEYDOWN;
+        event3.key.keysym.sym = SDLK_LEFT;
+        obj->handleEvent(event3);
+    }
+    ASSERT_EQ(obj->getCursor().Position, 0);
+
+    for(size_t i = 0; i < sizeof(testText) - 1; ++i) {
+        SDL_Event event3;
+        event3.type = SDL_KEYDOWN;
+        event3.key.keysym.sym = SDLK_RIGHT;
+        obj->handleEvent(event3);
+    }
+    ASSERT_EQ(obj->getCursor().Position, sizeof(testText) - 1);
 }
 TEST_F(TextEditFixture, HandleUpArrow) {
+    obj->setActive(true);
 
+    const char testText[] = "Hello World\nasdf";
+
+    for(int  i = 0; i < sizeof(testText) - 1 ; ++i) {
+        printf("inserting: %c \n", testText[i]);
+        SDL_Event event;
+        event.type = SDL_TEXTINPUT;
+        event.text.text[0] = testText[i];
+        event.text.text[1] = '\0';
+        obj->handleEvent(event);
+    }
+    ASSERT_EQ(obj->getCursor().Position, sizeof(testText) - 1);
+    SDL_Event event3;
+    event3.type = SDL_KEYDOWN;
+    event3.key.keysym.sym = SDLK_UP;
+    obj->handleEvent(event3);
+
+    auto cursor = obj->getCursor();
+    ASSERT_EQ(cursor.Position, 4); // second line is asdf, so it should move to 4 position of first line
 }
-TEST_F(TextEditFixture, HandleUpArrowWhenFirstLine) {
+TEST_F(TextEditFixture, HandleUpArrowWhenOneLine) {
+    obj->setActive(true);
 
+    const char testText[] = "Hello World";
+
+    for(int  i = 0; i < sizeof(testText) - 1 ; ++i) {
+        printf("inserting: %c \n", testText[i]);
+        SDL_Event event;
+        event.type = SDL_TEXTINPUT;
+        event.text.text[0] = testText[i];
+        event.text.text[1] = '\0';
+        obj->handleEvent(event);
+    }
+    ASSERT_EQ(obj->getCursor().Position, sizeof(testText) - 1);
+    SDL_Event event3;
+    event3.type = SDL_KEYDOWN;
+    event3.key.keysym.sym = SDLK_UP;
+    obj->handleEvent(event3);
+
+    auto cursor = obj->getCursor();
+    ASSERT_EQ(cursor.Position,  0);
 }
 TEST_F(TextEditFixture, HandleUpArrowWhenPreviousLineIsShorter) {
+    obj->setActive(true);
 
+    const char testText[] = "asdfgh\nHello World";
+
+    for(int  i = 0; i < sizeof(testText) - 1 ; ++i) {
+        printf("inserting: %c \n", testText[i]);
+        SDL_Event event;
+        event.type = SDL_TEXTINPUT;
+        event.text.text[0] = testText[i];
+        event.text.text[1] = '\0';
+        obj->handleEvent(event);
+    }
+    ASSERT_EQ(obj->getCursor().Position, sizeof(testText) - 1);
+
+    SDL_Event event3;
+    event3.type = SDL_KEYDOWN;
+    event3.key.keysym.sym = SDLK_UP;
+    obj->handleEvent(event3);
+
+    auto cursor = obj->getCursor();
+    ASSERT_EQ(cursor.Position,  6); // previous line is shorter, so it should go to the last position
 }
 TEST_F(TextEditFixture, HandleDownArrow) {
+    obj->setActive(true);
 
+    const char testText[] = "asdfgh\nHello World";
+
+    for(int  i = 0; i < sizeof(testText) - 1 ; ++i) {
+        printf("inserting: %c \n", testText[i]);
+        SDL_Event event;
+        event.type = SDL_TEXTINPUT;
+        event.text.text[0] = testText[i];
+        event.text.text[1] = '\0';
+        obj->handleEvent(event);
+    }
+    ASSERT_EQ(obj->getCursor().Position, sizeof(testText) - 1);
+
+    SDL_Event event3;
+    event3.type = SDL_KEYDOWN;
+    event3.key.keysym.sym = SDLK_DOWN;
+    obj->handleEvent(event3);
+
+    auto cursor = obj->getCursor();
+    ASSERT_EQ(cursor.Position,  6); // previous line is shorter, so it should go to the last position
 }
-TEST_F(TextEditFixture, HandleDownArrowWhenLastLine) {
+TEST_F(TextEditFixture, HandleDownArrowWhenOneLine) {
 
 }
 TEST_F(TextEditFixture, HandleDownArrowWhenNextLineIsShorter) {

@@ -9,6 +9,8 @@
 void TextEdit::insertText(const char *val, const int &count) {
     text.insert(cursor.Position, val);
     cursor.Position += count;
+
+    printf("inserting text, currentIndex; %d \n", cursor.Position);
 }
 
 void TextEdit::removeText(const int &count) {
@@ -50,10 +52,12 @@ void TextEdit::handleNormalEvent(const SDL_Event &e) {
                 if(cursor.Position > 0) {
                     cursor.Position--;
                 }
+                printf("moving left, currentIndex; %d \n", cursor.Position);
             } else if (keycode == SDLK_RIGHT) {
                 if(cursor.Position < text.size()) {
                     cursor.Position++;
                 }
+                printf("moving right, currentIndex; %d \n", cursor.Position);
             } else if (keycode == SDLK_UP) {
                 if (cursor.Position == 0) {
                     std::cout << "First line of document" << std::endl;
