@@ -7,24 +7,24 @@
 #include "StringHelpers.h"
 
 void TextEdit::insertText(const char *val, const int &count) {
-    text.insert(cursor.Position, val);
-    cursor.Position += count;
-
-    printf("inserting text, currentIndex; %d \n", cursor.Position);
+    text.insert(cursor.getPos(), val);
+    cursor.updatePosition(cursor.getPos() + count);
+    printf("inserting text, currentIndex; %d \n", cursor.getPos());
 }
 
 void TextEdit::removeText(const int &count) {
-    if(cursor.Position > 0) {
-        cursor.Position -= count;
-        text.erase(cursor.Position, count);
+    if(cursor.getPos() > 0) {
+        cursor.updatePosition(cursor.getPos() - count);
+        text.erase(cursor.getPos(), count);
     }
 }
+
 void TextEdit::removeSelectionText(const int &startPos, const int &count) {
     std::cout << "startPos;" << startPos << "\n";
     std::cout << "deletion count;" << count << "\n";
     std::cout << "textCount; " << text.size() << "\n";
     if(startPos >= 0 && count <= text.size() - startPos) {
-        cursor.Position = startPos;
+        cursor.updatePosition(startPos);
         text.erase(startPos, count);
     }
 }
@@ -49,86 +49,95 @@ void TextEdit::handleNormalEvent(const SDL_Event &e) {
             } else if (keycode == SDLK_RETURN) {
                 insertText("\n", 1);
             } else if (keycode == SDLK_LEFT) {
-                if(cursor.Position > 0) {
-                    cursor.Position--;
+                if(cursor.getPos() > 0) {
+                    cursor.updatePosition(cursor.getPos() - 1);
                 }
-                printf("moving left, currentIndex; %d \n", cursor.Position);
+                //printf("moving left, currentIndex; %d \n", cursor.Position);
             } else if (keycode == SDLK_RIGHT) {
-                if(cursor.Position < text.size()) {
-                    cursor.Position++;
+                if(cursor.getPos() < text.size()) {
+                    cursor.updatePosition(cursor.getPos() + 1);
                 }
-                printf("moving right, currentIndex; %d \n", cursor.Position);
+                //printf("moving right, currentIndex; %d \n", cursor.Position);
             } else if (keycode == SDLK_UP) {
-                if (cursor.Position == 0) {
+                if (cursor.getPos() == 0) {
                     std::cout << "First line of document" << std::endl;
                     return;
                 }
 
-                size_t currentLineStart = findLineStart(cursor.Position, text.c_str(), '\n');
+                size_t currentLineStart = findLineStart(cursor.getPos(), text.c_str(), '\n');
                 if (currentLineStart == 0) {
-                    cursor.Position = 0;
+                    cursor.updatePosition(0);
                     std::cout << "First line of document" << std::endl;
                 } else {
                     size_t previousLineEnd = currentLineStart - 1;
                     size_t previousLineStart = findLineStart(previousLineEnd, text.c_str(), '\n');
-                    size_t distanceFromLineStart = cursor.Position - currentLineStart;
-                    cursor.Position = previousLineStart + std::min(distanceFromLineStart, previousLineEnd - previousLineStart);
+                    size_t distanceFromLineStart = cursor.getPos() - currentLineStart;
+                    cursor.updatePosition( previousLineStart + std::min(distanceFromLineStart, previousLineEnd - previousLineStart));
                 }
             }
             else if (keycode == SDLK_DOWN) {
-                size_t currentLineEnd  = findLineEnd(cursor.Position, text.c_str(), '\n');
-                if (currentLineEnd  == text.size()) {
+                if(cursor.getPos() == text.size()) {
                     std::cout << "End line of document" << std::endl;
                     return;
                 }
 
-                size_t nextLineStart = currentLineEnd + 1;
-                size_t nextLineEnd = findLineEnd(nextLineStart, text.c_str(), '\n');
-                size_t distanceFromLineStart = cursor.Position - findLineStart(cursor.Position, text.c_str(), '\n');
-                cursor.Position = nextLineStart + std::min(distanceFromLineStart, nextLineEnd - nextLineStart);
+                size_t currentLineEnd  = findLineEnd(cursor.getPos(), text.c_str(), '\n');
+                if (currentLineEnd  == text.size()) {
+                    cursor.updatePosition(text.size());
+                }
+                else {
+                    size_t nextLineStart = currentLineEnd + 1;
+                    size_t nextLineEnd = findLineEnd(nextLineStart, text.c_str(), '\n');
+                    size_t distanceFromLineStart = cursor.getPos() - findLineStart(cursor.getPos(), text.c_str(), '\n');
+
+                    cursor.updatePosition(nextLineStart + std::min(distanceFromLineStart, nextLineEnd - nextLineStart));
+                }
+
+
+
             }
         }
     }
 }
 
-bool TextEdit::handleCTRLEvent(const SDL_Event &e, bool isCtrlPressed) {
-    if (isCtrlPressed) {
+bool TextEdit::handleCTRLEvent(const SDL_Event &e) {
+    if (e.key.keysym.mod & KMOD_CTRL) {
         switch(e.type) {
             case SDL_KEYDOWN: {
                 switch (e.key.keysym.sym) {
                     case SDLK_LEFT: {
                         // Skip multiple characters to left
-                        if (cursor.Position == 0) {
+                        if (cursor.getPos() == 0) {
                             return false;
                         }
 
                         std::string beforeCursor(text.begin(),
-                                                 text.begin() + cursor.Position);
+                                                 text.begin() + cursor.getPos());
                         std::reverse(beforeCursor.begin(), beforeCursor.end());
                         std::regex pattern(R"((\s+|\W+|\w+))");
                         std::smatch match;
 
                         if (std::regex_search(beforeCursor, match, pattern)) {
-                            if (cursor.Selection.IsSelecting) {
+                            if (selection.IsSelecting) {
                                 //cursor.Selection.SelectionEnd = cursor.Position.Line;
                             }
-                            cursor.Position -= match.length();
+                            cursor.updatePosition(cursor.getPos() - match.length());
                             return true;
                         }
                         return false;
                     }
                     case SDLK_RIGHT: {
-                        if (cursor.Position == text.size()) {
+                        if (cursor.getPos() == text.size()) {
                             //printf("right false \n");
                             return false;
                         }
-                        std::string beforeCursor(text.begin() + cursor.Position,
+                        std::string beforeCursor(text.begin() + cursor.getPos(),
                                                  text.end());;
                         std::regex pattern(R"((\s+|\W+|\w+))");
                         std::smatch match;
 
                         if (std::regex_search(beforeCursor, match, pattern)) {
-                            cursor.Position += match.length();
+                            cursor.updatePosition(cursor.getPos() + match.length());
                             return true;
                         }
                         // Skip multiple characters to right
@@ -154,36 +163,41 @@ bool TextEdit::handleCTRLEvent(const SDL_Event &e, bool isCtrlPressed) {
     return false;
 }
 
-bool TextEdit::handleSHIFTEvent(const SDL_Event &e, bool isShiftPressed) {
-    if (isShiftPressed) {
-        if (cursor.Selection.IsSelecting == false) {
-
-            cursor.Selection.IsSelecting = true;
-            cursor.Selection.SelectionStart = cursor.Position;
-
-            cursor.Selection.SelectionEnd = cursor.Position;
-
-            printf("SelectionStart; %d \n", cursor.Selection.SelectionStart);
-        } else if (cursor.Selection.IsSelecting == true) {
-            cursor.Selection.SelectionEnd = cursor.Position;
-
-            printf("update SelectionEnd to; %d \n", cursor.Selection.SelectionEnd);
+bool TextEdit::handleSHIFTEvent(const SDL_Event &e) {
+    if (e.key.keysym.mod & KMOD_SHIFT) {
+        printf("passed kmod shift");
+        if (selection.IsSelecting == false) {
+            selection.IsSelecting = true;
+            selection.updateSelectionStart(cursor.getPos());
         }
-
         return handleSelection(e);
     }
     else {
         printf("shift not selected");
-        if (cursor.Selection.IsSelecting == true) {
-            cursor.Selection.IsSelecting = false;
+        if (selection.IsSelecting == true) {
+            selection.IsSelecting = false;
+
+            selection.updateSelectionStart(cursor.getPos());
+            selection.updateSelectionEnd(cursor.getPos());
         }
     }
 
     return false;
 }
 
+void TextEdit::onCursorUpdated(const Cursor& cursor) {
+    if(selection.IsSelecting == true) {
+        selection.updateSelectionEnd(cursor.getPos());
+    }
+    else {
+        selection.updateSelectionStart(cursor.getPos());
+        selection.updateSelectionEnd(cursor.getPos());
+    }
+}
+
+
 bool TextEdit::handleSelection(const SDL_Event& e) {
-    if(cursor.Selection.IsSelecting == true) {
+    if(selection.IsSelecting == true) {
         switch (e.type) {
             case SDL_TEXTINPUT: {
                 break;
@@ -191,8 +205,8 @@ bool TextEdit::handleSelection(const SDL_Event& e) {
             case SDL_KEYDOWN: {
                 int keycode = e.key.keysym.sym;
                 if (keycode == SDLK_BACKSPACE) {
-                    int selectionStart = cursor.Selection.SelectionStart >= cursor.Selection.SelectionEnd ?  cursor.Selection.SelectionEnd : cursor.Selection.SelectionStart;
-                    int selectionEnd = cursor.Selection.SelectionEnd >= cursor.Selection.SelectionStart ?  cursor.Selection.SelectionEnd : cursor.Selection.SelectionStart;
+                    int selectionStart = selection.SelectionStart >= selection.SelectionEnd ?  selection.SelectionEnd : selection.SelectionStart;
+                    int selectionEnd = selection.SelectionEnd >= selection.SelectionStart ?  selection.SelectionEnd : selection.SelectionStart;
                     std::cout << "selectionStart;" << selectionStart << "\n";
                     std::cout << "selectionEnd;" << selectionEnd << "\n";
                     removeSelectionText(selectionStart, selectionEnd - selectionStart);
@@ -211,11 +225,11 @@ bool TextEdit::handleSelection(const SDL_Event& e) {
     return false;
 }
 
-void TextEdit::handleCursorSelection(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines) {
- if (cursor.Selection.IsSelecting) {
+void TextEdit::handleSelection(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines) {
+ if (selection.IsSelecting) {
         SDL_SetRenderDrawColor(renderer, 52, 45, 113, 255);
-        size_t startPos = cursor.Selection.SelectionStart;
-        size_t endPos = cursor.Selection.SelectionEnd;
+        size_t startPos = selection.SelectionStart;
+        size_t endPos = selection.SelectionEnd;
         if (startPos > endPos) {
             std::swap(startPos, endPos);
         }
@@ -267,11 +281,7 @@ void TextEdit::handleCursorSelection(SDL_Renderer* renderer, const int spaceBetw
 }
 
 void TextEdit::handleCursorBlinking(SDL_Renderer *renderer, const int spaceBetweenLine, const std::vector<std::string> lines) {
-    Uint32 ticks = SDL_GetTicks();
-    if (ticks - cursor.LastTimeBlink > cursor.BLINK_INTERVAL) {
-        cursor.LastTimeBlink = ticks;
-        cursor.IsBlinking = !cursor.IsBlinking;
-    }
+    cursor.updateTicks(SDL_GetTicks());
 
     if (cursor.IsBlinking) {
         int cursorPosX, cursorPosY;
@@ -285,9 +295,9 @@ void TextEdit::handleCursorBlinking(SDL_Renderer *renderer, const int spaceBetwe
             size_t lineStart = currentPos;
             size_t lineEnd = lineStart + line.size();
 
-            if (cursor.Position >= lineStart && cursor.Position <= lineEnd) {
+            if (cursor.getPos() >= lineStart && cursor.getPos() <= lineEnd) {
 
-                cursorColumn = cursor.Position - lineStart;
+                cursorColumn = cursor.getPos() - lineStart;
                 break;
             }
 
@@ -356,11 +366,11 @@ void TextEdit::handleEvent(const SDL_Event &e) {
     //Writing
     if (isActive) {
 
-        if(handleCTRLEvent(e, SDL_GetModState() & KMOD_CTRL)) {
+        if(handleCTRLEvent(e)) {
             printf("HANDLING CTRL EVENTS SKIP \n");
             return;
         }
-        if(handleSHIFTEvent(e, SDL_GetModState() & KMOD_SHIFT)) {
+        if(handleSHIFTEvent(e)) {
             printf("HANDLING SHIFT EVENTS SKIP \n");
             return;
         }
@@ -392,7 +402,7 @@ void TextEdit::render(SDL_Renderer *renderer) {
 
     // Render cursor
     //It is being rendered first, so we can se blinking cursor on top of it
-    handleCursorSelection(renderer, spaceBetweenLine, splittedText);
+    handleSelection(renderer, spaceBetweenLine, splittedText);
     //And now blinking
     handleCursorBlinking(renderer, spaceBetweenLine, splittedText);
 

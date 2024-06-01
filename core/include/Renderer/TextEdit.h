@@ -17,18 +17,48 @@ struct Selection {
     int          SelectionStart;
     int          SelectionEnd;
     bool IsSelecting = false;
+
+    void updateSelectionStart(int pos) {
+        SelectionStart = pos;
+    }
+    void updateSelectionEnd(int pos) {
+        SelectionEnd = pos;
+    }
 };
 
 struct Cursor {
+private:
     int Position = 0;
-    Selection Selection = {};
+public:
     Uint32 LastTimeBlink = 0;
     const int BLINK_INTERVAL = 500;
     bool IsBlinking = false;
+    std::function<void(const Cursor&)> onUpdateCursorPosition;
 
     Cursor() = default;
-    Cursor(int pos, struct Selection sel, Uint32 lastTimeBlink, int blinkInterval, bool isBlinking)
-        : Position(pos), Selection(sel), LastTimeBlink(lastTimeBlink), BLINK_INTERVAL(blinkInterval), IsBlinking(isBlinking) {}
+    Cursor(int pos, Uint32 lastTimeBlink, int blinkInterval, bool isBlinking, const std::function<void(const Cursor&)>& updateFunc)
+        : Position(pos), LastTimeBlink(lastTimeBlink), BLINK_INTERVAL(blinkInterval), IsBlinking(isBlinking),onUpdateCursorPosition(updateFunc)  {}
+
+    int getPos() const {
+       return Position;
+    }
+    void updatePosition(const int newPos) {
+        Position = newPos;
+        if (onUpdateCursorPosition) {
+            onUpdateCursorPosition(*this);
+        }
+    }
+
+    void updateTicks(Uint32 currentTime) {
+        if (currentTime - LastTimeBlink >= BLINK_INTERVAL) {
+            IsBlinking = !IsBlinking;
+            LastTimeBlink = currentTime;
+        }
+    }
+
+
+
+
 };
 
 
@@ -52,23 +82,27 @@ public:
     bool getActive() {
         return isActive;
     }
-    Cursor getCursor() {
-        return {this->cursor};
+    Cursor getCursor() const {
+        return cursor;
+    }
+    Selection getSelection() const {
+        return selection;
     }
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;
 protected:
     bool                       isActive = false;
-    Cursor                     cursor = {};
+    Cursor                     cursor = Cursor( 0,0,500,false, std::bind(&TextEdit::onCursorUpdated, this, std::placeholders::_1));
+    Selection                  selection = {};
     int                        letterWidth;
     int                        letterHeight;
 
     virtual void handleNormalEvent(const SDL_Event& e);
-    virtual bool handleCTRLEvent(const SDL_Event& e, bool isCtrlPressed);
-    virtual bool handleSHIFTEvent(const SDL_Event& e, bool isShiftPressed);
+    virtual bool handleCTRLEvent(const SDL_Event& e);
+    virtual bool handleSHIFTEvent(const SDL_Event& e);
     virtual bool handleSelection(const SDL_Event& e);
-
-    virtual void handleCursorSelection(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);
+    virtual void onCursorUpdated(const Cursor& cursor);
+    virtual void handleSelection(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);
     virtual void handleCursorBlinking(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);
     virtual void handleRenderingText(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);
     virtual void insertText(const char* val, const int& count);
