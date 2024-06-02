@@ -619,9 +619,12 @@ TEST_F(TextEditFixture, HandleSHIFT_CTRLArrowLeft) {
     SDL_Event event;
 
     event.type = SDL_KEYDOWN;
+    event.key.keysym.mod = KMOD_SHIFT;
+    // event.key.keysym.sym;
+    obj->handleEvent(event);
+
     event.key.keysym.mod = KMOD_SHIFT | KMOD_CTRL;
     event.key.keysym.sym = SDLK_LEFT;
-
     obj->handleEvent(event);
     obj->handleEvent(event);
 
@@ -629,9 +632,45 @@ TEST_F(TextEditFixture, HandleSHIFT_CTRLArrowLeft) {
     auto selection = obj->getSelection();
     ASSERT_EQ(cursor.getPos(),  5);
     ASSERT_EQ(selection.IsSelecting, true);
-    ASSERT_EQ(selection.SelectionStart, (sizeof(testText - 1)));
+    ASSERT_EQ(selection.SelectionStart, (sizeof(testText) - 1));
     ASSERT_EQ(selection.SelectionEnd, 5);
 }
 TEST_F(TextEditFixture, HandleSHIFT_CTRLArrowRight) {
+    obj->setActive(true);
 
+    const char testText[] = "Hello World";
+
+    for(int  i = 0; i < sizeof(testText) - 1 ; ++i) {
+        printf("inserting: %c \n", testText[i]);
+        SDL_Event event;
+        event.type = SDL_TEXTINPUT;
+        event.key.keysym.mod = KMOD_NONE;
+        event.text.text[0] = testText[i];
+        event.text.text[1] = '\0';
+        obj->handleEvent(event);
+    }
+    ASSERT_EQ(obj->getCursor().getPos(), sizeof(testText) - 1);
+    
+    SDL_Event event;
+
+    event.type = SDL_KEYDOWN;
+    event.key.keysym.mod = KMOD_CTRL;
+    event.key.keysym.sym = SDLK_LEFT;
+    obj->handleEvent(event);
+
+    event.type = SDL_KEYDOWN;
+    event.key.keysym.mod = KMOD_SHIFT;
+    event.key.keysym.sym = SDLK_UNKNOWN;
+    obj->handleEvent(event);
+
+    event.key.keysym.mod = KMOD_SHIFT | KMOD_CTRL;
+    event.key.keysym.sym = SDLK_RIGHT;
+    obj->handleEvent(event);
+
+    auto cursor = obj->getCursor();
+    auto selection = obj->getSelection();
+    ASSERT_EQ(cursor.getPos(),  sizeof(testText) - 1);
+    ASSERT_EQ(selection.IsSelecting, true);
+    ASSERT_EQ(selection.SelectionStart, 6);
+    ASSERT_EQ(selection.SelectionEnd, sizeof(testText) - 1);
 }
