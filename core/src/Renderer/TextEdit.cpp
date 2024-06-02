@@ -197,11 +197,20 @@ void TextEdit::handleSHIFTEvent(const SDL_Event &e) {
             }
         }
         case SDL_KEYUP: {
-            if (!(e.key.keysym.mod & KMOD_SHIFT) && selection.IsSelecting == true) {
-                printf("NOT SELECTED \n");
-                selection.IsSelecting = false;
-                selection.updateSelectionStart(cursor.getPos());
-                selection.updateSelectionEnd(cursor.getPos());
+            if(!(e.key.keysym.mod & KMOD_SHIFT)) {
+                switch(e.key.keysym.sym) {
+                    case SDLK_LEFT:
+                    case SDLK_RIGHT:
+                    case SDLK_UP:
+                    case SDLK_DOWN: {
+                        if (selection.IsSelecting == true) {
+                            printf("NOT SELECTED \n");
+                            selection.IsSelecting = false;
+                            selection.updateSelectionStart(cursor.getPos());
+                            selection.updateSelectionEnd(cursor.getPos());
+                        }
+                    }
+                }
             }
         }
     }
