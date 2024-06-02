@@ -16,13 +16,20 @@ using namespace __gnu_cxx;
 struct Selection {
     int          SelectionStart;
     int          SelectionEnd;
-    bool IsSelecting = false;
+    bool         IsSelecting = false;
 
     void updateSelectionStart(int pos) {
         SelectionStart = pos;
     }
     void updateSelectionEnd(int pos) {
         SelectionEnd = pos;
+    }
+    std::pair<int,int> getOrderedSelection() const {
+        int selectionStart = SelectionStart >= SelectionEnd ?  SelectionEnd : SelectionStart;
+        int selectionEnd = SelectionEnd >= SelectionStart ?  SelectionEnd : SelectionStart;
+        std::cout << "selectionStart;" << selectionStart << "\n";
+        std::cout << "selectionEnd;" << selectionEnd << "\n";
+        return std::make_pair(selectionStart, selectionEnd);
     }
 };
 
@@ -99,8 +106,7 @@ protected:
 
     virtual void handleNormalEvent(const SDL_Event& e);
     virtual bool handleCTRLEvent(const SDL_Event& e);
-    virtual bool handleSHIFTEvent(const SDL_Event& e);
-    virtual bool handleSelection(const SDL_Event& e);
+    virtual void handleSHIFTEvent(const SDL_Event& e);
     virtual void onCursorUpdated(const Cursor& cursor);
     virtual void handleSelection(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);
     virtual void handleCursorBlinking(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);

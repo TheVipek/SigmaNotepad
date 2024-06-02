@@ -650,7 +650,7 @@ TEST_F(TextEditFixture, HandleSHIFT_CTRLArrowRight) {
         obj->handleEvent(event);
     }
     ASSERT_EQ(obj->getCursor().getPos(), sizeof(testText) - 1);
-    
+
     SDL_Event event;
 
     event.type = SDL_KEYDOWN;

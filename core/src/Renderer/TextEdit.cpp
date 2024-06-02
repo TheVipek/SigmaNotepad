@@ -33,6 +33,11 @@ void TextEdit::handleNormalEvent(const SDL_Event &e) {
 
     switch (e.type) {
         case SDL_TEXTINPUT: {
+            if(selection.IsSelecting) {
+                auto _orderedSelection = selection .getOrderedSelection();
+                selection.IsSelecting = false;
+                removeSelectionText(_orderedSelection.first, _orderedSelection.second - _orderedSelection.first);
+            }
             insertText(e.text.text, 1);
             break;
         }
@@ -42,11 +47,28 @@ void TextEdit::handleNormalEvent(const SDL_Event &e) {
             if (keycode == SDLK_BACKSPACE) {
                 //printf("BACKSPACE \n");
                 if (!text.empty()) {
-                    removeText(1);
+                    if(selection.IsSelecting) {
+                        auto _orderedSelection = selection .getOrderedSelection();
+                        selection.IsSelecting = false;
+                        removeSelectionText(_orderedSelection.first, _orderedSelection.second - _orderedSelection.first);
+                    }
+                    else {
+                        removeText(1);
+                    }
                 }
             } else if (keycode == SDLK_TAB) {
+                if(selection.IsSelecting) {
+                    auto _orderedSelection = selection .getOrderedSelection();
+                    selection.IsSelecting = false;
+                    removeSelectionText(_orderedSelection.first, _orderedSelection.second - _orderedSelection.first);
+                }
                 insertText("   ", 3);
             } else if (keycode == SDLK_RETURN) {
+                if(selection.IsSelecting) {
+                    auto _orderedSelection = selection .getOrderedSelection();
+                    selection.IsSelecting = false;
+                    removeSelectionText(_orderedSelection.first, _orderedSelection.second - _orderedSelection.first);
+                }
                 insertText("\n", 1);
             } else if (keycode == SDLK_LEFT) {
                 if(cursor.getPos() > 0) {
@@ -163,26 +185,26 @@ bool TextEdit::handleCTRLEvent(const SDL_Event &e) {
     return false;
 }
 
-bool TextEdit::handleSHIFTEvent(const SDL_Event &e) {
-    if (e.key.keysym.mod & KMOD_SHIFT) {
-        printf("passed kmod shift");
-        if (selection.IsSelecting == false) {
-            selection.IsSelecting = true;
-            selection.updateSelectionStart(cursor.getPos());
+void TextEdit::handleSHIFTEvent(const SDL_Event &e) {
+    switch(e.type) {
+        case SDL_KEYDOWN: {
+            if (e.key.keysym.mod & KMOD_SHIFT) {
+                if (selection.IsSelecting == false) {
+                    printf("SELECTED \n");
+                    selection.IsSelecting = true;
+                    selection.updateSelectionStart(cursor.getPos());
+                }
+            }
         }
-        return handleSelection(e);
-    }
-    else {
-        printf("shift not selected");
-        if (selection.IsSelecting == true) {
-            selection.IsSelecting = false;
-
-            selection.updateSelectionStart(cursor.getPos());
-            selection.updateSelectionEnd(cursor.getPos());
+        case SDL_KEYUP: {
+            if (!(e.key.keysym.mod & KMOD_SHIFT) && selection.IsSelecting == true) {
+                printf("NOT SELECTED \n");
+                selection.IsSelecting = false;
+                selection.updateSelectionStart(cursor.getPos());
+                selection.updateSelectionEnd(cursor.getPos());
+            }
         }
     }
-
-    return false;
 }
 
 void TextEdit::onCursorUpdated(const Cursor& cursor) {
@@ -195,35 +217,6 @@ void TextEdit::onCursorUpdated(const Cursor& cursor) {
     }
 }
 
-
-bool TextEdit::handleSelection(const SDL_Event& e) {
-    if(selection.IsSelecting == true) {
-        switch (e.type) {
-            case SDL_TEXTINPUT: {
-                break;
-            }
-            case SDL_KEYDOWN: {
-                int keycode = e.key.keysym.sym;
-                if (keycode == SDLK_BACKSPACE) {
-                    int selectionStart = selection.SelectionStart >= selection.SelectionEnd ?  selection.SelectionEnd : selection.SelectionStart;
-                    int selectionEnd = selection.SelectionEnd >= selection.SelectionStart ?  selection.SelectionEnd : selection.SelectionStart;
-                    std::cout << "selectionStart;" << selectionStart << "\n";
-                    std::cout << "selectionEnd;" << selectionEnd << "\n";
-                    removeSelectionText(selectionStart, selectionEnd - selectionStart);
-
-                    return true;
-                }
-                else if (keycode == SDLK_TAB) {
-
-                }
-                else if (keycode == SDLK_RETURN) {
-
-                }
-            }
-        }
-    }
-    return false;
-}
 
 void TextEdit::handleSelection(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines) {
  if (selection.IsSelecting) {
@@ -366,16 +359,16 @@ void TextEdit::handleEvent(const SDL_Event &e) {
     //Writing
     if (isActive) {
 
+        handleSHIFTEvent(e);
+
         if(handleCTRLEvent(e)) {
             printf("HANDLING CTRL EVENTS SKIP \n");
-            return;
         }
-        if(handleSHIFTEvent(e)) {
-            printf("HANDLING SHIFT EVENTS SKIP \n");
-            return;
+        else {
+            printf("HANDLING NORMAL EVENTS \n");
+            handleNormalEvent(e);
         }
-        printf("HANDLING NORMAL EVENTS \n");
-        handleNormalEvent(e);
+
 
         //printf("Line; %d \n", cursor.Position.Line);
     }
