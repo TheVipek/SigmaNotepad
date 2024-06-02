@@ -28,6 +28,43 @@ void TextEdit::removeSelectionText(const int &startPos, const int &count) {
         text.erase(startPos, count);
     }
 }
+std::string TextEdit::getSelectionText(const int &startPos, const int &count) {
+    std::cout << "startPos;" << startPos << "\n";
+    std::cout << "get count;" << count << "\n";
+    std::cout << "textCount; " << text.size() << "\n";
+    if(startPos >= 0 && count <= text.size() - startPos) {
+        return text.substr(startPos, count).c_str();
+    }
+    return "";
+
+}
+
+bool TextEdit::copyToClipboard() {
+    printf("INSIDE COPY CLIPBOARD \n");
+    auto _orderedSelection = selection.getOrderedSelection();
+    std::string selectedText = getSelectionText(_orderedSelection.first, _orderedSelection.second - _orderedSelection.first);
+
+    if(selectedText.length() == 0) {
+        return false;
+    }
+    printf("after length check \n");
+
+    if(SDL_SetClipboardText(selectedText.c_str()) != 0) {
+        printf("Unable to set clipboard text: %s", SDL_GetError());
+        return false;
+    }
+    return true;
+}
+bool TextEdit::pasteFromClipboard() {
+    std::string text = SDL_GetClipboardText();
+    if(text.length() == 0) {
+        return false;
+    }
+
+    insertText(text.c_str(), text.length());
+    return true;
+}
+
 
 void TextEdit::handleNormalEvent(const SDL_Event &e) {
 
@@ -165,20 +202,44 @@ bool TextEdit::handleCTRLEvent(const SDL_Event &e) {
                         // Skip multiple characters to right
                         return false;
                     }
-                //     case SDLK_x: {
-                //         std::cout << "Cut command\n";
-                //         return false;
-                //     }
-                //     case SDLK_c: {
-                //         std::cout << "Copy command\n";
-                //         return false;
-                //     }
-                //     case SDLK_v: {
-                //         std::cout << "Paste command\n";
-                //         return false;
-                //     }
+                    case SDLK_x: {
+                        if(selection.IsSelecting) {
+                            if(copyToClipboard() == true) {
+                                std::cout << "Cut command\n";
+                                selection.IsSelecting = false;
+                                auto _orderedSelection = selection .getOrderedSelection();
+                                removeSelectionText(_orderedSelection.first, _orderedSelection.second - _orderedSelection.first);
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    case SDLK_c: {
+                        if(selection.IsSelecting) {
+                            if(copyToClipboard() == true) {
+                                std::cout << "Copy command\n";
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    case SDLK_v: {
+                        if(selection.IsSelecting) {
+                            selection.IsSelecting = false;
+                            auto _orderedSelection = selection .getOrderedSelection();
+                            removeSelectionText(_orderedSelection.first, _orderedSelection.second - _orderedSelection.first);
+                        }
+                        if(pasteFromClipboard() == true) {
+                            std::cout << "Paste command\n";
+                            return true;
+                        }
+                        return false;
+                    }
                 }
-
+                default: {
+                    printf("No Ctrl Implementation");
+                    return false;
+                }
             }
         }
     }

@@ -114,6 +114,9 @@ protected:
     virtual void insertText(const char* val, const int& count);
     virtual void removeText(const int& count);
     virtual void removeSelectionText(const int& startPos, const int& count);
+    virtual std::string getSelectionText(const int& startPos, const int& count);
+    virtual bool copyToClipboard();
+    virtual bool pasteFromClipboard();
     int getSpaceBetweenLine() {
         if(font->get() != nullptr) {
             return TTF_FontLineSkip(font->get());
