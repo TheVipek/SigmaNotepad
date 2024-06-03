@@ -281,9 +281,11 @@ void TextEdit::handleSHIFTEvent(const SDL_Event &e) {
 
 void TextEdit::onCursorUpdated(const Cursor& cursor) {
     if(selection.IsSelecting == true) {
+        printf("updating end selection \n");
         selection.updateSelectionEnd(cursor.getPos());
     }
     else {
+        printf("updating start+end selection \n");
         selection.updateSelectionStart(cursor.getPos());
         selection.updateSelectionEnd(cursor.getPos());
     }
@@ -296,10 +298,7 @@ int TextEdit::convertMousePositionToCharacterPosition(const int x, const int y) 
 
     auto splitted = split(text.c_str(), "\n");
     int spaceBetweenLine = getSpaceBetweenLine();
-    printf("mouseY pos %d \n", y);
-    printf("space between line %d \n", spaceBetweenLine);
     int targetY = std::floor((y - baseRect.y) / spaceBetweenLine) ;
-    printf("targetY %d \n", targetY);
     if(targetY >= splitted.size()) {
         return text.size(); // last index
     }
@@ -320,21 +319,27 @@ int TextEdit::convertMousePositionToCharacterPosition(const int x, const int y) 
 bool TextEdit::handleMouse(const SDL_Event &e) {
     switch(e.type) {
         case SDL_MOUSEBUTTONDOWN: {
+            printf("MOUSE DOWN");
+            auto pos = convertMousePositionToCharacterPosition(e.button.x,e.button.y);
 
-            int x = e.button.x;
-            int y = e.button.y;
+            selection.IsSelecting = false;
+            cursor.updatePosition(pos);
+            selection.IsSelecting = true;
 
-            cursor.updatePosition(convertMousePositionToCharacterPosition(x,y));
-
-            break;
+            selection.IsMousePressed = true;
+            return true;
         }
         case SDL_MOUSEBUTTONUP: {
-
-            break;
+            selection.IsMousePressed = false;
+            return false;
         }
         case SDL_MOUSEMOTION: {
-
-            break;
+            if(selection.IsMousePressed == true) {
+                printf("MOTION CALLED \n");
+                auto pos = convertMousePositionToCharacterPosition(e.button.x,e.button.y);
+                cursor.updatePosition(pos);
+            }
+            return true;
         }
     }
     return false;
@@ -342,57 +347,60 @@ bool TextEdit::handleMouse(const SDL_Event &e) {
 
 
 void TextEdit::handleSelection(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines) {
- if (selection.IsSelecting) {
-        SDL_SetRenderDrawColor(renderer, 52, 45, 113, 255);
-        size_t startPos = selection.SelectionStart;
-        size_t endPos = selection.SelectionEnd;
-        if (startPos > endPos) {
-            std::swap(startPos, endPos);
+
+    size_t startPos = selection.SelectionStart;
+    size_t endPos = selection.SelectionEnd;
+    if(startPos == endPos)
+        return;
+
+    SDL_SetRenderDrawColor(renderer, 52, 45, 113, 255);
+
+    if (startPos > endPos) {
+        std::swap(startPos, endPos);
+    }
+
+    size_t currentPos = 0;
+    for (size_t i = 0; i < lines.size(); ++i) {
+        std::string line = lines[i];
+        size_t lineStart = currentPos;
+        size_t lineEnd = lineStart + line.size();
+
+        if (endPos <= lineStart) {
+            // Selection ends before the current line starts
+            break;
         }
 
-        size_t currentPos = 0;
-        for (size_t i = 0; i < lines.size(); ++i) {
-            std::string line = lines[i];
-            size_t lineStart = currentPos;
-            size_t lineEnd = lineStart + line.size();
-
-            if (endPos <= lineStart) {
-                // Selection ends before the current line starts
-                break;
-            }
-
-            if (startPos >= lineEnd) {
-                // Selection starts after the current line ends
-                currentPos += line.size() + 1; // +1 for the newline character
-                continue;
-            }
-
-            int xPosition = currentRect.x;
-            int yPosition = currentRect.y + (i * spaceBetweenLine);
-            int xSize;
-            int ySize = spaceBetweenLine;
-
-            if (startPos <= lineStart && endPos >= lineEnd) {
-                // Entire line is selected
-                xSize = letterWidth * line.size();
-            } else if (startPos > lineStart && endPos < lineEnd) {
-                // Selection is within this single line
-                xPosition += letterWidth * (startPos - lineStart);
-                xSize = letterWidth * (endPos - startPos);
-            } else if (startPos <= lineStart && endPos < lineEnd) {
-                // Selection starts before this line and ends within this line
-                xSize = letterWidth * (endPos - lineStart);
-            } else if (startPos > lineStart && endPos >= lineEnd) {
-                // Selection starts within this line and ends after this line
-                xPosition += letterWidth * (startPos - lineStart);
-                xSize = letterWidth * (lineEnd - startPos);
-            }
-
-            SDL_Rect rect = { xPosition, yPosition, xSize, ySize };
-            SDL_RenderFillRect(renderer, &rect);
-
+        if (startPos >= lineEnd) {
+            // Selection starts after the current line ends
             currentPos += line.size() + 1; // +1 for the newline character
+            continue;
         }
+
+        int xPosition = currentRect.x;
+        int yPosition = currentRect.y + (i * spaceBetweenLine);
+        int xSize;
+        int ySize = spaceBetweenLine;
+
+        if (startPos <= lineStart && endPos >= lineEnd) {
+            // Entire line is selected
+            xSize = letterWidth * line.size();
+        } else if (startPos > lineStart && endPos < lineEnd) {
+            // Selection is within this single line
+            xPosition += letterWidth * (startPos - lineStart);
+            xSize = letterWidth * (endPos - startPos);
+        } else if (startPos <= lineStart && endPos < lineEnd) {
+            // Selection starts before this line and ends within this line
+            xSize = letterWidth * (endPos - lineStart);
+        } else if (startPos > lineStart && endPos >= lineEnd) {
+            // Selection starts within this line and ends after this line
+            xPosition += letterWidth * (startPos - lineStart);
+            xSize = letterWidth * (lineEnd - startPos);
+        }
+
+        SDL_Rect rect = { xPosition, yPosition, xSize, ySize };
+        SDL_RenderFillRect(renderer, &rect);
+
+        currentPos += line.size() + 1; // +1 for the newline character
     }
 }
 
@@ -482,6 +490,11 @@ void TextEdit::handleEvent(const SDL_Event &e) {
     //Writing
     if (isActive) {
         handleMouse(e);
+
+        if(selection.IsMousePressed == true) {
+            return;
+        }
+
         handleSHIFTEvent(e);
 
         if(handleCTRLEvent(e)) {

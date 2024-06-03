@@ -17,6 +17,7 @@ struct Selection {
     int          SelectionStart;
     int          SelectionEnd;
     bool         IsSelecting = false;
+    bool         IsMousePressed = false;
 
     void updateSelectionStart(int pos) {
         SelectionStart = pos;
