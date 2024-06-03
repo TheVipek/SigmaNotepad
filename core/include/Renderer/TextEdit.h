@@ -107,6 +107,8 @@ protected:
     virtual void handleNormalEvent(const SDL_Event& e);
     virtual bool handleCTRLEvent(const SDL_Event& e);
     virtual void handleSHIFTEvent(const SDL_Event& e);
+    virtual bool handleMouse(const SDL_Event& e);
+    virtual int convertMousePositionToCharacterPosition(const int x, const int y);
     virtual void onCursorUpdated(const Cursor& cursor);
     virtual void handleSelection(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);
     virtual void handleCursorBlinking(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);

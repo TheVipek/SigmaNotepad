@@ -28,6 +28,7 @@ void TextEdit::removeSelectionText(const int &startPos, const int &count) {
         text.erase(startPos, count);
     }
 }
+
 std::string TextEdit::getSelectionText(const int &startPos, const int &count) {
     std::cout << "startPos;" << startPos << "\n";
     std::cout << "get count;" << count << "\n";
@@ -55,6 +56,7 @@ bool TextEdit::copyToClipboard() {
     }
     return true;
 }
+
 bool TextEdit::pasteFromClipboard() {
     std::string text = SDL_GetClipboardText();
     if(text.length() == 0) {
@@ -287,6 +289,57 @@ void TextEdit::onCursorUpdated(const Cursor& cursor) {
     }
 }
 
+int TextEdit::convertMousePositionToCharacterPosition(const int x, const int y) {
+    if(text.size() == 0) {
+        return 0;
+    }
+
+    auto splitted = split(text.c_str(), "\n");
+    int spaceBetweenLine = getSpaceBetweenLine();
+    printf("mouseY pos %d \n", y);
+    printf("space between line %d \n", spaceBetweenLine);
+    int targetY = std::floor((y - baseRect.y) / spaceBetweenLine) ;
+    printf("targetY %d \n", targetY);
+    if(targetY >= splitted.size()) {
+        return text.size(); // last index
+    }
+
+    int charIndex = 0;
+    for (int i = 0; i < targetY; ++i) {
+        charIndex += splitted[i].size() + 1; // +1 for the newline character
+    }
+
+    int targetX = x / letterWidth;
+
+    if(targetX >= splitted[targetY].size()) {
+        return charIndex + splitted[targetY].size();
+    }
+    return charIndex + targetX;
+}
+
+bool TextEdit::handleMouse(const SDL_Event &e) {
+    switch(e.type) {
+        case SDL_MOUSEBUTTONDOWN: {
+
+            int x = e.button.x;
+            int y = e.button.y;
+
+            cursor.updatePosition(convertMousePositionToCharacterPosition(x,y));
+
+            break;
+        }
+        case SDL_MOUSEBUTTONUP: {
+
+            break;
+        }
+        case SDL_MOUSEMOTION: {
+
+            break;
+        }
+    }
+    return false;
+}
+
 
 void TextEdit::handleSelection(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines) {
  if (selection.IsSelecting) {
@@ -428,7 +481,7 @@ void TextEdit::handleEvent(const SDL_Event &e) {
 
     //Writing
     if (isActive) {
-
+        handleMouse(e);
         handleSHIFTEvent(e);
 
         if(handleCTRLEvent(e)) {
