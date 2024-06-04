@@ -21,6 +21,8 @@ add_library(SigmaNotepadLib STATIC
         include/Renderer/ITextAligment.h
         include/Renderer/IText.h
         include/Renderer/IBackground.h
+        include/Renderer/ScrollLayout.h
+
         src/Renderer/SigmaObject.cpp
         src/Renderer/SigmaRenderableObject.cpp
         src/Renderer/Button.cpp
@@ -29,6 +31,7 @@ add_library(SigmaNotepadLib STATIC
         src/Renderer/Panel.cpp
         src/Renderer/TextEdit.cpp
         src/Managers/WindowRenderingManager.cpp
+        src/Renderer/ScrollLayout.cpp
 )
 
 target_include_directories(SigmaNotepadLib PUBLIC "src")

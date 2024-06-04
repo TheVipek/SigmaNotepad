@@ -18,7 +18,9 @@ public:
     ~SigmaRenderableObject() override;
 
     virtual void render(SDL_Renderer* renderer) = 0;
+    [[nodiscard]] SDL_Rect getContentSize() const { return contentSize; }
 protected:
     std::shared_ptr<IWindowRenderingManager> targetWindow;
+    SDL_Rect            contentSize = {};
 };
 #endif //SIGMARENDERABLEOBJECT_H

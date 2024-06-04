@@ -7,6 +7,7 @@
 #include "Managers/WindowRenderingManager.h"
 #include "Renderer/Button.h"
 #include "Renderer/Panel.h"
+#include "Renderer/ScrollLayout.h"
 #include "Renderer/TextEdit.h"
 
 std::shared_ptr<WindowRenderingManager> mainWindow;
@@ -48,11 +49,15 @@ int main(int argc, char* args[])
     btn3->setAnchor(Anchor::TopLeft);
     btn3->setOffset({200, 0,0,0});
 
-     SDL_Rect textEditSize = {0, 25, 0, 55};
-     auto textEdit = new TextEdit(textEditSize, mainWindow);
-     textEdit->setAnchor(Anchor::FullScreen);
+    SDL_Rect textEditSize = {0, 25, 0, 55};
+    auto textEdit = new TextEdit(textEditSize, mainWindow);
+    textEdit->setAnchor(Anchor::FullScreen);
     textEdit->setOffset({0,0,0,0});
 
+    SDL_Rect rect ={};
+    auto scrollLayout = new ScrollLayout(rect, mainWindow);
+
+    scrollLayout->assign(textEdit);
 
 
 

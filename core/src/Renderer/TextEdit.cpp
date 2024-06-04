@@ -345,7 +345,6 @@ bool TextEdit::handleMouse(const SDL_Event &e) {
     return false;
 }
 
-
 void TextEdit::handleSelection(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines) {
 
     size_t startPos = selection.SelectionStart;
@@ -455,6 +454,10 @@ void TextEdit::handleRenderingText(SDL_Renderer* renderer, const int spaceBetwee
             continue;
         }
         SDL_Rect textRect = {currentRect.x, currentRect.y + yOffset, surface->w, surface->h};
+
+        contentSize.w = surface->w;
+        contentSize.h = surface->h;
+
         SDL_RenderCopy(renderer, texture, nullptr, &textRect);
 
         SDL_DestroyTexture(texture);
