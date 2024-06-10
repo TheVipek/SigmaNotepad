@@ -55,7 +55,7 @@ int main(int argc, char* args[])
     textEdit->setOffset({0,0,0,0});
 
     SDL_Rect rect ={};
-    auto scrollLayout = new ScrollLayout(rect, mainWindow);
+    auto scrollLayout = new ScrollLayout(.2f, rect, mainWindow);
 
     scrollLayout->assign(textEdit);
 

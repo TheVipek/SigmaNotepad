@@ -36,8 +36,7 @@ public:
     void RemoveRenderableObject(SigmaRenderableObject* obj) override;
     void SetTargetWindow(SDL_Window* w);
     void SetTargetRenderer(SDL_Renderer* r);
-    SDL_Window* targetWindow;
-    SDL_Renderer* targetRenderer;
+
 protected:
     std::vector<SigmaRenderableObject*> renderableObjects;
 };
