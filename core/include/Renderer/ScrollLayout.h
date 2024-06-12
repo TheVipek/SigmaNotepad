@@ -39,7 +39,8 @@ protected:
     float                   barSize;
     float                   maxValue = 1;
     float                   minValue = 0;
-    float                   currentValue = 0;
+    float                   currentHorizontalValue = 0;
+    float                   currentVerticalValue = 0;
 
     float                     lastMousePosX, lastMousePosY;
 };

@@ -456,7 +456,7 @@ void TextEdit::handleRenderingText(SDL_Renderer* renderer, const int spaceBetwee
         SDL_Rect textRect = {currentRect.x, currentRect.y + yOffset, surface->w, surface->h};
 
         contentSize.w = surface->w;
-        contentSize.h = surface->h;
+        contentSize.h = surface->h * lines.size();
 
         SDL_RenderCopy(renderer, texture, nullptr, &textRect);
 
