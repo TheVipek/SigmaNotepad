@@ -24,7 +24,7 @@ void ScrollLayout::handleEvent(const SDL_Event &e) {
 
             if(withinX && withinY) {
                 dragVertically = true;
-                lastMousePosX = mousePosX;
+                lastMousePosY = mousePosY;
             }
         }
         if(horizontal) {
@@ -33,11 +33,12 @@ void ScrollLayout::handleEvent(const SDL_Event &e) {
 
             if(withinX && withinY) {
                 dragHorizontally = true;
-                lastMousePosX = mousePosY;
+                lastMousePosX = mousePosX;
             }
         }
     }
     else if(e.type == SDL_MOUSEBUTTONUP) {
+        printf("DRAGGING FALSE \n");
         dragHorizontally = false;
         dragVertically = false;
     }
@@ -66,11 +67,9 @@ void ScrollLayout::handleEvent(const SDL_Event &e) {
         if (dragHorizontally) {
             int deltaX = mouseX - lastMousePosX;
             lastMousePosX = mouseX;
-            std::cout << "deltaValue;" << deltaX << "\n";
-            currentValue += deltaX / (float)w;
+            currentValue += ((float)deltaX / w);
 
             currentValue = std::clamp(currentValue, minValue, maxValue);
-            std::cout << "currentValue;" << currentValue << "\n";
         }
     }
 

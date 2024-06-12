@@ -239,7 +239,7 @@ bool TextEdit::handleCTRLEvent(const SDL_Event &e) {
                     }
                 }
                 default: {
-                    printf("No Ctrl Implementation");
+                    //printf("No Ctrl Implementation");
                     return false;
                 }
             }
@@ -281,11 +281,11 @@ void TextEdit::handleSHIFTEvent(const SDL_Event &e) {
 
 void TextEdit::onCursorUpdated(const Cursor& cursor) {
     if(selection.IsSelecting == true) {
-        printf("updating end selection \n");
+        //printf("updating end selection \n");
         selection.updateSelectionEnd(cursor.getPos());
     }
     else {
-        printf("updating start+end selection \n");
+        //printf("updating start+end selection \n");
         selection.updateSelectionStart(cursor.getPos());
         selection.updateSelectionEnd(cursor.getPos());
     }
@@ -501,10 +501,10 @@ void TextEdit::handleEvent(const SDL_Event &e) {
         handleSHIFTEvent(e);
 
         if(handleCTRLEvent(e)) {
-            printf("HANDLING CTRL EVENTS SKIP \n");
+            //printf("HANDLING CTRL EVENTS SKIP \n");
         }
         else {
-            printf("HANDLING NORMAL EVENTS \n");
+            //printf("HANDLING NORMAL EVENTS \n");
             handleNormalEvent(e);
         }
 
