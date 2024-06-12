@@ -7,6 +7,9 @@
 void ScrollLayout::handleEvent(const SDL_Event &e) {
     if(assignedObject == nullptr)
         return;
+
+    assignedObject->handleEvent(e);
+
     if(!vertical && !horizontal)
         return;
 
@@ -81,13 +84,20 @@ void ScrollLayout::render(SDL_Renderer *renderer){
     if(assignedObject == nullptr)
         return;
 
-    auto contentSize = assignedObject->getContentSize();
     std::cout << "ContntSize;" << contentSize.w << ":" << contentSize.h << "\n";
     std::cout << "assignedObject;" << assignedObject->getWidth() << ":" << assignedObject->getHeight() << "\n";
-    if(horizontal == true && contentSize.w > assignedObject->getWidth()) {
-        //render horizontal
-        SDL_SetRenderDrawColor(renderer, 242,242,242,255);
 
+    auto contentSize = assignedObject->getContentSize();
+
+    SDL_Rect sourceRect = { currentHorizontalBarPos.x, currentVerticalBarPos.y, assignedObject->getWidth(), assignedObject->getHeight() };
+    std::cout << "sourceRect;" << "x;" << sourceRect.x << "y;" << sourceRect.y;
+    SDL_RenderSetClipRect(renderer, &sourceRect);
+    assignedObject->render(renderer);
+    SDL_RenderSetClipRect(renderer, nullptr);
+
+
+    if(horizontal == true && contentSize.w > assignedObject->getWidth()) {
+        SDL_SetRenderDrawColor(renderer, 242,242,242,255);
         int targetWidth = static_cast<int>(assignedObject->getWidth() * barSize);
         int targetY = assignedObject->getY() + assignedObject->getHeight() - DEFAULT_VERTICAL_BAR_WIDTH;
         int targetX = assignedObject->getX() + static_cast<int>((assignedObject->getWidth() - targetWidth) * currentHorizontalValue);
@@ -96,17 +106,18 @@ void ScrollLayout::render(SDL_Renderer *renderer){
     }
 
     if(vertical == true && contentSize.h > assignedObject->getHeight()) {
-        //render vertical
         SDL_SetRenderDrawColor(renderer, 242,242,242,255);
-
         int targetHeight = static_cast<int>(assignedObject->getHeight() * barSize);
         int targetX = assignedObject->getX() + (assignedObject->getWidth() - DEFAULT_HORIZONTAL_BAR_HEIGHT);
         int targetY = assignedObject->getY() + static_cast<int>((assignedObject->getHeight() - targetHeight) * currentVerticalValue);
         currentVerticalBarPos = { targetX, targetY, DEFAULT_HORIZONTAL_BAR_HEIGHT, targetHeight  };
         SDL_RenderFillRect(renderer, &currentVerticalBarPos);
     }
+
+
 }
 
 void ScrollLayout::assign(SigmaRenderableObject* targetObject) {
     assignedObject = targetObject;
+    targetWindow.get()->RemoveRenderableObject(assignedObject);
 }
