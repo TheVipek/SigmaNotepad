@@ -4,6 +4,8 @@
 
 #include "Renderer/ScrollLayout.h"
 
+#include <vector>
+
 void ScrollLayout::handleEvent(const SDL_Event &e) {
     if(assignedObject == nullptr)
         return;
@@ -87,13 +89,18 @@ void ScrollLayout::render(SDL_Renderer *renderer){
     std::cout << "ContntSize;" << contentSize.w << ":" << contentSize.h << "\n";
     std::cout << "assignedObject;" << assignedObject->getWidth() << ":" << assignedObject->getHeight() << "\n";
 
+    assignedObject->render(renderer);
+
     auto contentSize = assignedObject->getContentSize();
 
-    SDL_Rect sourceRect = { currentHorizontalBarPos.x, currentVerticalBarPos.y, assignedObject->getWidth(), assignedObject->getHeight() };
-    std::cout << "sourceRect;" << "x;" << sourceRect.x << "y;" << sourceRect.y;
-    SDL_RenderSetClipRect(renderer, &sourceRect);
-    assignedObject->render(renderer);
-    SDL_RenderSetClipRect(renderer, nullptr);
+    auto texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, assignedObject->getWidth(), assignedObject->getHeight());
+    SDL_SetRenderTarget(renderer,texture);
+    SDL_Rect source = { assignedObject->getX(), assignedObject->getY(), contentSize.w, contentSize.h  };
+    SDL_Rect dest = { static_cast<int>(currentHorizontalValue * (assignedObject->getX() + contentSize.w)), static_cast<int>(currentVerticalValue * (assignedObject->getY() + contentSize.h)), assignedObject->getWidth(),  assignedObject->getHeight() };
+    //SDL_SetRenderTarget(renderer,nullptr);
+    //SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer,texture,&source,&dest);
+    SDL_DestroyTexture(texture);
 
 
     if(horizontal == true && contentSize.w > assignedObject->getWidth()) {
