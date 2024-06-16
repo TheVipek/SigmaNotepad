@@ -7,10 +7,11 @@
 
 #include <bits/algorithmfwd.h>
 
+#include "IBackground.h"
 #include "SigmaRenderableObject.h"
 
 
-class ScrollLayout : SigmaRenderableObject {
+class ScrollLayout : SigmaRenderableObject, IBackground {
 public:
     ScrollLayout(float _barSize, SDL_Rect &rect, const std::shared_ptr<IWindowRenderingManager> &targetWindow)
         : SigmaRenderableObject(rect, targetWindow), barSize(std::clamp(_barSize, 0.0f, 1.0f)){
@@ -43,6 +44,9 @@ protected:
     float                   currentVerticalValue = 0;
 
     float                     lastMousePosX, lastMousePosY;
+
+    virtual void DrawBars(SDL_Renderer* renderer);
+    virtual void UpdateViewport(SDL_Renderer* renderer);
 };
 
 

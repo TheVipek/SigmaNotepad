@@ -454,9 +454,9 @@ void TextEdit::handleRenderingText(SDL_Renderer* renderer, const int spaceBetwee
             continue;
         }
         SDL_Rect textRect = {currentRect.x, currentRect.y + yOffset, surface->w, surface->h};
-
-        contentSize.w = surface->w;
-        contentSize.h = surface->h * lines.size();
+        if(surface->w > contentSize.w) {
+            contentSize.w = surface->w;
+        }
 
         SDL_RenderCopy(renderer, texture, nullptr, &textRect);
 
@@ -465,6 +465,7 @@ void TextEdit::handleRenderingText(SDL_Renderer* renderer, const int spaceBetwee
 
         yOffset += spaceBetweenLine;
     }
+    contentSize.h = spaceBetweenLine * lines.size();
 }
 
 void TextEdit::handleEvent(const SDL_Event &e) {
@@ -521,7 +522,16 @@ void TextEdit::render(SDL_Renderer *renderer) {
 
     // Background rendering
     SDL_SetRenderDrawColor(renderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
-    SDL_RenderFillRect(renderer, &currentRect);
+    SDL_Rect rect = currentRect;
+
+    if(contentSize.w > currentRect.w) {
+        rect.w = contentSize.w;
+    }
+    if(contentSize.h > currentRect.h) {
+        rect.h = contentSize.h;
+    }
+
+    SDL_RenderFillRect(renderer, &rect);
 
     // Font rendering
     if (font->get() == nullptr || text.empty())
