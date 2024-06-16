@@ -20,7 +20,7 @@ void TextLabel::render(SDL_Renderer* renderer) {
 
     SigmaRenderableObject::render(renderer);
 
-    if(font->get() == nullptr)
+    if(font->get() == nullptr || text.empty())
         return;
     SDL_Surface* surface = TTF_RenderText_Blended_Wrapped(font->get(), text.c_str(), textColor, 0);
     if (surface == nullptr) {
@@ -35,7 +35,7 @@ void TextLabel::render(SDL_Renderer* renderer) {
         return;
     }
 
-    SDL_Rect dest = { currentRect.x + (surface->w/2) + 20 , currentRect.y, surface->w, surface->h };
+    SDL_Rect dest = { currentRect.x, currentRect.y, surface->w, surface->h };
     SDL_RenderCopy(renderer, texture, NULL, &dest);
 
     SDL_DestroyTexture(texture);

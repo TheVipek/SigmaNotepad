@@ -11,6 +11,15 @@
 #include "Renderer/TextEdit.h"
 
 std::shared_ptr<WindowRenderingManager> mainWindow;
+Panel* topPanel;
+Button* fileButton;
+Button* editButton;
+Button* showButton;
+TextEdit* textEditField;
+ScrollLayout* scrollLayout;
+Panel* bottomPanel;
+TextLabel* bottomCounter;
+
 int main(int argc, char* args[])
 {
 //Initialization
@@ -29,43 +38,53 @@ int main(int argc, char* args[])
 
 //Creating GUI Elements
     SDL_Rect topPanelSize = {0, 0, 0, 25};
-    auto topPanel = new Panel(topPanelSize, mainWindow);
+    topPanel = new Panel(topPanelSize, mainWindow);
     topPanel->setBackgroundColor({ 30, 30 ,30 ,255});
     topPanel->setAnchor(Anchor::FullWidthTop);
 
 
     SDL_Rect btnSize = {0, 0, 75, 25};
-    auto btn = new Button(btnSize, mainWindow, "File");
-    btn->setAnchor(Anchor::TopLeft);
-    btn->TLabel->setHorizontalAligment(HorizontalAligment::Center);
-    btn->TLabel->setVerticalAligment(VerticalAligment::Center);
+    fileButton = new Button(btnSize, mainWindow, "File");
+    fileButton->setAnchor(Anchor::TopLeft);
+    fileButton->TLabel->setHorizontalAligment(HorizontalAligment::Center);
+    fileButton->TLabel->setVerticalAligment(VerticalAligment::Center);
     SDL_Rect btnSize2 = {0, 0, 75, 25};
-    auto btn2 = new Button(btnSize2, mainWindow, "Edit");
-    btn2->setAnchor(Anchor::TopLeft);
-    btn2->setOffset({100, 0,0,0});
+    editButton = new Button(btnSize2, mainWindow, "Edit");
+    editButton->setAnchor(Anchor::TopLeft);
+    editButton->setOffset({100, 0,0,0});
 
     SDL_Rect btnSize3 = {0, 0, 75, 25};
-    auto btn3 = new Button(btnSize3, mainWindow, "Show");
-    btn3->setAnchor(Anchor::TopLeft);
-    btn3->setOffset({200, 0,0,0});
+    showButton = new Button(btnSize3, mainWindow, "Show");
+    showButton->setAnchor(Anchor::TopLeft);
+    showButton->setOffset({200, 0,0,0});
 
     SDL_Rect textEditSize = {0, 25, 0, 55};
-    auto textEdit = new TextEdit(textEditSize, mainWindow);
-    textEdit->setAnchor(Anchor::FullScreen);
-    textEdit->setOffset({0,0,0,0});
+    textEditField = new TextEdit(textEditSize, mainWindow);
+    textEditField->setAnchor(Anchor::FullScreen);
+    textEditField->setOffset({0,0,0,0});
 
-    textEdit->setSize(64);
-    textEdit->setFontStyle(1 | 2 | 3 | 4 | 5);
+    textEditField->setSize(64);
+    textEditField->setFontStyle(1 | 2 | 3 | 4 | 5);
 
     SDL_Rect rect ={};
-    auto scrollLayout = new ScrollLayout(.2f, rect, mainWindow);
+    scrollLayout = new ScrollLayout(.2f, rect, mainWindow);
 
-    scrollLayout->assign(textEdit);
+    scrollLayout->assign(textEditField);
 
     SDL_Rect bottomPanelSize = {0, 0, 25, 30};
-    auto bottomPanel = new Panel(bottomPanelSize, mainWindow);
+    bottomPanel = new Panel(bottomPanelSize, mainWindow);
     bottomPanel->setBackgroundColor({ 30, 30 ,30 ,255});
     bottomPanel->setAnchor(Anchor::FullWidthBottom);
+
+    SDL_Rect bottomCounterPanel = {0, 0, 0, 30};
+    bottomCounter = new TextLabel(bottomCounterPanel, mainWindow);
+    bottomCounter->setOffset({0,0,0,0});
+    bottomCounter->setText("Current Text Length: 0");
+    bottomCounter->setAnchor(Anchor::FullWidthBottom);
+
+    textEditField->registerToOnTextLengthChanged([](int length) {
+       bottomCounter->setText("Current Text Length: " + std::to_string(length));
+    });
 
     while(true) {
         SDL_Event event;
@@ -77,7 +96,7 @@ int main(int argc, char* args[])
             mainWindow->HandleEvent(event);
         }
         mainWindow->RenderFrame();
-        SDL_Delay(16);
+        SDL_Delay(4);
     }
 
     SDL_Quit();

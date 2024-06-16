@@ -78,6 +78,9 @@ public:
         initFont(DEFAULT_FONTP, DEFAULT_FONTS);
         TTF_SizeUTF8(font->get(), " ",&letterWidth, &letterHeight);
     }
+    ~TextEdit() {
+        onTextLengthChangedCallbacks.clear();
+    }
     void setText(const rope<char> text) override {
         this->text = text;
     }
@@ -110,13 +113,14 @@ public:
     }
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;
+    void registerToOnTextLengthChanged(std::function<void(int)> callback);
 protected:
     bool                       isActive = false;
     Cursor                     cursor = Cursor( 0,0,500,false, std::bind(&TextEdit::onCursorUpdated, this, std::placeholders::_1));
     Selection                  selection = {};
     int                        letterWidth;
     int                        letterHeight;
-
+    std::vector<std::function<void(int length)>> onTextLengthChangedCallbacks;
     virtual void handleNormalEvent(const SDL_Event& e);
     virtual bool handleCTRLEvent(const SDL_Event& e);
     virtual void handleSHIFTEvent(const SDL_Event& e);
@@ -126,6 +130,8 @@ protected:
     virtual void handleSelection(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);
     virtual void handleCursorBlinking(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);
     virtual void handleRenderingText(SDL_Renderer* renderer, const int spaceBetweenLine, const std::vector<std::string> lines);
+
+    virtual void notifyOnTextLengthChanged(int length);
     virtual void insertText(const char* val, const int& count);
     virtual void removeText(const int& count);
     virtual void removeSelectionText(const int& startPos, const int& count);
@@ -138,6 +144,7 @@ protected:
         }
         return -1;
     }
+
 };
 
 #endif //TEXTEDIT_H

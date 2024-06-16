@@ -6,16 +6,30 @@
 #include "regex"
 #include "StringHelpers.h"
 
+void TextEdit::registerToOnTextLengthChanged(std::function<void(int)> callback) {
+    onTextLengthChangedCallbacks.push_back(callback);
+}
+
+void TextEdit::notifyOnTextLengthChanged(int length) {
+    for(auto& callback : onTextLengthChangedCallbacks) {
+        callback(length);
+    }
+}
+
+
 void TextEdit::insertText(const char *val, const int &count) {
     text.insert(cursor.getPos(), val);
     cursor.updatePosition(cursor.getPos() + count);
     printf("inserting text, currentIndex; %d \n", cursor.getPos());
+
+    notifyOnTextLengthChanged(text.length());
 }
 
 void TextEdit::removeText(const int &count) {
     if(cursor.getPos() > 0) {
         cursor.updatePosition(cursor.getPos() - count);
         text.erase(cursor.getPos(), count);
+        notifyOnTextLengthChanged(text.length());
     }
 }
 
