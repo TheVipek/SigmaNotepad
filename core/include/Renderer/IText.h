@@ -8,6 +8,8 @@
 #include <string>
 #include "Font.h"
 
+
+
 template<typename T>
 class IText : public ITextAligment {
 public:
@@ -45,6 +47,10 @@ public:
         return currentFontPath;
     }
 
+    //https://wiki.libsdl.org/SDL2_ttf/TTF_SetFontStyle
+    virtual void setFontStyle(int style) {
+        TTF_SetFontStyle(font->get(), style);
+    }
 protected:
     //i wont define there data structure for text, beacuse i may want to have different in specific scenarios
     SDL_Color                           textColor = { 242, 242, 242, 255 };

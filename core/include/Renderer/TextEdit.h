@@ -92,6 +92,10 @@ public:
         IText::setFont(path);
         TTF_SizeUTF8(font->get(), " ",&letterWidth, &letterHeight);
     }
+    void setFontStyle(int style) override {
+        IText::setFontStyle(style);
+        TTF_SizeUTF8(font->get(), " ",&letterWidth, &letterHeight);
+    }
     void setActive(bool value) {
         isActive = value;
     }

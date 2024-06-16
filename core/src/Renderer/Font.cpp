@@ -26,4 +26,5 @@ void Font::close() {
 void Font::change(const std::string& fontPath, const int fontSize) {
     close();
     open(fontPath, fontSize);
+
 }

@@ -55,6 +55,7 @@ int main(int argc, char* args[])
     textEdit->setOffset({0,0,0,0});
 
     textEdit->setSize(64);
+    textEdit->setFontStyle(1 | 2 | 3 | 4 | 5);
 
     SDL_Rect rect ={};
     auto scrollLayout = new ScrollLayout(.2f, rect, mainWindow);

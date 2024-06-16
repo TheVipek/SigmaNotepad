@@ -23,6 +23,7 @@ public:
 
 private:
     TTF_Font* mFont;
+
 };
 
 #endif //FONT_H
