@@ -54,18 +54,12 @@ int main(int argc, char* args[])
     textEdit->setAnchor(Anchor::FullScreen);
     textEdit->setOffset({0,0,0,0});
 
+    textEdit->setSize(64);
+
     SDL_Rect rect ={};
     auto scrollLayout = new ScrollLayout(.2f, rect, mainWindow);
 
     scrollLayout->assign(textEdit);
-
-
-
-
-
-
-
-
 
     SDL_Rect bottomPanelSize = {0, 0, 25, 30};
     auto bottomPanel = new Panel(bottomPanelSize, mainWindow);

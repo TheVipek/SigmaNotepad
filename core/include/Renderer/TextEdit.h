@@ -84,6 +84,14 @@ public:
     rope<char> getText() override {
         return {text};
     }
+    void setSize(const int& size) override {
+        IText::setSize(size);
+        TTF_SizeUTF8(font->get(), " ",&letterWidth, &letterHeight);
+    }
+    void setFont(const std::string& path) override {
+        IText::setFont(path);
+        TTF_SizeUTF8(font->get(), " ",&letterWidth, &letterHeight);
+    }
     void setActive(bool value) {
         isActive = value;
     }

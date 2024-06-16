@@ -13,15 +13,37 @@ class IText : public ITextAligment {
 public:
     virtual ~IText() = default;
     virtual void initFont(const std::string& fPath, const int fSize) {
+        currentSize = fSize;
+        currentFontPath = fPath;
         if(font != nullptr) {
             //Ignore, font has been initialized already
         }
         else {
-            font = std::make_unique<Font>(fPath, fSize);
+            font = std::make_unique<Font>(currentFontPath, currentSize);
         }
     }
     virtual void setText(const T text) = 0;
     virtual T getText() = 0;
+    virtual void setSize(const int& size) {
+        currentSize = size;
+        if(font != nullptr) {
+            font->change(currentFontPath, currentSize);
+        }
+    }
+    virtual int getSize() {
+        return currentSize;
+    }
+    virtual void setFont(const std::string& path) {
+        currentFontPath = path;
+
+        if(font != nullptr) {
+            font->change(currentFontPath, currentSize);
+        }
+
+    }
+    virtual std::string getFont(){
+        return currentFontPath;
+    }
 
 protected:
     //i wont define there data structure for text, beacuse i may want to have different in specific scenarios
@@ -30,6 +52,8 @@ protected:
     const std::string                   DEFAULT_FONTP = std::string(ASSET_DIR) + "/defaultFonts/Consolas-Regular.ttf";
     const int                           DEFAULT_FONTS = 20;
     T                                   text = T();
+    int                                 currentSize;
+    std::string                         currentFontPath;
 };
 
 #endif //ITEXT_H
