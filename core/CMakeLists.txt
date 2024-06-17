@@ -22,6 +22,7 @@ add_library(SigmaNotepadLib STATIC
         include/Renderer/IText.h
         include/Renderer/IBackground.h
         include/Renderer/ScrollLayout.h
+        include/Window.h
 
         src/Renderer/SigmaObject.cpp
         src/Renderer/SigmaRenderableObject.cpp
