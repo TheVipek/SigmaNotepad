@@ -9,18 +9,19 @@
 #include <memory>
 #include <SDL_render.h>
 
+#include "IRenderHandler.h"
 #include "SigmaObject.h"
-#include "Managers/IWindowRenderingManager.h"
+#include "../Window/Window.h"
 
-class SigmaRenderableObject : public SigmaObject {
+class SigmaRenderableObject : public SigmaObject, public IRenderHandler {
 public:
-    SigmaRenderableObject(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow);
+    SigmaRenderableObject(SDL_Rect& rect, Window* _owner);
     ~SigmaRenderableObject() override;
 
-    virtual void render(SDL_Renderer* renderer) = 0;
+    void render(SDL_Renderer* renderer) override;
     [[nodiscard]] SDL_Rect getContentSize() const { return contentSize; }
 protected:
-    std::shared_ptr<IWindowRenderingManager> targetWindow;
     SDL_Rect            contentSize = {};
+    Window* owner;
 };
 #endif //SIGMARENDERABLEOBJECT_H

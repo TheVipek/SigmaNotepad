@@ -4,17 +4,22 @@
 
 #ifndef IWINDOWRENDERINGMANAGER_H
 #define IWINDOWRENDERINGMANAGER_H
+#include <vector>
 
+#include "IRenderFrame.h"
+#include "Window/Window.h"
 
-class SigmaRenderableObject;
-
-class IWindowRenderingManager {
+class IWindowRenderingManager : public IEventHandler, public IRenderFrame {
 public:
-    virtual void AddRenderableObject(SigmaRenderableObject* obj) = 0;
-    virtual void RemoveRenderableObject(SigmaRenderableObject* obj) = 0;
-    virtual ~IWindowRenderingManager() {}
-    SDL_Window* targetWindow;
-    SDL_Renderer* targetRenderer;
+    IWindowRenderingManager() = default;
+    virtual ~IWindowRenderingManager() = default;
+    virtual void renderFrame() = 0;
+    virtual void addWindow(std::shared_ptr<Window> obj) = 0;
+    virtual void handleEvent(const SDL_Event &e) = 0;
+
+protected:
+    std::vector<std::shared_ptr<Window>> targetWindows;
 };
+
 
 #endif //IWINDOWRENDERINGMANAGER_H

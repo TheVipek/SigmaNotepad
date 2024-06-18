@@ -10,7 +10,7 @@
 
 class Panel : public SigmaRenderableObject, public IBackground {
 public:
-    Panel(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow) : SigmaRenderableObject(rect, targetWindow) {}
+    Panel(SDL_Rect& rect, Window* owner) : SigmaRenderableObject(rect, owner) {}
 
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;

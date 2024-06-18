@@ -11,10 +11,10 @@
 #include "SigmaRenderableObject.h"
 
 
-class ScrollLayout : SigmaRenderableObject, IBackground {
+class ScrollLayout : public SigmaRenderableObject, IBackground {
 public:
-    ScrollLayout(float _barSize, SDL_Rect &rect, const std::shared_ptr<IWindowRenderingManager> &targetWindow)
-        : SigmaRenderableObject(rect, targetWindow), barSize(std::clamp(_barSize, 0.0f, 1.0f)){
+    ScrollLayout(float _barSize, SDL_Rect &rect, Window* owner)
+        : SigmaRenderableObject(rect, owner), barSize(std::clamp(_barSize, 0.0f, 1.0f)){
 
     }
 

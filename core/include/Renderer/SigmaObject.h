@@ -7,6 +7,8 @@
 
 #include <SDL_events.h>
 #include <SDL_rect.h>
+
+#include "../IEventHandler.h"
 #include "Offset.h"
 
 enum class Anchor {
@@ -18,7 +20,7 @@ enum class Anchor {
     None
 };
 
-class SigmaObject {
+class SigmaObject : public IEventHandler {
 public:
     SigmaObject(const SDL_Rect& rect)
         : baseRect(rect), currentRect(rect),offset(defaultOffset) {};
@@ -36,7 +38,7 @@ public:
     virtual void setAnchor(Anchor anchor) { this->anchor = anchor; isAnchorDirty = true;}
     virtual void setOffset(const Offset& offset) { this->offset = offset;  }
     virtual void handlePosition(const int& screen_width, const int& screen_height);
-    virtual void handleEvent(const SDL_Event& e);
+    void handleEvent(const SDL_Event& e) override;
 protected:
     SDL_Rect            currentRect;
     SDL_Rect            baseRect;

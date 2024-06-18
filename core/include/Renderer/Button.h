@@ -17,10 +17,10 @@
 
 class Button : public SigmaRenderableObject  {
 public:
-    Button(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow, const std::string& text)
-        : SigmaRenderableObject(rect, targetWindow) {
+    Button(SDL_Rect& rect, Window* _owner, const std::string& text)
+        : SigmaRenderableObject(rect, _owner) {
 
-        TLabel = std::make_unique<TextLabel>(this->baseRect, targetWindow);
+        TLabel = std::make_unique<TextLabel>(this->baseRect, owner);
         TLabel->setText(text);
     }
 

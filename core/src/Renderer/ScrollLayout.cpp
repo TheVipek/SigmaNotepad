@@ -73,7 +73,7 @@ void ScrollLayout::handleEvent(const SDL_Event &e) {
 
        int w;
        int h;
-       SDL_GetWindowSize(targetWindow->targetWindow, &w, &h);
+       SDL_GetWindowSize(owner->getWindow(), &w, &h);
 
         if (dragVertically) {
             int deltaY = mouseY - lastMousePosY;
@@ -143,7 +143,8 @@ void ScrollLayout::render(SDL_Renderer *renderer){
 
 void ScrollLayout::assign(SigmaRenderableObject* targetObject) {
     assignedObject = targetObject;
-    targetWindow.get()->RemoveRenderableObject(assignedObject);
+    owner->removeRenderableObject(assignedObject);
+    owner->removeEventObject(assignedObject);
 
 }
 

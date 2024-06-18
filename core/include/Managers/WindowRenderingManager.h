@@ -6,39 +6,19 @@
 #define WINDOWRENDERINGMANAGER_H
 
 #include <SDL.h>
-#include <queue>
 
 #include "IWindowRenderingManager.h"
 #include "Renderer/SigmaRenderableObject.h"
 
-
-class WindowRenderingManager : public IWindowRenderingManager{
+class WindowRenderingManager : public IWindowRenderingManager {
 public:
     WindowRenderingManager() = default;
     ~WindowRenderingManager() override {
-        if(targetRenderer != nullptr) {
-            SDL_DestroyRenderer(targetRenderer);
-            targetRenderer = nullptr;
-        }
-        if(targetWindow != nullptr) {
-            SDL_DestroyWindow(targetWindow);
-            targetWindow = nullptr;
-        }
-
-        for(auto obj : renderableObjects) {
-            delete obj;
-        }
-        renderableObjects.clear();
+        targetWindows.clear();
     }
-    void HandleEvent(const SDL_Event& event);
-    void RenderFrame();
-    void AddRenderableObject(SigmaRenderableObject* obj) override;
-    void RemoveRenderableObject(SigmaRenderableObject* obj) override;
-    void SetTargetWindow(SDL_Window* w);
-    void SetTargetRenderer(SDL_Renderer* r);
-
-protected:
-    std::vector<SigmaRenderableObject*> renderableObjects;
+    void handleEvent(const SDL_Event& event) final;
+    void renderFrame() final;
+    void addWindow(std::shared_ptr<Window> obj) final;
 };
 
 #endif //WINDOWRENDERINGMANAGER_H

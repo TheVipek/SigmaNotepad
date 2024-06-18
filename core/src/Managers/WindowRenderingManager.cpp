@@ -4,49 +4,25 @@
 #include "Managers/WindowRenderingManager.h"
 
 #include <algorithm>
-void WindowRenderingManager::RenderFrame() {
-    if(targetRenderer == nullptr)
-        return;
+void WindowRenderingManager::renderFrame() {
+    for(const auto& obj : targetWindows) {
+        // Clear the renderer with a default or background color
+        SDL_SetRenderDrawColor(obj->getRenderer(), 42, 42, 42, 255); // Black, or choose another color
+        SDL_RenderClear(obj->getRenderer());
 
-    // Clear the renderer with a default or background color
-    SDL_SetRenderDrawColor(targetRenderer, 42, 42, 42, 255); // Black, or choose another color
-    SDL_RenderClear(targetRenderer);
-
-    for (auto obj: renderableObjects) {
-        obj->render(targetRenderer);
+        obj->renderFrame();
+        SDL_RenderPresent(obj->getRenderer());
     }
-
-    SDL_RenderPresent(targetRenderer);
 }
 
-void WindowRenderingManager::HandleEvent(const SDL_Event &event) {
-    for(auto obj : renderableObjects) {
+void WindowRenderingManager::handleEvent(const SDL_Event &event) {
+
+    for(const auto& obj : targetWindows) {
         obj->handleEvent(event);
     }
 }
-
-
-void WindowRenderingManager::AddRenderableObject(SigmaRenderableObject* obj) {
-    auto it = std::find(renderableObjects.begin(), renderableObjects.end(), obj);
-    if (it == renderableObjects.end()) {  // Object not found
-        renderableObjects.push_back(obj);
-    } else {
-        //skip
-    }
+void WindowRenderingManager::addWindow(std::shared_ptr<Window> obj) {
+    targetWindows.push_back(obj);
 }
 
-void WindowRenderingManager::RemoveRenderableObject(SigmaRenderableObject* obj) {
-    auto it = std::find(renderableObjects.begin(), renderableObjects.end(), obj);
-    if (it == renderableObjects.end()) {  // Object not found
-        //skip
-    } else {
-        renderableObjects.erase(it);
-    }
-}
 
-void WindowRenderingManager::SetTargetWindow(SDL_Window* w) {
-    targetWindow = w;
-}
-void WindowRenderingManager::SetTargetRenderer(SDL_Renderer* r) {
-    targetRenderer = r;
-}

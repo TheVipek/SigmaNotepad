@@ -73,8 +73,8 @@ public:
 class TextEdit : public SigmaRenderableObject, public IText<rope<char>>, public IBackground
 {
 public:
-    TextEdit(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow)
-        : SigmaRenderableObject(rect, targetWindow){
+    TextEdit(SDL_Rect& rect, Window* owner)
+        : SigmaRenderableObject(rect, owner){
         initFont(DEFAULT_FONTP, DEFAULT_FONTS);
         TTF_SizeUTF8(font->get(), " ",&letterWidth, &letterHeight);
     }

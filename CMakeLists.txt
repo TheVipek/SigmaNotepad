@@ -12,6 +12,7 @@ add_definitions(-DASSET_DIR="${CMAKE_SOURCE_DIR}/assets")
 
 add_subdirectory(tests)
 add_subdirectory(core)
+add_subdirectory(app)
 
 add_executable(SigmaNotepad main.cpp)
 
@@ -24,6 +25,7 @@ add_dependencies(${PROJECT_NAME} copy_resources)
 target_link_libraries(SigmaNotepad
         PRIVATE
         SigmaNotepadLib
+        SigmaNotepadAPP
 )
 
 

@@ -7,16 +7,12 @@
 
 #include <iostream>
 
-SigmaRenderableObject::SigmaRenderableObject(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow)
-    : SigmaObject(rect), targetWindow(targetWindow){
-    if(targetWindow != nullptr) {
-        targetWindow->AddRenderableObject(this);
-    }
+SigmaRenderableObject::SigmaRenderableObject(SDL_Rect& rect, Window* _owner)
+    : SigmaObject(rect), owner(_owner){
+    owner->addRenderableObject(this);
+    owner->addEventObject(this);
 }
 SigmaRenderableObject::~SigmaRenderableObject() {
-    if(targetWindow != nullptr) {
-        targetWindow->RemoveRenderableObject(this);
-    }
 }
 void SigmaRenderableObject::render(SDL_Renderer* renderer) {
     if(isAnchorDirty) {

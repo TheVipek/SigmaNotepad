@@ -19,8 +19,8 @@
 class TextLabel : public SigmaRenderableObject, public IText<std::string> {
 
 public:
-    TextLabel(SDL_Rect& rect, std::shared_ptr<IWindowRenderingManager> targetWindow)
-        : SigmaRenderableObject(rect, targetWindow) {
+    TextLabel(SDL_Rect& rect, Window* _owner)
+        : SigmaRenderableObject(rect,_owner) {
         initFont(DEFAULT_FONTP, DEFAULT_FONTS);
         setText("");
     }
