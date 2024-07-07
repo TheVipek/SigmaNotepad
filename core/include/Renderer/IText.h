@@ -54,6 +54,7 @@ public:
         currentFontStyle = style;
         TTF_SetFontStyle(font->get(), currentFontStyle);
     }
+
 protected:
     //i wont define there data structure for text, beacuse i may want to have different in specific scenarios
     SDL_Color                           textColor = { 242, 242, 242, 255 };

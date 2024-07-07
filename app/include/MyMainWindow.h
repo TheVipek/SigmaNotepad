@@ -26,14 +26,16 @@ protected:
     ScrollLayout* scrollLayout;
     Panel* bottomPanel;
     TextLabel* bottomCounter;
+    TextLabel* bottomZoom;
 
     const int BASE_FONT_SIZE = 12;
     int currentFontSize;
 
     const float BASE_ZOOM = 1.0f;
     float currentZoom;
-    const float ZOOM_STEP = 0.1f;
+    const float ZOOM_STEP = 0.25f;
     void updateTextCounter(int length);
+    void updateZoomText(float zoom);
     void modifyZoom(float val);
     void updateFontSize(int size);
     void handleEvent(const SDL_Event &e) override;
