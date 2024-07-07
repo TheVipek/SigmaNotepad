@@ -27,8 +27,15 @@ protected:
     Panel* bottomPanel;
     TextLabel* bottomCounter;
 
-    void updateTextCounter(int length);
+    const int BASE_FONT_SIZE = 12;
+    int currentFontSize;
 
+    const float BASE_ZOOM = 1.0f;
+    float currentZoom;
+    const float ZOOM_STEP = 0.1f;
+    void updateTextCounter(int length);
+    void modifyZoom(float val);
+    void updateFontSize(int size);
     void handleEvent(const SDL_Event &e) override;
     void renderFrame() override;
 };

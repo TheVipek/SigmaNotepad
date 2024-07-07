@@ -30,6 +30,7 @@ public:
         currentSize = size;
         if(font != nullptr) {
             font->change(currentFontPath, currentSize);
+            setFontStyle(currentFontStyle);
         }
     }
     virtual int getSize() {
@@ -40,6 +41,7 @@ public:
 
         if(font != nullptr) {
             font->change(currentFontPath, currentSize);
+            setFontStyle(currentFontStyle);
         }
 
     }
@@ -49,7 +51,8 @@ public:
 
     //https://wiki.libsdl.org/SDL2_ttf/TTF_SetFontStyle
     virtual void setFontStyle(int style) {
-        TTF_SetFontStyle(font->get(), style);
+        currentFontStyle = style;
+        TTF_SetFontStyle(font->get(), currentFontStyle);
     }
 protected:
     //i wont define there data structure for text, beacuse i may want to have different in specific scenarios
@@ -60,6 +63,7 @@ protected:
     T                                   text = T();
     int                                 currentSize;
     std::string                         currentFontPath;
+    int                                 currentFontStyle;
 };
 
 #endif //ITEXT_H

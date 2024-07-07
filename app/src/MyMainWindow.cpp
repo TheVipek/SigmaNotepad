@@ -4,6 +4,9 @@
 
 #include "MyMainWindow.h"
 MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer) : Window(_window, _renderer) {
+
+    currentFontSize = BASE_FONT_SIZE;
+    currentZoom = BASE_ZOOM;
     //Creating GUI Elements
     SDL_Rect topPanelSize = {0, 0, 0, 25};
     topPanel = new Panel(topPanelSize, this);
@@ -31,7 +34,7 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer) : Windo
     textEditField->setAnchor(Anchor::FullScreen);
     textEditField->setOffset({0,0,0,0});
 
-    textEditField->setSize(64);
+    textEditField->setSize(currentFontSize * currentZoom);
     textEditField->setFontStyle(1 | 2 | 3 | 4 | 5);
 
     SDL_Rect rect ={};
@@ -52,13 +55,32 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer) : Windo
 
     textEditField->registerToOnTextLengthChanged(std::bind(&MyMainWindow::updateTextCounter, this, std::placeholders::_1));
 }
+
 void MyMainWindow::updateTextCounter(int length) {
     bottomCounter->setText("Current Text Length: " + std::to_string(length));
 }
 
+void MyMainWindow::modifyZoom(float val) {
+    currentZoom += val;
+}
+
+void MyMainWindow::updateFontSize(int size) {
+    textEditField->setSize(size * currentZoom);
+}
+
+
 void MyMainWindow::handleEvent(const SDL_Event &e) {
+    if(e.type == SDL_MOUSEWHEEL) {
+        if(SDL_GetModState() & KMOD_CTRL){
+            int dir = e.wheel.y > 0 ? 1 : -1;
+            modifyZoom(ZOOM_STEP * dir);
+            updateFontSize(currentFontSize);
+        }
+
+    }
     Window::handleEvent(e);
 }
+
 void MyMainWindow::renderFrame() {
     Window::renderFrame();
 }
