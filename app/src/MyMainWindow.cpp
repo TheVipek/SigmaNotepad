@@ -18,19 +18,62 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer) : Windo
 
 
     SDL_Rect btnSize = {0, 0, 75, 25};
-    fileButton = new Button(btnSize, this, "File");
-    fileButton->setAnchor(Anchor::TopLeft);
-    fileButton->TLabel->setHorizontalAligment(HorizontalAligment::Center); // no implementation for text aligment
-    fileButton->TLabel->setVerticalAligment(VerticalAligment::Center); // no implementation for text aligment
-    SDL_Rect btnSize2 = {0, 0, 75, 25};
-    editButton = new Button(btnSize2, this, "Edit");
-    editButton->setAnchor(Anchor::TopLeft);
-    editButton->setOffset({100, 0,0,0});
+    fileDropdown = new Dropdown(btnSize, this, "File");
+    fileDropdown->setAnchor(Anchor::TopLeft);
+    fileDropdown->TLabel->setHorizontalAligment(HorizontalAligment::Center); // no implementation for text aligment
+    fileDropdown->TLabel->setVerticalAligment(VerticalAligment::Center); // no implementation for text aligment
+    fileDropdown->setRenderingPriority(-100);
 
-    SDL_Rect btnSize3 = {0, 0, 75, 25};
-    showButton = new Button(btnSize3, this, "Show");
-    showButton->setAnchor(Anchor::TopLeft);
-    showButton->setOffset({200, 0,0,0});
+    SDL_Rect fileItemRect = {0,0,75,25};
+    auto fileItem1 = new DropdownItem(fileItemRect, this, "Open");
+    fileDropdown->setAnchor(Anchor::TopLeft);
+    fileDropdown->addElement(*fileItem1);
+
+    auto fileItem2 = new DropdownItem(fileItemRect, this, "Save");
+    fileDropdown->setAnchor(Anchor::TopLeft);
+    fileDropdown->addElement(*fileItem2);
+
+    auto fileItem3 = new DropdownItem(fileItemRect, this, "Save As");
+    fileDropdown->setAnchor(Anchor::TopLeft);
+    fileDropdown->addElement(*fileItem3);
+
+    auto fileItem4 = new DropdownItem(fileItemRect, this, "Exit");
+    fileDropdown->setAnchor(Anchor::TopLeft);
+    fileDropdown->addElement(*fileItem4);
+
+    SDL_Rect btnSize2 = {75, 0, 75, 25};
+    editDropdown = new Dropdown(btnSize2, this, "Edit");
+    editDropdown->setAnchor(Anchor::TopLeft);
+    editDropdown->setRenderingPriority(-100);
+
+    SDL_Rect editItemRect = {0,0,75,25};
+    auto editItem1 = new DropdownItem(editItemRect, this, "Font");
+    editItem1->setAnchor(Anchor::TopLeft);
+    editDropdown->addElement(*editItem1);
+
+
+    SDL_Rect btnSize3 = {200, 0, 75, 25};
+    showDropdown = new Dropdown(btnSize3, this, "Show");
+    showDropdown->setAnchor(Anchor::TopLeft);
+    showDropdown->setRenderingPriority(-100);
+
+    SDL_Rect showItemRect = {0,0,75,25};
+
+    //Could implement something like 'Extendable DropdownItem' so after hovering it would show those two options
+    auto showItem1 = new DropdownItem(showItemRect, this, "Increase Text");
+    showItem1->setAnchor(Anchor::TopLeft);
+    showDropdown->addElement(*showItem1);
+
+    auto showItem2 = new DropdownItem(showItemRect, this, "Decrease Text");
+    showItem2->setAnchor(Anchor::TopLeft);
+    showDropdown->addElement(*showItem2);
+
+
+    //Could implement quick img displayer, so it would show arrow at right of it if its active
+    auto showItem3 = new DropdownItem(showItemRect, this, "Show Status Bar");
+    showItem3->setAnchor(Anchor::TopLeft);
+    showDropdown->addElement(*showItem3);
+
 
     SDL_Rect textEditSize = {0, 25, 0, 55};
     textEditField = new TextEdit(textEditSize, this);
@@ -40,9 +83,10 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer) : Windo
     textEditField->setSize(currentFontSize * currentZoom);
     textEditField->setFontStyle(1 | 2 | 3 | 4 | 5);
 
-    SDL_Rect rect ={};
-    scrollLayout = new ScrollLayout(.2f, rect, this);
-    scrollLayout->assign(textEditField);
+    // SDL_Rect rect ={};
+    // scrollLayout = new ScrollLayout(.2f, rect, this);
+    // scrollLayout->assign(textEditField);
+
 
 
     SDL_Rect bottomPanelSize = {0, 0, 25, 30};

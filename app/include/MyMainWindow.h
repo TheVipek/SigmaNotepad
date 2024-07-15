@@ -7,6 +7,7 @@
 
 #include <SDL2/SDL.h>
 #include "Renderer/Button.h"
+#include "Renderer/Dropdown.h"
 #include "Renderer/Panel.h"
 #include "Renderer/ScrollLayout.h"
 #include "Renderer/TextEdit.h"
@@ -19,9 +20,9 @@ public:
     MyMainWindow(SDL_Window* _window, SDL_Renderer* _renderer);
 protected:
     Panel* topPanel;
-    Button* fileButton;
-    Button* editButton;
-    Button* showButton;
+    Dropdown* fileDropdown;
+    Dropdown* editDropdown;
+    Dropdown* showDropdown;
     TextEdit* textEditField;
     ScrollLayout* scrollLayout;
     Panel* bottomPanel;

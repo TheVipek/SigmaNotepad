@@ -9,6 +9,7 @@ void Button::handleEvent(const SDL_Event &e) {
 
     if(!enabled) // no need to process events
         return;
+    TLabel->handleEvent(e);
 
     SigmaRenderableObject::handleEvent(e);
 
@@ -50,6 +51,7 @@ void Button::render(SDL_Renderer* renderer) {
     if(!visible) // no need to render
         return;
 
+    TLabel->render(renderer);
     SigmaRenderableObject::render(renderer);
 
     SDL_Color bgColorToRender;

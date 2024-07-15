@@ -13,6 +13,7 @@ void DropdownItem::render(SDL_Renderer *renderer) {
 }
 
 void DropdownItem::onClick() {
+
     Button::onClick();
 }
 
@@ -27,3 +28,4 @@ void DropdownItem::setRect(const SDL_Rect &rect) {
 void DropdownItem::setOffset(const Offset &offset) {
     Button::setOffset(offset);
 }
+

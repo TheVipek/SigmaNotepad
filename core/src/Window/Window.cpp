@@ -4,6 +4,7 @@
 
 #include "Window/Window.h"
 #include "Renderer/IRenderHandler.h"
+#include "Renderer/SigmaRenderableObject.h"
 
 void Window::addRenderableObject(IRenderHandler* obj) {
     auto it = std::find(renderHandlers.begin(), renderHandlers.end(), obj);
@@ -43,7 +44,9 @@ void Window::handleEvent(const SDL_Event &e) {
     }
 }
 void Window::renderFrame() {
-    for(const auto& obj : renderHandlers) {
+    std::sort(renderHandlers.begin(), renderHandlers.end(), [](const IRenderHandler* a, const IRenderHandler* b) { return a->getRenderingPriority() > b->getRenderingPriority();});
+    for(const auto& obj : renderHandlers)
+    {
         obj->render(renderer.get());
     }
 }

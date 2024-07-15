@@ -33,7 +33,7 @@ public:
     [[nodiscard]] int getHeight() const { return currentRect.h; }
 
     virtual void setEnabled(const bool enabled) { this->enabled = enabled; }
-    virtual void setRect(const SDL_Rect& rect) { this->currentRect = rect;}
+    virtual void setRect(const SDL_Rect& rect) { this->baseRect = rect;}
     virtual void setVisibility(const bool visible) { this->visible = visible; }
     virtual void setAnchor(Anchor anchor) { this->anchor = anchor; isAnchorDirty = true;}
     virtual void setOffset(const Offset& offset) { this->offset = offset;  }

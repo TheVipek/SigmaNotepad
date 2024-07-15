@@ -9,8 +9,10 @@
 
 SigmaRenderableObject::SigmaRenderableObject(SDL_Rect& rect, Window* _owner)
     : SigmaObject(rect), owner(_owner){
-    owner->addRenderableObject(this);
-    owner->addEventObject(this);
+    if(owner != nullptr) {
+        owner->addRenderableObject(this);
+        owner->addEventObject(this);
+    }
 }
 SigmaRenderableObject::~SigmaRenderableObject() {
 }

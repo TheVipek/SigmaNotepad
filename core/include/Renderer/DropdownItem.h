@@ -6,7 +6,7 @@
 #define DROPDOWNITEM_H
 #include "Button.h"
 
-class DropdownItem : public Button {
+class DropdownItem : public Button{
 
 public:
     DropdownItem(SDL_Rect& rect, Window* _owner, const std::string& text)
@@ -21,6 +21,7 @@ public:
     void setRect(const SDL_Rect& rect) override;
     void setAnchor(Anchor anchor) override;
     void setOffset(const Offset &offset) override;
+    void setRenderingPriority(const int priority) override;
 
 protected:
     void onClick() override;

@@ -23,5 +23,6 @@ public:
 protected:
     SDL_Rect            contentSize = {};
     Window* owner;
+
 };
 #endif //SIGMARENDERABLEOBJECT_H
