@@ -20,11 +20,11 @@ public:
     Button(SDL_Rect& rect, Window* _owner, const std::string& text)
         : SigmaRenderableObject(rect, _owner) {
 
-        TLabel = std::make_unique<TextLabel>(this->baseRect, owner);
+        TLabel = std::make_shared<TextLabel>(this->baseRect, owner);
         TLabel->setText(text);
     }
 
-    std::unique_ptr<TextLabel>  TLabel;
+    std::shared_ptr<TextLabel>  TLabel;
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;
     void setRect(const SDL_Rect& rect) override;

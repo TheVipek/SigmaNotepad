@@ -24,21 +24,19 @@ void Button::handleEvent(const SDL_Event &e) {
                 //Change color to not hovered
                 isHovered = false;
             }
-            return;
         }
 
-        if(e.type == SDL_MOUSEMOTION) {
+        if(e.type == SDL_MOUSEMOTION && (withinX && withinY)) {
             //Change color to hovered
             isHovered = true;
         }
         else if(e.type == SDL_MOUSEBUTTONDOWN) {
             //Change color to click
-            if(!isClicked) {
-                std::cout << "clicked";
-                onClick();
+            if(!isClicked && (withinX && withinY)) {
                 isClicked = true;
-
+                std::cout << "clicked";
             }
+            onClick();
         }
         else if(e.type == SDL_MOUSEBUTTONUP) {
             if(isClicked) {

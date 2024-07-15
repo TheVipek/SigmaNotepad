@@ -26,6 +26,8 @@ add_library(SigmaNotepadLib STATIC
         include/Renderer/IRenderHandler.h
         include/Window/Window.h
         include/IRenderFrame.h
+        include/Renderer/Dropdown.h
+        include/Renderer/DropdownItem.h
 
         src/Renderer/SigmaObject.cpp
         src/Renderer/SigmaRenderableObject.cpp
@@ -36,6 +38,8 @@ add_library(SigmaNotepadLib STATIC
         src/Renderer/TextEdit.cpp
         src/Managers/WindowRenderingManager.cpp
         src/Renderer/ScrollLayout.cpp
+        src/Renderer/Dropdown.cpp
+        src/Renderer/DropdownItem.cpp
         src/Window/Window.cpp
 )
 
