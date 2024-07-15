@@ -32,5 +32,8 @@
   }, {
     "name" : "gtest",
     "version>=" : "1.14.0#1"
+  }, {
+    "name" : "nativefiledialog",
+    "version>=" : "2022-01-20"
   } ]
 }
