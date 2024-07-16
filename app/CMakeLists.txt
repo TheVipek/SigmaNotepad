@@ -2,7 +2,9 @@ project(SigmaNotepadAPP)
 
 add_library(${PROJECT_NAME} STATIC
         src/MyMainWindow.cpp
+        src/FontSettingsWindow.cpp
         include/MyMainWindow.h
+        include/FontSettingsWindow.h
 )
 
 find_package(unofficial-nativefiledialog CONFIG REQUIRED)

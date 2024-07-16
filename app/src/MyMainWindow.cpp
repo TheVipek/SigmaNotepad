@@ -6,10 +6,18 @@
 
 #include <iomanip>
 
-MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer) : Window(_window, _renderer) {
+MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::shared_ptr<WindowRenderingManager> mainWindow) : Window(_window, _renderer), mainWindow((mainWindow)) {
+
 
     currentFontSize = BASE_FONT_SIZE;
     currentZoom = BASE_ZOOM;
+
+    // SDL_Window* fontSettingsWindow = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 300, 150, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+    // SDL_Renderer* fontSettingsRenderer = SDL_CreateRenderer(fontSettingsWindow, -1, SDL_RENDERER_ACCELERATED);
+    // SDL_SetRenderDrawBlendMode(fontSettingsRenderer, SDL_BLENDMODE_BLEND);
+    // fontSettings = std::shared_ptr<FontSettingsWindow>(new FontSettingsWindow(fontSettingsWindow, fontSettingsRenderer, currentFontSize));
+    // mainWindow->addWindow(fontSettings);
+
     //Creating GUI Elements
     SDL_Rect topPanelSize = {0, 0, 0, 25};
     topPanel = new Panel(topPanelSize, this);

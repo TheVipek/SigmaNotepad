@@ -6,6 +6,9 @@
 #define MYMAINWINDOW_H
 
 #include <SDL2/SDL.h>
+
+#include "FontSettingsWindow.h"
+#include "Managers/WindowRenderingManager.h"
 #include "Renderer/Button.h"
 #include "Renderer/Dropdown.h"
 #include "Renderer/Panel.h"
@@ -17,8 +20,10 @@
 class MyMainWindow : public Window {
 public:
 
-    MyMainWindow(SDL_Window* _window, SDL_Renderer* _renderer);
+    MyMainWindow(SDL_Window* _window, SDL_Renderer* _renderer, std::shared_ptr<WindowRenderingManager> mainWindow);
 protected:
+    std::shared_ptr<WindowRenderingManager> mainWindow;
+    std::shared_ptr<FontSettingsWindow> fontSettings;
     Panel* topPanel;
     Dropdown* fileDropdown;
     Dropdown* editDropdown;
