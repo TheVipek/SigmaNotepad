@@ -24,7 +24,7 @@ public:
     void setRenderingPriority(const int priority) override;
 
 protected:
-    void onClick() override;
+    void click() override;
 };
 
 #endif //DROPDOWNITEM_H

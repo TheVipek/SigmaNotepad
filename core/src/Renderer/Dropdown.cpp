@@ -24,13 +24,14 @@ void Dropdown::render(SDL_Renderer *renderer) {
     }
 }
 
-void Dropdown::onClick() {
+void Dropdown::click() {
     if(!isHovered) {
         if(dropdownActive)
             dropdownActive = false;
         return;
     }
     dropdownActive = !dropdownActive;
+    notifyOnClick();
 }
 
 void Dropdown::setAnchor(Anchor anchor) {

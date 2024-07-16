@@ -35,6 +35,7 @@ public:
     virtual void setEnabled(const bool enabled) { this->enabled = enabled; }
     virtual void setRect(const SDL_Rect& rect) { this->baseRect = rect;}
     virtual void setVisibility(const bool visible) { this->visible = visible; }
+    virtual bool getVisibility() { return this->visible; }
     virtual void setAnchor(Anchor anchor) { this->anchor = anchor; isAnchorDirty = true;}
     virtual void setOffset(const Offset& offset) { this->offset = offset;  }
     virtual void handlePosition(const int& screen_width, const int& screen_height);

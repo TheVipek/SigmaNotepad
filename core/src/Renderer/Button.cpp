@@ -35,9 +35,8 @@ void Button::handleEvent(const SDL_Event &e) {
             //Change color to click
             if(!isClicked && (withinX && withinY)) {
                 isClicked = true;
-                std::cout << "clicked";
+                click();
             }
-            onClick();
         }
         else if(e.type == SDL_MOUSEBUTTONUP) {
             if(isClicked) {
@@ -69,9 +68,20 @@ void Button::render(SDL_Renderer* renderer) {
     SDL_RenderFillRect(renderer, &currentRect);
 }
 
-void Button::onClick() {
-
+void Button::click() {
+    notifyOnClick();
 }
+
+void Button::notifyOnClick() {
+    for(auto& callback : onClick) {
+        callback();
+    }
+}
+
+void Button::registerOnClick(std::function<void()> callback) {
+    onClick.push_back(callback);
+}
+
 
 void Button::setAnchor(Anchor anchor) {
     SigmaRenderableObject::setAnchor(anchor);

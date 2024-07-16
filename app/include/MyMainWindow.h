@@ -36,11 +36,12 @@ protected:
     float currentZoom;
     const float ZOOM_STEP = 0.25f;
     void updateTextCounter(int length);
-    void updateZoomText(float zoom);
+    void updateZoomText(const float& zoom);
     void modifyZoom(float val);
-    void updateFontSize(int size);
+    void updateFontSize(const int& size);
     void handleEvent(const SDL_Event &e) override;
     void renderFrame() override;
+    void changeVisibilityOfStatusBar();
 };
 
 

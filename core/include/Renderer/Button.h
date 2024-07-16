@@ -10,6 +10,7 @@
 #include <memory>
 #include <SDL_rect.h>
 #include <string>
+#include <tr1/functional>
 
 #include "SigmaObject.h"
 #include "SigmaRenderableObject.h"
@@ -30,6 +31,7 @@ public:
     void setRect(const SDL_Rect& rect) override;
     void setAnchor(Anchor anchor) override;
     void setOffset(const Offset &offset) override;
+    void registerOnClick(std::function<void()> callback);
 
 protected:
 
@@ -40,8 +42,9 @@ protected:
     SDL_Color                   hoverColor = { 220, 220, 220, 48};; // bg on hover
     SDL_Color                   clickColor = { 220, 220, 220, 96};; // bg on click
 
-
-    virtual void onClick();
+    std::vector<std::function<void()>> onClick;
+    void notifyOnClick();
+    virtual void click();
 };
 
 

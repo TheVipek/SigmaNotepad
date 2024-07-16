@@ -60,19 +60,33 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer) : Windo
     SDL_Rect showItemRect = {0,0,75,25};
 
     //Could implement something like 'Extendable DropdownItem' so after hovering it would show those two options
-    auto showItem1 = new DropdownItem(showItemRect, this, "Increase Text");
+    auto showItem1 = new DropdownItem(showItemRect, this, "Increase Zoom");
+    showItem1->registerOnClick([this] {
+        modifyZoom(ZOOM_STEP);
+        updateFontSize(currentFontSize);
+        updateZoomText(currentZoom);
+    });
     showItem1->setAnchor(Anchor::TopLeft);
     showDropdown->addElement(*showItem1);
 
-    auto showItem2 = new DropdownItem(showItemRect, this, "Decrease Text");
+    auto showItem2 = new DropdownItem(showItemRect, this, "Decrease Zoom");
+    showItem2->registerOnClick([this] {
+        modifyZoom(-ZOOM_STEP);
+        updateFontSize(currentFontSize);
+        updateZoomText(currentZoom);
+    });
+
     showItem2->setAnchor(Anchor::TopLeft);
     showDropdown->addElement(*showItem2);
 
 
     //Could implement quick img displayer, so it would show arrow at right of it if its active
     auto showItem3 = new DropdownItem(showItemRect, this, "Show Status Bar");
+    showItem3->registerOnClick(std::bind(&MyMainWindow::changeVisibilityOfStatusBar, this));
     showItem3->setAnchor(Anchor::TopLeft);
     showDropdown->addElement(*showItem3);
+
+
 
 
     SDL_Rect textEditSize = {0, 25, 0, 55};
@@ -111,7 +125,7 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer) : Windo
     bottomZoom->setAnchor(Anchor::BottomRight);
 }
 
-void MyMainWindow::updateZoomText(float zoom) {
+void MyMainWindow::updateZoomText(const float& zoom) {
     std::ostringstream oss;
     oss << std::fixed << std::setprecision(0) << zoom * 100;
     bottomZoom->setText("Current Zoom: " + oss.str() + "%");
@@ -122,11 +136,18 @@ void MyMainWindow::updateTextCounter(int length) {
 }
 
 void MyMainWindow::modifyZoom(float val) {
-    currentZoom += val;
+    if(currentZoom + val > 0)
+        currentZoom += val;
 }
 
-void MyMainWindow::updateFontSize(int size) {
+void MyMainWindow::updateFontSize(const int& size) {
     textEditField->setSize(size * currentZoom);
+}
+
+void MyMainWindow::changeVisibilityOfStatusBar() {
+    bottomPanel->setVisibility(!bottomPanel->getVisibility());
+    bottomCounter->setVisibility(!bottomCounter->getVisibility());
+    bottomZoom->setVisibility(!bottomZoom->getVisibility());
 }
 
 
@@ -134,8 +155,9 @@ void MyMainWindow::handleEvent(const SDL_Event &e) {
     if(e.type == SDL_MOUSEWHEEL) {
         if(SDL_GetModState() & KMOD_CTRL){
             int dir = e.wheel.y > 0 ? 1 : -1;
-            if(currentZoom + (ZOOM_STEP * dir) > 0) {
-                modifyZoom(ZOOM_STEP * dir);
+            int preZoom = currentZoom;
+            modifyZoom(ZOOM_STEP * dir);
+            if(currentZoom != preZoom) {
                 updateFontSize(currentFontSize);
                 updateZoomText(currentZoom);
             }

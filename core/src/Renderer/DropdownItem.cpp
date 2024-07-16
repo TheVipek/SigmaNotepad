@@ -12,9 +12,9 @@ void DropdownItem::render(SDL_Renderer *renderer) {
     Button::render(renderer);
 }
 
-void DropdownItem::onClick() {
+void DropdownItem::click() {
 
-    Button::onClick();
+    Button::click();
 }
 
 void DropdownItem::setAnchor(Anchor anchor) {

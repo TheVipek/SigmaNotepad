@@ -28,7 +28,7 @@ public:
 protected:
     std::vector<std::shared_ptr<DropdownItem>> items;
     bool                        dropdownActive = false;
-    void onClick() override;
+    void click() override;
 };
 
 #endif //DROPDOWN_H
