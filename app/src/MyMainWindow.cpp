@@ -6,6 +6,8 @@
 
 #include <iomanip>
 
+#include "Renderer/ExtendableDropdownItem.h"
+
 MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::shared_ptr<WindowRenderingManager> mainWindow) : Window(_window, _renderer), mainWindow((mainWindow)) {
 
 
@@ -55,9 +57,18 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     editDropdown->setRenderingPriority(-100);
 
     SDL_Rect editItemRect = {0,0,75,25};
-    auto editItem1 = new DropdownItem(editItemRect, this, "Font");
+    auto editItem1 = new ExtendableDropdownItem(editItemRect, this, "Font");
     editItem1->setAnchor(Anchor::TopLeft);
     editDropdown->addElement(*editItem1);
+
+
+    SDL_Rect fontItemRect = {0,0,50,25};
+    for (int i = 0; i < 20; ++i) {
+        auto fontItem = new DropdownItem(fontItemRect, this, std::to_string(i));
+        editItem1->addElement(*fontItem);
+    }
+
+
 
 
     SDL_Rect btnSize3 = {200, 0, 75, 25};

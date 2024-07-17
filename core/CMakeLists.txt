@@ -28,6 +28,10 @@ add_library(SigmaNotepadLib STATIC
         include/IRenderFrame.h
         include/Renderer/Dropdown.h
         include/Renderer/DropdownItem.h
+        include/Renderer/NumericEdit.h
+        include/Renderer/IEditField.h
+        include/Renderer/ExtendableDropdownItem.h
+        include/Renderer/IDropdownHolder.h
 
         src/Renderer/SigmaObject.cpp
         src/Renderer/SigmaRenderableObject.cpp
@@ -41,6 +45,7 @@ add_library(SigmaNotepadLib STATIC
         src/Renderer/Dropdown.cpp
         src/Renderer/DropdownItem.cpp
         src/Window/Window.cpp
+        src/Renderer/ExtendableDropdownItem.cpp
 )
 
 target_include_directories(SigmaNotepadLib PUBLIC "src")

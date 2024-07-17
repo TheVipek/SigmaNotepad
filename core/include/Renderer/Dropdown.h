@@ -6,14 +6,16 @@
 
 #include "Button.h"
 #include "DropdownItem.h"
+#include "IDropdownHolder.h"
 #include "SigmaObject.h"
 #include "SigmaRenderableObject.h"
 #include "TextLabel.h"
 
-class Dropdown : public Button {
+class Dropdown : public Button, public IDropdownHolder {
 public:
     Dropdown(SDL_Rect& rect, Window* _owner, const std::string& text)
-       : Button(rect, _owner, text) {}
+       : Button(rect, _owner, text), IDropdownHolder()
+    {}
 
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;
@@ -21,12 +23,12 @@ public:
     void setAnchor(Anchor anchor) override;
     void setOffset(const Offset &offset) override;
 
-    void addElement(DropdownItem& item);
-    void removeElement(DropdownItem* item);
-    void removeElement(int index);
+    virtual void addElement(DropdownItem& item);
+    virtual void removeElement(DropdownItem* item);
+    virtual void removeElement(int index);
 
 protected:
-    std::vector<std::shared_ptr<DropdownItem>> items;
+
     bool                        dropdownActive = false;
     void click() override;
 };
