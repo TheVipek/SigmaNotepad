@@ -39,6 +39,8 @@ void Window::removeEventObject(IEventHandler* obj) {
     }
 }
 void Window::handleEvent(const SDL_Event &e) {
+    if(SDL_GetWindowFromID(e.window.windowID) != window.get())
+        return;
     for(const auto& obj : eventHandlers) {
         obj->handleEvent(e);
     }
