@@ -5,13 +5,17 @@
 #ifndef DROPDOWNITEM_H
 #define DROPDOWNITEM_H
 #include "Button.h"
+class Dropdown;
 
 class DropdownItem : public Button{
 
 public:
     DropdownItem(SDL_Rect& rect, Window* _owner, const std::string& text)
-       : Button(rect, _owner, text) {}
-
+       : Button(rect, _owner, text) {
+    };
+    ~DropdownItem() {
+        itemOwner = nullptr;
+    }
     bool operator==(const DropdownItem& other) const {
         return this == &other;
     }
@@ -22,9 +26,10 @@ public:
     void setAnchor(Anchor anchor) override;
     void setOffset(const Offset &offset) override;
     void setRenderingPriority(const int priority) override;
-
+    virtual void setItemOwner(Dropdown* itemOwner) { this->itemOwner = itemOwner; }
 protected:
     void click() override;
+    Dropdown* itemOwner;
 };
 
 #endif //DROPDOWNITEM_H

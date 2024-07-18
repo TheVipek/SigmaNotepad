@@ -22,13 +22,13 @@ public:
     void setRect(const SDL_Rect& rect) override;
     void setAnchor(Anchor anchor) override;
     void setOffset(const Offset &offset) override;
-
+    void forceDropdownActiveChange(bool v) { dropdownActive = v; forceHideOfAnyChildren(); }
     virtual void addElement(std::shared_ptr<DropdownItem> item);
     virtual void removeElement(std::shared_ptr<DropdownItem> item);
     virtual void removeElement(int index);
 
 protected:
-
+    virtual void forceHideOfAnyChildren();
     bool                        dropdownActive = false;
     void click() override;
 };

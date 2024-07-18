@@ -23,7 +23,8 @@ void ExtendableDropdownItem::render(SDL_Renderer *renderer) {
     }
 }
 void ExtendableDropdownItem::click() {
-    DropdownItem::click();
+    //DropdownItem::click();
+    Button::click();
     if(!isHovered) {
         if(isExtended)
             isExtended = false;
@@ -45,9 +46,10 @@ void ExtendableDropdownItem::addElement(std::shared_ptr<DropdownItem> item) {
 
         owner->removeRenderableObject(item.get());
         owner->removeEventObject(item.get());
-        const SDL_Rect newRect = { currentRect.x + currentRect.w, currentRect.y + targetHeight, item->getWidth(), item->getHeight() };
+        const SDL_Rect newRect = { baseRect.x + baseRect.w, baseRect.y + targetHeight, item->getWidth(), item->getHeight() };
         item->setRect(newRect);
         item->setRenderingPriority(renderingPrority);
+        item->setItemOwner(itemOwner);
         items.push_back(item);
     } else {
         // skip
@@ -61,6 +63,14 @@ void ExtendableDropdownItem::removeElement(std::shared_ptr<DropdownItem> item) {
 void ExtendableDropdownItem::removeElement(int index) {
     if (index >= 0 && index < items.size()) {
         items.erase(items.begin() + index);
+    }
+}
+
+void ExtendableDropdownItem::setItemOwner(Dropdown *itemOwner) {
+    DropdownItem::setItemOwner(itemOwner);
+
+    for (auto i: items) {
+        i->setItemOwner(itemOwner);
     }
 }
 

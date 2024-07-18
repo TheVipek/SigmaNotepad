@@ -15,6 +15,7 @@ void DropdownItem::render(SDL_Renderer *renderer) {
 void DropdownItem::click() {
 
     Button::click();
+    itemOwner->forceDropdownActiveChange(false);
 }
 
 void DropdownItem::setAnchor(Anchor anchor) {

@@ -22,7 +22,9 @@ public:
     virtual void addElement(std::shared_ptr<DropdownItem> item);
     virtual void removeElement(std::shared_ptr<DropdownItem> item);
     virtual void removeElement(int index);
-
+    virtual void setItemOwner(Dropdown *itemOwner) override;
+    bool getIsExtended() const { return isExtended; }
+    void setIsExtended(bool v) { isExtended = v; }
 protected:
     bool isExtended = false;
     void click() override;
