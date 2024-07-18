@@ -62,9 +62,10 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     editDropdown->addElement(editItem1);
 
 
-    SDL_Rect fontItemRect = {0,0,50,25};
-    for (int i = 0; i < 20; ++i) {
+    SDL_Rect fontItemRect = {0,0,40,20};
+    for (int i = 8; i <= 36; i+=4) {
         auto fontItem = std::make_shared<DropdownItem>(fontItemRect, this, std::to_string(i));
+        fontItem->registerOnClick([this, i]{ updateFontSize(i);  });
         editItem1->addElement(fontItem);
     }
 
