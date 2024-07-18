@@ -19,8 +19,8 @@ public:
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;
 
-    virtual void addElement(DropdownItem& item);
-    virtual void removeElement(DropdownItem* item);
+    virtual void addElement(std::shared_ptr<DropdownItem> item);
+    virtual void removeElement(std::shared_ptr<DropdownItem> item);
     virtual void removeElement(int index);
 
 protected:

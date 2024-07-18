@@ -14,8 +14,8 @@ public:
     ~IDropdownHolder() {
 
     };
-    virtual void addElement(DropdownItem& item) = 0;
-    virtual void removeElement(DropdownItem* item) = 0;
+    virtual void addElement(std::shared_ptr<DropdownItem> item) = 0;
+    virtual void removeElement(std::shared_ptr<DropdownItem> item) = 0;
     virtual void removeElement(int index) = 0;
 protected:
     std::vector<std::shared_ptr<DropdownItem>> items;

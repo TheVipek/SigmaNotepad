@@ -35,21 +35,21 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     fileDropdown->setRenderingPriority(-100);
 
     SDL_Rect fileItemRect = {0,0,75,25};
-    auto fileItem1 = new DropdownItem(fileItemRect, this, "Open");
+    auto fileItem1 = std::make_shared<DropdownItem>(fileItemRect, this, "Open");
     fileDropdown->setAnchor(Anchor::TopLeft);
-    fileDropdown->addElement(*fileItem1);
+    fileDropdown->addElement(fileItem1);
 
-    auto fileItem2 = new DropdownItem(fileItemRect, this, "Save");
+    auto fileItem2 = std::make_shared<DropdownItem>(fileItemRect, this, "Save");
     fileDropdown->setAnchor(Anchor::TopLeft);
-    fileDropdown->addElement(*fileItem2);
+    fileDropdown->addElement(fileItem2);
 
-    auto fileItem3 = new DropdownItem(fileItemRect, this, "Save As");
+    auto fileItem3 = std::make_shared<DropdownItem>(fileItemRect, this, "Save As");
     fileDropdown->setAnchor(Anchor::TopLeft);
-    fileDropdown->addElement(*fileItem3);
+    fileDropdown->addElement(fileItem3);
 
-    auto fileItem4 = new DropdownItem(fileItemRect, this, "Exit");
+    auto fileItem4 = std::make_shared<DropdownItem>(fileItemRect, this, "Exit");
     fileDropdown->setAnchor(Anchor::TopLeft);
-    fileDropdown->addElement(*fileItem4);
+    fileDropdown->addElement(fileItem4);
 
     SDL_Rect btnSize2 = {75, 0, 75, 25};
     editDropdown = new Dropdown(btnSize2, this, "Edit");
@@ -57,15 +57,15 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     editDropdown->setRenderingPriority(-100);
 
     SDL_Rect editItemRect = {0,0,75,25};
-    auto editItem1 = new ExtendableDropdownItem(editItemRect, this, "Font");
+    auto editItem1 = std::make_shared<ExtendableDropdownItem>(editItemRect, this, "Font");
     editItem1->setAnchor(Anchor::TopLeft);
-    editDropdown->addElement(*editItem1);
+    editDropdown->addElement(editItem1);
 
 
     SDL_Rect fontItemRect = {0,0,50,25};
     for (int i = 0; i < 20; ++i) {
-        auto fontItem = new DropdownItem(fontItemRect, this, std::to_string(i));
-        editItem1->addElement(*fontItem);
+        auto fontItem = std::make_shared<DropdownItem>(fontItemRect, this, std::to_string(i));
+        editItem1->addElement(fontItem);
     }
 
 
@@ -79,16 +79,16 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     SDL_Rect showItemRect = {0,0,75,25};
 
     //Could implement something like 'Extendable DropdownItem' so after hovering it would show those two options
-    auto showItem1 = new DropdownItem(showItemRect, this, "Increase Zoom");
+    auto showItem1 = std::make_shared<DropdownItem>(showItemRect, this, "Increase Zoom");
     showItem1->registerOnClick([this] {
         modifyZoom(ZOOM_STEP);
         updateFontSize(currentFontSize);
         updateZoomText(currentZoom);
     });
     showItem1->setAnchor(Anchor::TopLeft);
-    showDropdown->addElement(*showItem1);
+    showDropdown->addElement(showItem1);
 
-    auto showItem2 = new DropdownItem(showItemRect, this, "Decrease Zoom");
+    auto showItem2 = std::make_shared<DropdownItem>(showItemRect, this, "Decrease Zoom");
     showItem2->registerOnClick([this] {
         modifyZoom(-ZOOM_STEP);
         updateFontSize(currentFontSize);
@@ -96,14 +96,14 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     });
 
     showItem2->setAnchor(Anchor::TopLeft);
-    showDropdown->addElement(*showItem2);
+    showDropdown->addElement(showItem2);
 
 
     //Could implement quick img displayer, so it would show arrow at right of it if its active
-    auto showItem3 = new DropdownItem(showItemRect, this, "Show Status Bar");
+    auto showItem3 = std::make_shared<DropdownItem>(showItemRect, this, "Show Status Bar");
     showItem3->registerOnClick(std::bind(&MyMainWindow::changeVisibilityOfStatusBar, this));
     showItem3->setAnchor(Anchor::TopLeft);
-    showDropdown->addElement(*showItem3);
+    showDropdown->addElement(showItem3);
 
 
 

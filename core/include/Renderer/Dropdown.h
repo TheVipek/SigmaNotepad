@@ -23,8 +23,8 @@ public:
     void setAnchor(Anchor anchor) override;
     void setOffset(const Offset &offset) override;
 
-    virtual void addElement(DropdownItem& item);
-    virtual void removeElement(DropdownItem* item);
+    virtual void addElement(std::shared_ptr<DropdownItem> item);
+    virtual void removeElement(std::shared_ptr<DropdownItem> item);
     virtual void removeElement(int index);
 
 protected:

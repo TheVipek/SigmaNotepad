@@ -52,10 +52,10 @@ void DropdownItem::setRenderingPriority(const int priority) {
 }
 
 
-void Dropdown::addElement(DropdownItem& item) {
+void Dropdown::addElement(std::shared_ptr<DropdownItem> item) {
     auto it = std::find_if(items.begin(), items.end(),
                           [&item](const std::shared_ptr<DropdownItem>& ptr) {
-                              return *ptr == item;
+                              return ptr == item;
                           });
 
     if (it == items.end()) {  // Object not found
@@ -64,20 +64,20 @@ void Dropdown::addElement(DropdownItem& item) {
             targetHeight += i->getHeight();
         }
 
-        owner->removeRenderableObject(&item);
-        owner->removeEventObject(&item);
-        const SDL_Rect newRect = { currentRect.x, currentRect.y + currentRect.h + targetHeight, item.getWidth(), item.getHeight() };
-        item.setRect(newRect);
-        item.setRenderingPriority(renderingPrority);
-        items.push_back(std::make_unique<DropdownItem>(item));
+        owner->removeRenderableObject(item.get());
+        owner->removeEventObject(item.get());
+        const SDL_Rect newRect = { currentRect.x, currentRect.y + currentRect.h + targetHeight, item->getWidth(), item->getHeight() };
+        item->setRect(newRect);
+        item->setRenderingPriority(renderingPrority);
+        items.push_back(item);
     } else {
         // skip
     }
 }
 
-void Dropdown::removeElement(DropdownItem* item) {
+void Dropdown::removeElement(std::shared_ptr<DropdownItem> item) {
     items.erase(std::remove_if(items.begin(), items.end(),
-               [item](const std::shared_ptr<DropdownItem>& ptr) { return ptr.get() == item; }),
+               [item](const std::shared_ptr<DropdownItem>& ptr) { return ptr == item; }),
                items.end());
 }
 
