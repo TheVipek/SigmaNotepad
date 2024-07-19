@@ -49,6 +49,8 @@ protected:
 
 
     void openFile();
+    void saveFile();
+    void exit();
 };
 
 

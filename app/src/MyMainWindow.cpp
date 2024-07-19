@@ -48,14 +48,12 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
 
     auto fileItem2 = std::make_shared<DropdownItem>(fileItemRect, this, "Save");
     fileItem2->setAnchor(Anchor::TopLeft);
+    fileItem2->registerOnClick([this]{ saveFile(); });
     fileDropdown->addElement(fileItem2);
-
-    auto fileItem3 = std::make_shared<DropdownItem>(fileItemRect, this, "Save As");
-    fileItem3->setAnchor(Anchor::TopLeft);
-    fileDropdown->addElement(fileItem3);
 
     auto fileItem4 = std::make_shared<DropdownItem>(fileItemRect, this, "Exit");
     fileItem4->setAnchor(Anchor::TopLeft);
+    fileItem4->registerOnClick([this]{ exit(); });
     fileDropdown->addElement(fileItem4);
 
     SDL_Rect btnSize2 = {75, 0, 75, 25};
@@ -110,12 +108,6 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     showItem3->registerOnClick(std::bind(&MyMainWindow::changeVisibilityOfStatusBar, this));
     showItem3->setAnchor(Anchor::TopLeft);
     showDropdown->addElement(showItem3);
-
-
-
-
-
-
 
 
     SDL_Rect bottomPanelSize = {0, 0, 25, 30};
@@ -197,21 +189,55 @@ void MyMainWindow::openFile() {
     0 // forbids multiple selections
     );
 
-    std::ifstream file(selection, std::ios::binary | std::ios::ate);
-    if (file) {
-        std::streamsize size = file.tellg();
-        file.seekg(0, std::ios::beg);
+    if(selection) {
+        std::ifstream file(selection, std::ios::binary | std::ios::ate);
+        if (file) {
+            std::streamsize size = file.tellg();
+            file.seekg(0, std::ios::beg);
 
-        std::vector<char> buffer(size);
-        if (file.read(buffer.data(), size)) {
-            // Convert the byte array to a string
-            __gnu_cxx::rope<char> fileContents;
-            fileContents.replace(0,0, buffer.data(), size);
-            textEditField->setText(fileContents);
+            std::vector<char> buffer(size);
+            if (file.read(buffer.data(), size)) {
+                // Convert the byte array to a string
+                __gnu_cxx::rope<char> fileContents;
+                fileContents.replace(0,0, buffer.data(), size);
+                textEditField->setText(fileContents);
+            } else {
+                std::cerr << "Error reading the file." << std::endl;
+            }
         } else {
-            std::cerr << "Error reading the file." << std::endl;
+            std::cerr << "Error opening the file." << std::endl;
         }
-    } else {
-        std::cerr << "Error opening the file." << std::endl;
+    }
+
+}
+
+void MyMainWindow::saveFile() {
+    char const* filePatterns[]  = { "*.txt" };
+    char const * saveFile = tinyfd_saveFileDialog(
+    "Select file", // title
+    "", // optional initial directory
+    1, // number of filter patterns
+    filePatterns,  // char const * lFilterPatterns[2] = { "*.txt", "*.jpg" };
+    NULL // optional filter description
+    );
+
+    if(saveFile) {
+        std::ofstream file(saveFile, std::ios::binary); // Open file in binary write mode
+        if (file) {
+            rope<char> text = textEditField->getText(); // Assuming getText() returns the text content
+            file.write(text.c_str(), text.size()); // Write text to file
+            if (file.fail()) {
+                std::cerr << "Error writing to the file." << std::endl;
+            }
+        } else {
+            std::cerr << "Error opening the file for writing." << std::endl;
+        }
     }
 }
+
+void MyMainWindow::exit() {
+    SDL_Event quitEvent;
+    quitEvent.type = SDL_QUIT;
+    SDL_PushEvent(&quitEvent);
+}
+
