@@ -39,5 +39,5 @@ make
 
 ## License
 
-This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/)
+This project is licensed under the [GPL-3.0 license](https://www.gnu.org/licenses/gpl-3.0.html)
 
