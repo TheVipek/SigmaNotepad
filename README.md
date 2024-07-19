@@ -19,15 +19,6 @@ git clone https://github.com/TheVipek/SigmaNotepad.git
 cd SigmaNotepad
 ```
 
-## Install dependencies
-Ensure you have the following dependencies installed:
-```
-SDL2
-SDL_ttf
-tinyfiledialogs
-Google Test (for running tests)
-```
-
 ## Build the project
 
 ```
@@ -36,6 +27,15 @@ cd build
 cmake ..
 make
 ```
+
+## Install dependencies
+
+Ensure you have vcpkg installed and run the following command to install the required packages:
+
+```
+vcpkg install
+```
+
 
 ## License
 
