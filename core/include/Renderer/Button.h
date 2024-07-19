@@ -21,7 +21,10 @@ public:
     Button(SDL_Rect& rect, Window* _owner, const std::string& text)
         : SigmaRenderableObject(rect, _owner) {
 
-        TLabel = std::make_shared<TextLabel>(this->baseRect, nullptr);
+        TLabel = std::make_shared<TextLabel>(this->baseRect, _owner);
+        _owner->removeEventObject(TLabel.get());
+        _owner->removeRenderableObject(TLabel.get());
+
         TLabel->setText(text);
     }
 

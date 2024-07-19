@@ -15,7 +15,6 @@ void Panel::render(SDL_Renderer *renderer) {
     if(!visible)
         return;
 
-    SigmaRenderableObject::render(renderer);
 
     SDL_SetRenderDrawColor(renderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
     SDL_RenderFillRect(renderer, &currentRect);

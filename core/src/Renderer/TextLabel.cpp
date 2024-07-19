@@ -18,7 +18,6 @@ void TextLabel::render(SDL_Renderer* renderer) {
     if(!visible)
         return;
 
-    SigmaRenderableObject::render(renderer);
 
     if(font->get() == nullptr || text.empty())
         return;

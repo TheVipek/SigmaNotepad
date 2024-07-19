@@ -4,28 +4,34 @@
 
 #include "MyMainWindow.h"
 
+#include <fstream>
 #include <iomanip>
 
 #include "Renderer/ExtendableDropdownItem.h"
+
 
 MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::shared_ptr<WindowRenderingManager> mainWindow) : Window(_window, _renderer), mainWindow((mainWindow)) {
 
 
     currentFontSize = BASE_FONT_SIZE;
     currentZoom = BASE_ZOOM;
-
-    // SDL_Window* fontSettingsWindow = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 300, 150, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-    // SDL_Renderer* fontSettingsRenderer = SDL_CreateRenderer(fontSettingsWindow, -1, SDL_RENDERER_ACCELERATED);
-    // SDL_SetRenderDrawBlendMode(fontSettingsRenderer, SDL_BLENDMODE_BLEND);
-    // fontSettings = std::shared_ptr<FontSettingsWindow>(new FontSettingsWindow(fontSettingsWindow, fontSettingsRenderer, currentFontSize));
-    // mainWindow->addWindow(fontSettings);
-
     //Creating GUI Elements
     SDL_Rect topPanelSize = {0, 0, 0, 25};
     topPanel = new Panel(topPanelSize, this);
     topPanel->setBackgroundColor({ 30, 30 ,30 ,255});
     topPanel->setAnchor(Anchor::FullWidthTop);
 
+    SDL_Rect textEditSize = {0, 25, 0, 55};
+    textEditField = new TextEdit(textEditSize, this);
+    textEditField->setAnchor(Anchor::FullScreen);
+    textEditField->setOffset({0,0,0,0});
+
+    textEditField->setSize(currentFontSize * currentZoom);
+    textEditField->setFontStyle(1);
+
+    // SDL_Rect rect ={};
+    // scrollLayout = new ScrollLayout(.2f, rect, this);
+    // scrollLayout->assign(textEditField);
 
     SDL_Rect btnSize = {0, 0, 75, 25};
     fileDropdown = new Dropdown(btnSize, this, "File");
@@ -36,19 +42,20 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
 
     SDL_Rect fileItemRect = {0,0,75,25};
     auto fileItem1 = std::make_shared<DropdownItem>(fileItemRect, this, "Open");
-    fileDropdown->setAnchor(Anchor::TopLeft);
+    fileItem1->setAnchor(Anchor::TopLeft);
+    fileItem1->registerOnClick([this]{ openFile(); });
     fileDropdown->addElement(fileItem1);
 
     auto fileItem2 = std::make_shared<DropdownItem>(fileItemRect, this, "Save");
-    fileDropdown->setAnchor(Anchor::TopLeft);
+    fileItem2->setAnchor(Anchor::TopLeft);
     fileDropdown->addElement(fileItem2);
 
     auto fileItem3 = std::make_shared<DropdownItem>(fileItemRect, this, "Save As");
-    fileDropdown->setAnchor(Anchor::TopLeft);
+    fileItem3->setAnchor(Anchor::TopLeft);
     fileDropdown->addElement(fileItem3);
 
     auto fileItem4 = std::make_shared<DropdownItem>(fileItemRect, this, "Exit");
-    fileDropdown->setAnchor(Anchor::TopLeft);
+    fileItem4->setAnchor(Anchor::TopLeft);
     fileDropdown->addElement(fileItem4);
 
     SDL_Rect btnSize2 = {75, 0, 75, 25};
@@ -70,7 +77,7 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
 
 
 
-    SDL_Rect btnSize3 = {200, 0, 75, 25};
+    SDL_Rect btnSize3 = {150, 0, 75, 25};
     showDropdown = new Dropdown(btnSize3, this, "Show");
     showDropdown->setAnchor(Anchor::TopLeft);
     showDropdown->setRenderingPriority(-100);
@@ -107,17 +114,7 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
 
 
 
-    SDL_Rect textEditSize = {0, 25, 0, 55};
-    textEditField = new TextEdit(textEditSize, this);
-    textEditField->setAnchor(Anchor::FullScreen);
-    textEditField->setOffset({0,0,0,0});
 
-    textEditField->setSize(currentFontSize * currentZoom);
-    textEditField->setFontStyle(1 | 2 | 3 | 4 | 5);
-
-    // SDL_Rect rect ={};
-    // scrollLayout = new ScrollLayout(.2f, rect, this);
-    // scrollLayout->assign(textEditField);
 
 
 
@@ -189,3 +186,32 @@ void MyMainWindow::renderFrame() {
     Window::renderFrame();
 }
 
+void MyMainWindow::openFile() {
+    char const* filePatterns[]  = { "*.txt" };
+    char const * selection = tinyfd_openFileDialog(
+    "Select file", // title
+    "", // optional initial directory
+    1, // number of filter patterns
+    filePatterns,  // char const * lFilterPatterns[2] = { "*.txt", "*.jpg" };
+    NULL, // optional filter description
+    0 // forbids multiple selections
+    );
+
+    std::ifstream file(selection, std::ios::binary | std::ios::ate);
+    if (file) {
+        std::streamsize size = file.tellg();
+        file.seekg(0, std::ios::beg);
+
+        std::vector<char> buffer(size);
+        if (file.read(buffer.data(), size)) {
+            // Convert the byte array to a string
+            __gnu_cxx::rope<char> fileContents;
+            fileContents.replace(0,0, buffer.data(), size);
+            textEditField->setText(fileContents);
+        } else {
+            std::cerr << "Error reading the file." << std::endl;
+        }
+    } else {
+        std::cerr << "Error opening the file." << std::endl;
+    }
+}

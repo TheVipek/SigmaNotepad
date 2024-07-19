@@ -442,7 +442,7 @@ void TextEdit::handleRenderingText(SDL_Renderer* renderer, const int spaceBetwee
     int yOffset = 0;
     for (auto line : lines) {
         if (line.empty())
-            line = " "; // to render even empty lines correctly
+            continue; //line = " "; // to render even empty lines correctly
 
         SDL_Surface *surface = TTF_RenderUTF8_Blended_Wrapped(font->get(), line.c_str(), textColor, 0);
         if (surface == nullptr) {
@@ -521,7 +521,6 @@ void TextEdit::render(SDL_Renderer *renderer) {
     if (!visible)
         return;
 
-    SigmaRenderableObject::render(renderer);
 
     // Background rendering
     SDL_SetRenderDrawColor(renderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);

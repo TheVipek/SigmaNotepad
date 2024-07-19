@@ -10,6 +10,7 @@
 
 #include "../IEventHandler.h"
 #include "Offset.h"
+#include "Window/Window.h"
 
 enum class Anchor {
     TopLeft, TopRight, BottomLeft, BottomRight,
@@ -22,8 +23,11 @@ enum class Anchor {
 
 class SigmaObject : public IEventHandler {
 public:
-    SigmaObject(const SDL_Rect& rect)
-        : baseRect(rect), currentRect(rect),offset(defaultOffset) {};
+    SigmaObject(const SDL_Rect& rect, Window* owner)
+        : baseRect(rect), currentRect(rect),offset(defaultOffset), owner(owner) {
+
+    };
+
 
     virtual ~SigmaObject() = default;
 
@@ -33,22 +37,27 @@ public:
     [[nodiscard]] int getHeight() const { return currentRect.h; }
 
     virtual void setEnabled(const bool enabled) { this->enabled = enabled; }
-    virtual void setRect(const SDL_Rect& rect) { this->baseRect = rect;}
+    virtual void setRect(const SDL_Rect& rect) { this->baseRect = rect; recalculatePosition(); }
     virtual void setVisibility(const bool visible) { this->visible = visible; }
     virtual bool getVisibility() { return this->visible; }
-    virtual void setAnchor(Anchor anchor) { this->anchor = anchor; isAnchorDirty = true;}
-    virtual void setOffset(const Offset& offset) { this->offset = offset;  }
+    virtual void setAnchor(Anchor anchor) { this->anchor = anchor; recalculatePosition(); }
+    virtual void setOffset(const Offset& offset) { this->offset = offset; recalculatePosition(); }
     virtual void handlePosition(const int& screen_width, const int& screen_height);
-    void handleEvent(const SDL_Event& e) override;
+    virtual void recalculatePosition();
+    virtual void handleEvent(const SDL_Event& e) {
+        if(e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_RESIZED) {
+            recalculatePosition();
+        }
+    }
 protected:
     SDL_Rect            currentRect;
     SDL_Rect            baseRect;
     Anchor              anchor = Anchor::None;
     Offset&             offset;
     Offset              defaultOffset = Offset(0,0,0,0);
-    bool                isAnchorDirty = true;
     bool                enabled = true;
     bool                visible = true;
+    Window* owner;
 };
 
 

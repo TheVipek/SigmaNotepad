@@ -17,12 +17,12 @@ class SigmaRenderableObject : public SigmaObject, public IRenderHandler {
 public:
     SigmaRenderableObject(SDL_Rect& rect, Window* _owner);
     ~SigmaRenderableObject() override;
-
-    void render(SDL_Renderer* renderer) override;
+    void render(SDL_Renderer* renderer) = 0;
+    void handleEvent(const SDL_Event &e) override;
     [[nodiscard]] SDL_Rect getContentSize() const { return contentSize; }
 protected:
     SDL_Rect            contentSize = {};
-    Window* owner;
+
 
 };
 #endif //SIGMARENDERABLEOBJECT_H

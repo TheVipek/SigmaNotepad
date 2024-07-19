@@ -7,7 +7,6 @@
 
 #include <SDL2/SDL.h>
 
-#include "FontSettingsWindow.h"
 #include "Managers/WindowRenderingManager.h"
 #include "Renderer/Button.h"
 #include "Renderer/Dropdown.h"
@@ -17,13 +16,13 @@
 #include "Renderer/TextLabel.h"
 #include "Window/Window.h"
 
+#include "tinyfiledialogs/tinyfiledialogs.h"
 class MyMainWindow : public Window {
 public:
 
     MyMainWindow(SDL_Window* _window, SDL_Renderer* _renderer, std::shared_ptr<WindowRenderingManager> mainWindow);
 protected:
     std::shared_ptr<WindowRenderingManager> mainWindow;
-    std::shared_ptr<FontSettingsWindow> fontSettings;
     Panel* topPanel;
     Dropdown* fileDropdown;
     Dropdown* editDropdown;
@@ -47,6 +46,9 @@ protected:
     void handleEvent(const SDL_Event &e) override;
     void renderFrame() override;
     void changeVisibilityOfStatusBar();
+
+
+    void openFile();
 };
 
 

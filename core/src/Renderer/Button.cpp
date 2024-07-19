@@ -10,8 +10,8 @@ void Button::handleEvent(const SDL_Event &e) {
     if(!enabled) // no need to process events
         return;
     TLabel->handleEvent(e);
-
     SigmaRenderableObject::handleEvent(e);
+
 
     if(e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
         const int mousePosX = e.button.x;
@@ -51,7 +51,6 @@ void Button::render(SDL_Renderer* renderer) {
         return;
 
     TLabel->render(renderer);
-    SigmaRenderableObject::render(renderer);
 
     SDL_Color bgColorToRender;
     if(isHovered) {

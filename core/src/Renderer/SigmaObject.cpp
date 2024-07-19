@@ -84,3 +84,12 @@ void SigmaObject::handlePosition(const int& screen_width, const int& screen_heig
     currentRect.x += (offset.Left - offset.Right);
     currentRect.y += (offset.Bottom - offset.Top);
 }
+void SigmaObject::recalculatePosition() {
+    if(owner != nullptr) {
+        int w,h;
+        if(SDL_GetRendererOutputSize(owner->getRenderer(), &w, &h) == 0) {
+            handlePosition(w,h);
+        }
+    }
+}
+

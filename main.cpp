@@ -5,7 +5,6 @@
 #include <SDL2/SDL.h>
 #include <SDL_ttf.h>
 
-#include "FontSettingsWindow.h"
 #include "app/include/MyMainWindow.h"
 #include "Managers/WindowRenderingManager.h"
 
