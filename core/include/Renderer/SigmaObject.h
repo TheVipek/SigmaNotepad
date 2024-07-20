@@ -45,6 +45,7 @@ public:
     virtual void handlePosition(const int& screen_width, const int& screen_height);
     virtual void recalculatePosition();
     virtual void handleEvent(const SDL_Event& e) {
+        setEventHandled(false);
         if(e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_RESIZED) {
             recalculatePosition();
         }

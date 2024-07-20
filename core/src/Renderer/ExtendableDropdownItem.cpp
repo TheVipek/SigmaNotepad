@@ -6,10 +6,15 @@
 
 void ExtendableDropdownItem::handleEvent(const SDL_Event &e) {
     DropdownItem::handleEvent(e);
-
+    setEventHandled(false);
     if(isExtended) {
         for (auto item: items) {
             item->handleEvent(e);
+
+            if(item->isEventHandled()) {
+                setEventHandled(true);
+                break;
+            }
         }
     }
 }
@@ -49,6 +54,7 @@ void ExtendableDropdownItem::addElement(std::shared_ptr<DropdownItem> item) {
         const SDL_Rect newRect = { baseRect.x + baseRect.w, baseRect.y + targetHeight, item->getWidth(), item->getHeight() };
         item->setRect(newRect);
         item->setRenderingPriority(renderingPrority);
+        item->setEventHandled(eventPriority);
         item->setItemOwner(itemOwner);
         items.push_back(item);
     } else {

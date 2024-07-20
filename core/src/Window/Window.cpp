@@ -41,8 +41,18 @@ void Window::removeEventObject(IEventHandler* obj) {
 void Window::handleEvent(const SDL_Event &e) {
     if(SDL_GetWindowFromID(e.window.windowID) != window.get())
         return;
+
+    std::sort(eventHandlers.begin(), eventHandlers.end(), [](const IEventHandler* a, const IEventHandler* b) {
+    return a->getEventPriority() > b->getEventPriority();
+});
+
     for(const auto& obj : eventHandlers) {
         obj->handleEvent(e);
+
+        //it was the easiest solution for existing problem xd
+        if (obj->isEventHandled()) {
+            break;
+        }
     }
 }
 void Window::renderFrame() {

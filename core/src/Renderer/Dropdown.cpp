@@ -8,9 +8,16 @@
 
 void Dropdown::handleEvent(const SDL_Event &e) {
     Button::handleEvent(e);
+    setEventHandled(false);
     if(dropdownActive) {
         for (auto item: items) {
             item->handleEvent(e);
+
+            if(item->isEventHandled()) {
+                printf("event handled for item in dropdown \n");
+                setEventHandled(true);
+                break;
+            }
         }
     }
 }
@@ -69,6 +76,7 @@ void Dropdown::addElement(std::shared_ptr<DropdownItem> item) {
         const SDL_Rect newRect = { currentRect.x, currentRect.y + currentRect.h + targetHeight, item->getWidth(), item->getHeight() };
         item->setRect(newRect);
         item->setRenderingPriority(renderingPrority);
+        item->setEventPriority(eventPriority);
         item->setItemOwner(this);
         items.push_back(item);
     } else {

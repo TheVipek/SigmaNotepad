@@ -33,6 +33,7 @@ add_library(SigmaNotepadLib STATIC
         include/Renderer/ExtendableDropdownItem.h
         include/Renderer/IDropdownHolder.h
 
+
         src/Renderer/SigmaObject.cpp
         src/Renderer/SigmaRenderableObject.cpp
         src/Renderer/Button.cpp
@@ -46,10 +47,14 @@ add_library(SigmaNotepadLib STATIC
         src/Renderer/DropdownItem.cpp
         src/Window/Window.cpp
         src/Renderer/ExtendableDropdownItem.cpp
+
+        tfd/tinyfiledialogs.h
+        tfd/tinyfiledialogs.cpp
 )
 
 target_include_directories(SigmaNotepadLib PUBLIC "src")
 target_include_directories(SigmaNotepadLib PUBLIC "include")
+target_include_directories(SigmaNotepadLib PUBLIC "tfd")
 
 target_link_libraries(SigmaNotepadLib
         PUBLIC

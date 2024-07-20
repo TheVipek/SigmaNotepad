@@ -41,7 +41,7 @@ protected:
     bool                        isHovered = false;
     bool                        isClicked = false;
 
-    SDL_Color                   normalColor = { 255, 255, 255, 0}; // default bg color
+    SDL_Color                   normalColor = { 0, 0, 0, 192}; // default bg color
     SDL_Color                   hoverColor = { 220, 220, 220, 48};; // bg on hover
     SDL_Color                   clickColor = { 220, 220, 220, 96};; // bg on click
 

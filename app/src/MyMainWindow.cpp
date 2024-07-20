@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <iomanip>
+#include <thread>
 
 #include "Renderer/ExtendableDropdownItem.h"
 
@@ -39,6 +40,7 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     fileDropdown->TLabel->setHorizontalAligment(HorizontalAligment::Center); // no implementation for text aligment
     fileDropdown->TLabel->setVerticalAligment(VerticalAligment::Center); // no implementation for text aligment
     fileDropdown->setRenderingPriority(-100);
+    fileDropdown->setEventPriority(100);
 
     SDL_Rect fileItemRect = {0,0,75,25};
     auto fileItem1 = std::make_shared<DropdownItem>(fileItemRect, this, "Open");
@@ -60,13 +62,14 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     editDropdown = new Dropdown(btnSize2, this, "Edit");
     editDropdown->setAnchor(Anchor::TopLeft);
     editDropdown->setRenderingPriority(-100);
+    editDropdown->setEventPriority(100);
 
     SDL_Rect editItemRect = {0,0,75,25};
     auto editItem1 = std::make_shared<ExtendableDropdownItem>(editItemRect, this, "Font");
     editItem1->setAnchor(Anchor::TopLeft);
     editDropdown->addElement(editItem1);
     SDL_Rect fontItemRect = {0,0,40,20};
-    for (int i = 8; i <= 36; i+=4) {
+    for (int i = 12; i <= 36; i+=4) {
         auto fontItem = std::make_shared<DropdownItem>(fontItemRect, this, std::to_string(i));
         fontItem->registerOnClick([this, i]{ updateFontSize(i);  });
         editItem1->addElement(fontItem);
@@ -79,8 +82,9 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     showDropdown = new Dropdown(btnSize3, this, "Show");
     showDropdown->setAnchor(Anchor::TopLeft);
     showDropdown->setRenderingPriority(-100);
+    showDropdown->setEventPriority(100);
 
-    SDL_Rect showItemRect = {0,0,75,25};
+    SDL_Rect showItemRect = {0,0,165,25};
 
     //Could implement something like 'Extendable DropdownItem' so after hovering it would show those two options
     auto showItem1 = std::make_shared<DropdownItem>(showItemRect, this, "Increase Zoom");
@@ -179,17 +183,17 @@ void MyMainWindow::renderFrame() {
 }
 
 void MyMainWindow::openFile() {
-    char const* filePatterns[]  = { "*.txt" };
+    char const* filePatterns[] = { "*.txt" };
     char const * selection = tinyfd_openFileDialog(
-    "Select file", // title
-    "", // optional initial directory
-    1, // number of filter patterns
-    filePatterns,  // char const * lFilterPatterns[2] = { "*.txt", "*.jpg" };
-    NULL, // optional filter description
-    0 // forbids multiple selections
+        "Select file", // title
+        "", // optional initial directory
+        1, // number of filter patterns
+        filePatterns,  // char const * lFilterPatterns[2] = { "*.txt", "*.jpg" };
+        NULL, // optional filter description
+        0 // forbids multiple selections
     );
 
-    if(selection) {
+    if (selection) {
         std::ifstream file(selection, std::ios::binary | std::ios::ate);
         if (file) {
             std::streamsize size = file.tellg();
@@ -199,8 +203,9 @@ void MyMainWindow::openFile() {
             if (file.read(buffer.data(), size)) {
                 // Convert the byte array to a string
                 __gnu_cxx::rope<char> fileContents;
-                fileContents.replace(0,0, buffer.data(), size);
+                fileContents.replace(0, 0, buffer.data(), size);
                 textEditField->setText(fileContents);
+                SDL_FlushEvents(0, 0xFFFF);
             } else {
                 std::cerr << "Error reading the file." << std::endl;
             }
@@ -208,7 +213,6 @@ void MyMainWindow::openFile() {
             std::cerr << "Error opening the file." << std::endl;
         }
     }
-
 }
 
 void MyMainWindow::saveFile() {

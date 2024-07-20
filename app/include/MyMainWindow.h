@@ -16,7 +16,7 @@
 #include "Renderer/TextLabel.h"
 #include "Window/Window.h"
 
-#include "tinyfiledialogs/tinyfiledialogs.h"
+#include "tinyfiledialogs.h"
 class MyMainWindow : public Window {
 public:
 

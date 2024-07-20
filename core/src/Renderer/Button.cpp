@@ -34,6 +34,7 @@ void Button::handleEvent(const SDL_Event &e) {
         else if(e.type == SDL_MOUSEBUTTONDOWN) {
             //Change color to click
             if(!isClicked && (withinX && withinY)) {
+                setEventHandled(true);
                 isClicked = true;
                 click();
             }
@@ -50,7 +51,7 @@ void Button::render(SDL_Renderer* renderer) {
     if(!visible) // no need to render
         return;
 
-    TLabel->render(renderer);
+
 
     SDL_Color bgColorToRender;
     if(isHovered) {
@@ -65,6 +66,8 @@ void Button::render(SDL_Renderer* renderer) {
 
     SDL_SetRenderDrawColor(renderer, bgColorToRender.r, bgColorToRender.g, bgColorToRender.b, bgColorToRender.a);
     SDL_RenderFillRect(renderer, &currentRect);
+
+    TLabel->render(renderer);
 }
 
 void Button::click() {
