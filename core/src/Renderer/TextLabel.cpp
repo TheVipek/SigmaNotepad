@@ -34,7 +34,35 @@ void TextLabel::render(SDL_Renderer* renderer) {
         return;
     }
 
-    SDL_Rect dest = { currentRect.x, currentRect.y, surface->w, surface->h };
+    SDL_Rect dest;
+    dest.w = surface->w;
+    dest.h = surface->h;
+
+    switch(horizontal_aligment) {
+        case HorizontalAligment::Left:
+            dest.x = currentRect.x;
+        break;
+        case HorizontalAligment::Center:
+            dest.x = currentRect.x + (currentRect.w - surface->w) / 2;
+        break;
+        case HorizontalAligment::Right:
+            dest.x = currentRect.x + (currentRect.w - surface->w);
+        break;
+    }
+
+    switch(vertical_aligment) {
+        case VerticalAligment::Top:
+            dest.y = currentRect.y;
+        break;
+        case VerticalAligment::Center:
+            dest.y = currentRect.y + (currentRect.h - surface->h) / 2;
+        break;
+        case VerticalAligment::Bottom:
+            dest.y = currentRect.y + (currentRect.h - surface->h);
+        break;
+    }
+
+    //SDL_Rect dest = { currentRect.x, currentRect.y, surface->w, surface->h };
     SDL_RenderCopy(renderer, texture, NULL, &dest);
 
     SDL_DestroyTexture(texture);

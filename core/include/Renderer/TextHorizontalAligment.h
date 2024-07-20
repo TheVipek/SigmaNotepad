@@ -5,8 +5,8 @@
 #ifndef TEXTHORIZONTALALIGMENT_H
 #define TEXTHORIZONTALALIGMENT_H
 enum class HorizontalAligment {
-    Top,
+    Left,
     Center,
-    Bottom
+    Right
 };
 #endif //TEXTHORIZONTALALIGMENT_H

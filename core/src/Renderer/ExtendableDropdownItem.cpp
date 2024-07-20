@@ -56,6 +56,8 @@ void ExtendableDropdownItem::addElement(std::shared_ptr<DropdownItem> item) {
         item->setRenderingPriority(renderingPrority);
         item->setEventHandled(eventPriority);
         item->setItemOwner(itemOwner);
+        item->TLabel->setHorizontalAligment(this->TLabel->getHorizontalAligment());
+        item->TLabel->setVerticalAligment(this->TLabel->getVerticalAligment());
         items.push_back(item);
     } else {
         // skip

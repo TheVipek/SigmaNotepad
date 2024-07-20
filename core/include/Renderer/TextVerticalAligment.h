@@ -5,8 +5,8 @@
 #ifndef TEXTVERTICALALIGMENT_H
 #define TEXTVERTICALALIGMENT_H
 enum class VerticalAligment {
-    Left,
+    Top,
     Center,
-    Right
+    Bottom
 };
 #endif //TEXTVERTICALALIGMENT_H

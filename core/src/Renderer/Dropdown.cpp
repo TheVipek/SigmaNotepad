@@ -78,6 +78,8 @@ void Dropdown::addElement(std::shared_ptr<DropdownItem> item) {
         item->setRenderingPriority(renderingPrority);
         item->setEventPriority(eventPriority);
         item->setItemOwner(this);
+        item->TLabel->setHorizontalAligment(this->TLabel->getHorizontalAligment());
+        item->TLabel->setVerticalAligment(this->TLabel->getVerticalAligment());
         items.push_back(item);
     } else {
         // skip

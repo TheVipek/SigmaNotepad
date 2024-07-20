@@ -37,8 +37,8 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     SDL_Rect btnSize = {0, 0, 75, 25};
     fileDropdown = new Dropdown(btnSize, this, "File");
     fileDropdown->setAnchor(Anchor::TopLeft);
-    fileDropdown->TLabel->setHorizontalAligment(HorizontalAligment::Center); // no implementation for text aligment
-    fileDropdown->TLabel->setVerticalAligment(VerticalAligment::Center); // no implementation for text aligment
+    fileDropdown->TLabel->setHorizontalAligment(HorizontalAligment::Center);
+    fileDropdown->TLabel->setVerticalAligment(VerticalAligment::Center);
     fileDropdown->setRenderingPriority(-100);
     fileDropdown->setEventPriority(100);
 
