@@ -30,9 +30,9 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     textEditField->setSize(currentFontSize * currentZoom);
     textEditField->setFontStyle(1);
 
-    // SDL_Rect rect ={};
-    // scrollLayout = new ScrollLayout(.2f, rect, this);
-    // scrollLayout->assign(textEditField);
+    SDL_Rect rect ={};
+    scrollLayout = new ScrollLayout(.2f, rect, this);
+    scrollLayout->assign(textEditField);
 
     SDL_Rect btnSize = {0, 0, 75, 25};
     fileDropdown = new Dropdown(btnSize, this, "File");

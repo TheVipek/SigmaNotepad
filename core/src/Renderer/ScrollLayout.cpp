@@ -98,7 +98,6 @@ void ScrollLayout::handleEvent(const SDL_Event &e) {
 void ScrollLayout::render(SDL_Renderer *renderer){
     if(!visible)
         return;
-    SigmaRenderableObject::render(renderer);
     if(assignedObject == nullptr)
         return;
 
@@ -113,11 +112,12 @@ void ScrollLayout::render(SDL_Renderer *renderer){
     SDL_Rect clipRect = { assignedObject->getX(), assignedObject->getY(), assignedObject->getWidth(), assignedObject->getHeight() };
     SDL_RenderSetClipRect(renderer, &clipRect);
 
-    assignedObject->setRect({assignedObject->getX() - sourceX, assignedObject->getY() - sourceY, assignedObject->getWidth(), assignedObject->getHeight()});
+    assignedObject->setRect({assignedObject->getBaseX() - sourceX, assignedObject->getBaseY() - sourceY, assignedObject->getBaseWidth(), assignedObject->getBaseHeight()});
     assignedObject->render(renderer);
-    assignedObject->setRect({assignedObject->getX() + sourceX, assignedObject->getY() + sourceY, assignedObject->getWidth(), assignedObject->getHeight()});
+    assignedObject->setRect({assignedObject->getBaseX() + sourceX, assignedObject->getBaseY() + sourceY, assignedObject->getBaseWidth(), assignedObject->getBaseHeight()});
 
     SDL_RenderSetClipRect(renderer, nullptr);
+
 
 
     if(horizontal == true && contentSize.w > assignedObject->getWidth()) {

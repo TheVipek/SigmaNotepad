@@ -442,7 +442,7 @@ void TextEdit::handleRenderingText(SDL_Renderer* renderer, const int spaceBetwee
     int yOffset = 0;
     for (auto line : lines) {
         if (line.empty())
-            continue; //line = " "; // to render even empty lines correctly
+            line = " "; // to render even empty lines correctly
 
         SDL_Surface *surface = TTF_RenderUTF8_Blended_Wrapped(font->get(), line.c_str(), textColor, 0);
         if (surface == nullptr) {

@@ -36,6 +36,11 @@ public:
     [[nodiscard]] int getWidth() const { return currentRect.w; }
     [[nodiscard]] int getHeight() const { return currentRect.h; }
 
+    [[nodiscard]] int getBaseX() const { return baseRect.x;}
+    [[nodiscard]] int getBaseY() const { return baseRect.y;}
+    [[nodiscard]] int getBaseWidth() const { return baseRect.w; }
+    [[nodiscard]] int getBaseHeight() const { return baseRect.h; }
+
     virtual void setEnabled(const bool enabled) { this->enabled = enabled; }
     virtual void setRect(const SDL_Rect& rect) { this->baseRect = rect; recalculatePosition(); }
     virtual void setVisibility(const bool visible) { this->visible = visible; }
