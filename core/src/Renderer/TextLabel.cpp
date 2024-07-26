@@ -62,7 +62,6 @@ void TextLabel::render(SDL_Renderer* renderer) {
         break;
     }
 
-    //SDL_Rect dest = { currentRect.x, currentRect.y, surface->w, surface->h };
     SDL_RenderCopy(renderer, texture, NULL, &dest);
 
     SDL_DestroyTexture(texture);

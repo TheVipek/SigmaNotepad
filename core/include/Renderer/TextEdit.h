@@ -112,6 +112,13 @@ public:
     Selection getSelection() const {
         return selection;
     }
+
+    int getCharWidth() {
+        return letterWidth;
+    }
+    int getCharHeight() {
+        return letterHeight;
+    }
     void handleEvent(const SDL_Event &e) override;
     void render(SDL_Renderer* renderer) override;
 

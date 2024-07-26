@@ -19,8 +19,9 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     //Creating GUI Elements
     SDL_Rect topPanelSize = {0, 0, 0, 25};
     topPanel = new Panel(topPanelSize, this);
-    topPanel->setBackgroundColor({ 30, 30 ,30 ,255});
+    topPanel->setBackgroundColor({ 16, 16 ,16 ,255});
     topPanel->setAnchor(Anchor::FullWidthTop);
+
 
     SDL_Rect textEditSize = {0, 25, 0, 55};
     textEditField = new TextEdit(textEditSize, this);
@@ -29,9 +30,9 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
 
     textEditField->setSize(currentFontSize * currentZoom);
     textEditField->setFontStyle(1);
-
+    textEditField->setBackgroundColor({ 32, 32, 32, 255 });
     SDL_Rect rect ={};
-    scrollLayout = new ScrollLayout(.2f, rect, this);
+    scrollLayout = new ScrollLayoutText(.2f, rect, this);
     scrollLayout->assign(textEditField);
 
     SDL_Rect btnSize = {0, 0, 75, 25};
@@ -61,6 +62,8 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     SDL_Rect btnSize2 = {75, 0, 75, 25};
     editDropdown = new Dropdown(btnSize2, this, "Edit");
     editDropdown->setAnchor(Anchor::TopLeft);
+    editDropdown->TLabel->setHorizontalAligment(HorizontalAligment::Center);
+    editDropdown->TLabel->setVerticalAligment(VerticalAligment::Center);
     editDropdown->setRenderingPriority(-100);
     editDropdown->setEventPriority(100);
 
@@ -81,6 +84,8 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
     SDL_Rect btnSize3 = {150, 0, 75, 25};
     showDropdown = new Dropdown(btnSize3, this, "Show");
     showDropdown->setAnchor(Anchor::TopLeft);
+    showDropdown->TLabel->setHorizontalAligment(HorizontalAligment::Center);
+    showDropdown->TLabel->setVerticalAligment(VerticalAligment::Center);
     showDropdown->setRenderingPriority(-100);
     showDropdown->setEventPriority(100);
 
@@ -116,7 +121,7 @@ MyMainWindow::MyMainWindow(SDL_Window *_window, SDL_Renderer *_renderer, std::sh
 
     SDL_Rect bottomPanelSize = {0, 0, 25, 30};
     bottomPanel = new Panel(bottomPanelSize, this);
-    bottomPanel->setBackgroundColor({ 30, 30 ,30 ,255});
+    bottomPanel->setBackgroundColor({ 16, 16 ,16 ,255});
     bottomPanel->setAnchor(Anchor::FullWidthBottom);
 
     SDL_Rect bottomCounterPanel = {0, 0, 250, 30};

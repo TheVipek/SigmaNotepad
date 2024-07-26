@@ -17,6 +17,8 @@
 #include "Window/Window.h"
 
 #include "tinyfiledialogs.h"
+#include "Renderer/ScrollLayoutText.h"
+
 class MyMainWindow : public Window {
 public:
 
@@ -28,7 +30,7 @@ protected:
     Dropdown* editDropdown;
     Dropdown* showDropdown;
     TextEdit* textEditField;
-    ScrollLayout* scrollLayout;
+    ScrollLayoutText* scrollLayout;
     Panel* bottomPanel;
     TextLabel* bottomCounter;
     TextLabel* bottomZoom;

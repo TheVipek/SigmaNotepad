@@ -12,11 +12,12 @@
 #include <string>
 #include <tr1/functional>
 
+#include "IInteractableColors.h"
 #include "SigmaObject.h"
 #include "SigmaRenderableObject.h"
 #include "TextLabel.h"
 
-class Button : public SigmaRenderableObject  {
+class Button : public SigmaRenderableObject, IInteractableColors  {
 public:
     Button(SDL_Rect& rect, Window* _owner, const std::string& text)
         : SigmaRenderableObject(rect, _owner) {
@@ -41,9 +42,7 @@ protected:
     bool                        isHovered = false;
     bool                        isClicked = false;
 
-    SDL_Color                   normalColor = { 0, 0, 0, 192}; // default bg color
-    SDL_Color                   hoverColor = { 220, 220, 220, 48};; // bg on hover
-    SDL_Color                   clickColor = { 220, 220, 220, 96};; // bg on click
+
 
     std::vector<std::function<void()>> onClick;
     void notifyOnClick();

@@ -21,7 +21,7 @@ int main(int argc, char* args[])
 
 //Creating Window
     mainWindow = std::make_shared<WindowRenderingManager>();
-    SDL_Window* window = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 380, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+    SDL_Window* window = SDL_CreateWindow("SigmaNotepad", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     app = std::shared_ptr<MyMainWindow>(new MyMainWindow(window, renderer, mainWindow));

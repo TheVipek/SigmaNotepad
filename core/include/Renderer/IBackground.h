@@ -9,9 +9,7 @@
 class IBackground
 {
 public:
-    void setBackgroundColor(const SDL_Color& color) {
-        backgroundColor = color;
-    }
+    void setBackgroundColor(const SDL_Color color) { backgroundColor = color; }
 protected:
     SDL_Color backgroundColor = { 25, 25, 25, 255};
 };
