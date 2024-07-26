@@ -41,3 +41,5 @@ vcpkg install
 
 This project is licensed under the [GPL-3.0 license](https://www.gnu.org/licenses/gpl-3.0.html)
 
+
+![image](https://github.com/user-attachments/assets/4a416dab-f55b-40d0-a459-f1a54c829eac)
